@@ -1,6 +1,8 @@
 import sys
 import os
 import pygame
+
+import player
 def check_exit():
     for event in pygame.event.get():
         if event.type == pygame.QUIT or \
@@ -11,7 +13,7 @@ if __name__ == '__main__':
 
     pygame.init()
     clock = pygame.time.Clock()
-    os.chdir("..")
+    os.chdir("..")  # Work from root directory of the project to include all media and source files
 
     pygame.display.set_caption("Game")
     screen_size_x = 1800
@@ -20,12 +22,19 @@ if __name__ == '__main__':
 
     background = pygame.image.load("media/images/background/map_gras.png")
     background = pygame.transform.scale(background, (1800, 950))
+    image_player = pygame.image.load("media/images/player/ziwomol/ziwomol_v3.png")
+    image_player = pygame.transform.scale(image_player, (95, 260))
+    image_player_reverse = pygame.image.load("media/images/player/ziwomol/ziwomol_v3_reverse.png")
+    image_player_reverse = pygame.transform.scale(image_player_reverse, (95, 260))
+
+    player = player.Player()
 
     while True:
-        check_exit()
+        check_exit()  # Check for key inputs which close the game
+
+        player.move()
+
         screen.blit(background, (0, 0))
-
-
-
+        player.draw_player(screen, image_player, image_player_reverse)
         pygame.display.update()
         clock.tick(60)
