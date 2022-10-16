@@ -2,7 +2,7 @@ import pygame
 
 class Player:
 
-    def __init__(self):
+    def __init__(self, image):
         self.pos_x = 300
         self.pos_y = 540
         self.width = 96
@@ -13,6 +13,8 @@ class Player:
         self.jump_allowed = True
         self.last_move = 1
 
+        self.image = image
+
     def move(self):
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_LEFT]:
@@ -22,7 +24,7 @@ class Player:
             self.pos_x += self.speed
             self.last_move = 1
 
-    def jump(self, gravity):
+    def jump(self, gravity: (int, float)):
         pressed = pygame.key.get_pressed()
         if self.jump_allowed:
             if pressed[pygame.K_UP]:
@@ -37,8 +39,8 @@ class Player:
 
 
 
-    def draw(self, screen, image, image_reverse):
+    def draw(self, screen):
         if self.last_move == 0:
-            screen.blit(image_reverse, (self.pos_x, self.pos_y))
+            screen.blit(pygame.transform.flip(self.image, True, False), (self.pos_x, self.pos_y))
         if self.last_move == 1:
-            screen.blit(image, (self.pos_x, self.pos_y))
+            screen.blit(self.image, (self.pos_x, self.pos_y))

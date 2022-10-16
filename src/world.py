@@ -9,3 +9,6 @@ class World:
         self.background = pygame.transform.scale(self.background, self.size)
         self.blocks = blocks
         self.enemies = enemies
+
+    def draw(self, screen):
+        screen.blit(self.background, (0, 0))
