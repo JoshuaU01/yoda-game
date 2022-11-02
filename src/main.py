@@ -6,6 +6,7 @@ import player
 import enemy
 import sniper_guy
 import world
+
 def check_exit():
     for event in pygame.event.get():
         if event.type == pygame.QUIT or \
@@ -43,6 +44,7 @@ if __name__ == '__main__':
         # Update display
         world.draw(screen)
         player.draw(screen)
-        enemy.draw(screen)
+        enemy.update_hitbox()
+        enemy.draw(screen, show_hitbox=True)
         pygame.display.update()
         clock.tick(60)
