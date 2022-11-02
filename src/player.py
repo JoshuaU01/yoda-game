@@ -15,14 +15,18 @@ class Player:
 
         self.image = image
 
+        self.lock = False
+        self.hitbox = pygame.Rect(self.pos_x, self.pos_y, 95, 260)
+
     def move(self):
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_LEFT]:
-            self.pos_x -= self.speed
-            self.last_move = 0
-        if pressed[pygame.K_RIGHT]:
-            self.pos_x += self.speed
-            self.last_move = 1
+        if not self.lock:
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_LEFT]:
+                self.pos_x -= self.speed
+                self.last_move = 0
+            if pressed[pygame.K_RIGHT]:
+                self.pos_x += self.speed
+                self.last_move = 1
 
     def jump(self, gravity: (int, float)):
         pressed = pygame.key.get_pressed()
@@ -37,10 +41,13 @@ class Player:
             else:  # Collision or end of jump
                 self.jump_allowed = True
 
+    def update_hitbox(self):
+        self.hitbox.update(self.pos_x, self.pos_y, 95, 260)
 
-
-    def draw(self, screen):
+    def draw(self, screen, show_hitbox=False):
         if self.last_move == 0:
             screen.blit(pygame.transform.flip(self.image, True, False), (self.pos_x, self.pos_y))
         if self.last_move == 1:
             screen.blit(self.image, (self.pos_x, self.pos_y))
+        if show_hitbox:
+            pygame.draw.rect(screen, (255,0,0), self.hitbox, 5)

@@ -13,6 +13,10 @@ def check_exit():
                 event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             sys.exit()
 
+def check_collision(hitboxes):
+    if hitboxes[0].collidelist(hitboxes[1:]) != -1:
+        return True
+
 if __name__ == '__main__':
 
     pygame.init()
@@ -43,8 +47,16 @@ if __name__ == '__main__':
 
         # Update display
         world.draw(screen)
-        player.draw(screen)
+        player.update_hitbox()
+        player.draw(screen, show_hitbox=True)
         enemy.update_hitbox()
         enemy.draw(screen, show_hitbox=True)
+
+        hitboxes = [player.hitbox, enemy.hitbox]
+        if check_collision(hitboxes):
+            player.lock = True
+            enemy.lock = True
+            print("hey")
+        print(player.lock)
         pygame.display.update()
         clock.tick(60)

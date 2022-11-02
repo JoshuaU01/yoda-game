@@ -11,6 +11,7 @@ class SniperGuy(enemy.Enemy):
         self.width = 96
         self.height = 128
 
+        self.lock = False
         self.hitbox = pygame.Rect(self.pos_x, self.pos_y, 140, 260)
 
     def shoot(self):
