@@ -33,11 +33,11 @@ class Player:
         if self.jump_allowed:
             if pressed[pygame.K_UP]:
                 self.jump_allowed = False
-                self.jump_speed = 10
+                self.jump_speed = 12
         else:  # Player is jumping
             self.jump_speed -= 1  #TODO gravity / 10.0
-            if self.jump_speed > -10:
-                self.pos_y -= self.jump_speed * 4
+            if self.jump_speed > -12:
+                self.pos_y -= self.jump_speed * 3
             else:  # Collision or end of jump
                 self.jump_allowed = True
 
