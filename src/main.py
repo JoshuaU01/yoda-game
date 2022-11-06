@@ -6,6 +6,7 @@ import player
 import enemy
 import sniper_guy
 import world
+import bullet
 
 def check_exit():
     for event in pygame.event.get():
@@ -49,8 +50,12 @@ if __name__ == '__main__':
     while True:
         check_exit()  # Check for key inputs which close the game
 
+        # Update movement
         player.move()
         player.jump(world.gravity)
+        player.shoot()
+        for bullet in player.bullets:
+            bullet.move()
 
         # Update display
         world.draw(screen)
@@ -58,6 +63,8 @@ if __name__ == '__main__':
         player.draw(screen, show_hitbox=True)
         enemy.update_hitbox()
         enemy.draw(screen, show_hitbox=True)
+        for bullet in player.bullets:
+            bullet.draw(screen)
 
         hitboxes = [player.hitbox, enemy.hitbox]
         if check_collision(hitboxes):

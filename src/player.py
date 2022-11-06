@@ -1,5 +1,7 @@
 import pygame
 
+import bullet
+
 class Player:
 
     def __init__(self, pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image):
@@ -13,6 +15,8 @@ class Player:
         self.hitbox_width = hitbox_width
         self.hitbox_height = hitbox_heigth
         self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
+        self.bullets = []
+        self.cooldown = 0
 
         self.movement_lock = [False, False, False, False]  # left, rigth, up, down
         self.jump_allowed = True
@@ -40,6 +44,19 @@ class Player:
                 self.pos_y -= self.jump_speed * 3
             else:  # Collision or end of jump
                 self.jump_allowed = True
+
+    def shoot(self):
+        pressed = pygame.key.get_pressed()
+        if self.cooldown <= 0:
+            if pressed[pygame.K_a]:
+                self.cooldown = 10
+                if self.last_move == 0:
+                    self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 1.4, self.last_move)) #TODO check and change values
+                else:
+                    self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 1.4, self.last_move)) #TODO check and change values
+        else:
+            self.cooldown -= 1
+
 
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
