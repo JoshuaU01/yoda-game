@@ -4,6 +4,7 @@ Made with Pygame
 
 - Requirements:
     - Python >= 3.6
+    - Pygame (newest version should work)
 
 
 - For developers:
