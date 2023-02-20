@@ -15,7 +15,14 @@ def check_collision(hitboxes):
 
 # Resize graphical elements to the screen size
 def resize(old_size) -> int:
-    return int(old_size / resize_factor)
+    return int(old_size / RESIZE_FACTOR)
+
+# Load an image from a path and resize it
+def load_image(image_path, dimensions, do_resize=True):
+    image = pygame.image.load(image_path)
+    if do_resize is True:
+        dimensions = (resize(dimensions[0]), resize(dimensions[1]))
+    return pygame.transform.scale(image, dimensions)
 
 
 def main():
@@ -29,17 +36,18 @@ def main():
     screen_width = display_info.current_w
     screen_height = display_info.current_h
     screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-    global resize_factor
-    resize_factor = 950 / screen_height
+    global RESIZE_FACTOR
+    RESIZE_FACTOR = 950 / screen_height
 
     # Load and resize images
-    image_player = pygame.image.load("media/images/player/ziwomol/ziwomol_v3.png")
-    image_player = pygame.transform.scale(image_player, (resize(95), resize(260)))
-    image_enemy = pygame.image.load("media/images/template/stickman.png")
-    image_enemy = pygame.transform.scale(image_enemy, (resize(140), resize(260)))
+    image_player = load_image("media/images/player/ziwomol/ziwomol_v3.png", (95, 260))
+    image_enemy = load_image("media/images/template/stickman.png", (140, 260))
+    image_world = load_image("media/images/background/map_gras.png", (screen_width, screen_height), do_resize=False)
+
+    # Create objects
     p1 = player.Player(resize(300), resize(540), resize(96), resize(128), resize(10), resize(0), resize(95), resize(260), image_player)
-    enemy = sniper_guy.SniperGuy(resize(1200), resize(540), resize(96), resize(128), resize(10), resize(0), resize(140), resize(260), image_enemy)
-    w1 = world.World("media/images/background/map_gras.png", (screen_width, screen_height), False, False, resize(30))
+    e1 = sniper_guy.SniperGuy(resize(1200), resize(540), resize(96), resize(128), resize(10), resize(0), resize(140), resize(260), image_enemy)
+    w1 = world.World(image_world, (screen_width, screen_height), False, False, resize(30))
 
     # Start the game loop
     while True:
@@ -62,12 +70,12 @@ def main():
         w1.draw(screen)
         p1.update_hitbox()
         p1.draw(screen, show_hitbox=True)
-        enemy.update_hitbox()
-        enemy.draw(screen, show_hitbox=True)
+        e1.update_hitbox()
+        e1.draw(screen, show_hitbox=True)
         for bullet in p1.bullets:
             bullet.draw(screen)
 
-        hitboxes = [p1.hitbox, enemy.hitbox]
+        hitboxes = [p1.hitbox, e1.hitbox]
         if check_collision(hitboxes):
             p1.movement_lock[1] = True
         else:
