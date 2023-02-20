@@ -26,16 +26,18 @@ def load_image(image_path, dimensions, do_resize=True):
 
 
 def main():
+    # Init pygame
     pygame.init()
     clock = pygame.time.Clock()
     os.chdir("..")  # Work from root directory of the project to include all media and source files
 
+    # Init screen
+    fullscreen = False
     pygame.display.set_caption("Joda Game")
-
     display_info = pygame.display.Info()
     screen_width = display_info.current_w
     screen_height = display_info.current_h
-    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((960, 540))
     global RESIZE_FACTOR
     RESIZE_FACTOR = 950 / screen_height
 
@@ -58,6 +60,12 @@ def main():
                 return None
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return None
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                if fullscreen:
+                    screen = pygame.display.set_mode((960, 540))
+                else:
+                    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+                fullscreen = not fullscreen
 
         # Update movement
         p1.move()
