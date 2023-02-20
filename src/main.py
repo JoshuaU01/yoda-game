@@ -13,7 +13,7 @@ def check_collision(hitboxes):
     if hitboxes[0].collidelist(hitboxes[1:]) != -1:
         return True
 
-
+# Resize graphical elements to the screen size
 def resize(old_size) -> int:
     return int(old_size / resize_factor)
 
