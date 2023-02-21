@@ -20,8 +20,8 @@ def resize(old_size) -> int:
 # Load an image from a path and resize it
 def load_image(image_path, dimensions, do_resize=True):
     image = pygame.image.load(image_path)
-    if do_resize is True:
-        dimensions = (resize(dimensions[0]), resize(dimensions[1]))
+    #if do_resize is True:
+        #dimensions = (resize(dimensions[0]), resize(dimensions[1]))
     return pygame.transform.scale(image, dimensions)
 
 
@@ -35,9 +35,9 @@ def main():
     fullscreen = False
     pygame.display.set_caption("Joda Game")
     display_info = pygame.display.Info()
-    screen_width = display_info.current_w
-    screen_height = display_info.current_h
-    screen = pygame.display.set_mode((960, 540))
+    screen_width = 1440#display_info.current_w
+    screen_height = 810#display_info.current_h
+    screen = pygame.display.set_mode((screen_width, screen_height))
     global RESIZE_FACTOR
     RESIZE_FACTOR = 950 / screen_height
 
@@ -47,9 +47,9 @@ def main():
     image_world = load_image("media/images/background/map_gras.png", (screen_width, screen_height), do_resize=False)
 
     # Create objects
-    p1 = player.Player(resize(300), resize(540), resize(96), resize(128), resize(10), resize(0), resize(95), resize(260), image_player)
-    e1 = sniper_guy.SniperGuy(resize(1200), resize(540), resize(96), resize(128), resize(10), resize(0), resize(140), resize(260), image_enemy)
-    w1 = world.World(image_world, (screen_width, screen_height), False, False, resize(30))
+    p1 = player.Player(300, 485, 76, 208, 10, 0, 76, 208, image_player)
+    e1 = sniper_guy.SniperGuy(1100, 485, 112, 208, 10, 0, 112, 208, image_enemy)
+    w1 = world.World(image_world, (screen_width, screen_height), False, False, 30)
 
     # Start the game loop
     while True:
@@ -62,7 +62,7 @@ def main():
                 return None
             if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                 if fullscreen:
-                    screen = pygame.display.set_mode((960, 540))
+                    screen = pygame.display.set_mode((screen_width, screen_height))
                 else:
                     screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
                 fullscreen = not fullscreen

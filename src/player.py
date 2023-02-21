@@ -20,7 +20,9 @@ class Player:
 
         self.movement_lock = [False, False, False, False]  # left, rigth, up, down
         self.jump_allowed = True
-        self.image = image
+        self.jump_intended = False
+        self.jump_released = True
+        self.image = pygame.transform.scale(image, (self.width, self.height))
         self.last_move = 1
 
     def move(self):
@@ -37,11 +39,11 @@ class Player:
         if self.jump_allowed:
             if pressed[pygame.K_SPACE]:
                 self.jump_allowed = False
-                self.jump_speed = 12
+                self.jump_speed = 14
         else:  # Player is jumping
             self.jump_speed -= 1  #TODO gravity / 10.0
-            if self.jump_speed > -12:
-                self.pos_y -= self.jump_speed * 3
+            if self.jump_speed > -14:
+                self.pos_y -= self.jump_speed * 2
             else:  # Collision or end of jump
                 self.jump_allowed = True
 
@@ -51,9 +53,9 @@ class Player:
             if pressed[pygame.K_a]:
                 self.cooldown = 10
                 if self.last_move == 0:
-                    self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 1.4, self.last_move)) #TODO check and change values
+                    self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 0.65, self.last_move)) #TODO check and change values
                 else:
-                    self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 1.4, self.last_move)) #TODO check and change values
+                    self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 0.65, self.last_move)) #TODO check and change values
         else:
             self.cooldown -= 1
 

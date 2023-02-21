@@ -9,8 +9,3 @@ class SniperGuy(enemy.Enemy):
 
     def shoot(self):
         pass
-
-    def draw(self, screen, show_hitbox=False):
-        screen.blit(self.image, (self.pos_x, self.pos_y))
-        if show_hitbox:
-            pygame.draw.rect(screen, (255,0,0), self.hitbox, 5)

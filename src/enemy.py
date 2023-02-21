@@ -14,10 +14,12 @@ class Enemy:
         self.hitbox_width = hitbox_width
         self.hitbox_height = hitbox_heigth
         self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
-        self.image = image
+        self.image = pygame.transform.scale(image, (self.width, self.height))
 
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
 
-    def draw(self, screen):
+    def draw(self, screen, show_hitbox=False):
         screen.blit(self.image, (self.pos_x, self.pos_y))
+        if show_hitbox:
+            pygame.draw.rect(screen, (255,0,0), self.hitbox, 5)
