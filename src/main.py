@@ -47,8 +47,8 @@ def main():
     image_world = load_image("media/images/background/map_gras.png", (screen_width, screen_height), do_resize=False)
 
     # Create objects
-    p1 = player.Player(300, 485, 76, 208, 10, 0, 76, 208, image_player)
-    e1 = sniper_guy.SniperGuy(1100, 485, 112, 208, 10, 0, 112, 208, image_enemy)
+    p1 = player.Player(300, 530, 57, 156, 10, 0, 57, 156, image_player)
+    e1 = sniper_guy.SniperGuy(1100, 530, 84, 156, 10, 0, 84, 156, image_enemy)
     w1 = world.World(image_world, (screen_width, screen_height), False, False, 30)
 
     # Start the game loop
@@ -68,6 +68,7 @@ def main():
                 fullscreen = not fullscreen
 
         # Update movement
+        p1.collide(e1.hitbox)
         p1.move()
         p1.jump(w1.gravity)
         p1.shoot()
@@ -83,11 +84,7 @@ def main():
         for bullet in p1.bullets:
             bullet.draw(screen)
 
-        hitboxes = [p1.hitbox, e1.hitbox]
-        if check_collision(hitboxes):
-            p1.movement_lock[1] = True
-        else:
-            p1.movement_lock[1] = False
+
         pygame.display.update()
         clock.tick(60)  # Set the framerate to 60fps
 

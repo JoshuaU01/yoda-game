@@ -2,7 +2,7 @@ import pygame
 
 import bullet
 
-class Player:
+class Player():
 
     def __init__(self, pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image):
         self.pos_x = pos_x
@@ -36,14 +36,16 @@ class Player:
 
     def jump(self, gravity: (int, float)):
         pressed = pygame.key.get_pressed()
+        if self.movement_lock[3]:
+            self.jump_allowed = True
         if self.jump_allowed:
             if pressed[pygame.K_SPACE]:
                 self.jump_allowed = False
-                self.jump_speed = 14
+                self.jump_speed = 20
         else:  # Player is jumping
             self.jump_speed -= 1  #TODO gravity / 10.0
-            if self.jump_speed > -14:
-                self.pos_y -= self.jump_speed * 2
+            if self.jump_speed > -20:
+                self.pos_y -= self.jump_speed * 1.8
             else:  # Collision or end of jump
                 self.jump_allowed = True
 
@@ -59,6 +61,33 @@ class Player:
         else:
             self.cooldown -= 1
 
+    def collide(self, hitbox):
+        if self.hitbox.colliderect(hitbox):
+            # Check collision on left side
+            if hitbox.right - self.speed <= self.hitbox.left <= hitbox.right:
+                self.movement_lock[0] = True
+            else:
+                self.movement_lock[0] = False
+
+            # Check for collision on right side
+            if hitbox.left + self.speed >= self.hitbox.right >= hitbox.left:
+                self.movement_lock[1] = True
+            else:
+                self.movement_lock[1] = False
+
+            # Check for collision on upper side
+            if self.hitbox.top >= hitbox.bottom:
+                self.jump_speed = 0
+            else:
+                self.movement_lock[2] = False
+
+            # Check for collision on lower side
+            if hitbox.top - self.jump_speed >= self.hitbox.bottom >= hitbox.top:
+                self.movement_lock[3] = True
+            else:
+                self.movement_lock[3] = False
+        else:
+            self.movement_lock = [False, False, False, False]
 
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
