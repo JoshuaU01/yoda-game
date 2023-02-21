@@ -71,6 +71,7 @@ def main():
         p1.collide(e1.hitbox)
         p1.move()
         p1.jump(w1.gravity)
+        p1.fall()
         p1.shoot()
         for bullet in p1.bullets:
             bullet.move()
