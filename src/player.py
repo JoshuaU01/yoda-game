@@ -22,6 +22,7 @@ class Player():
         self.jump_allowed = True
         self.jump_intended = False
         self.jump_released = True
+        self.jump_cooldown = 0
         self.image = pygame.transform.scale(image, (self.width, self.height))
         self.last_move = 1
 
@@ -39,7 +40,10 @@ class Player():
         if self.movement_lock[3]:
             self.jump_allowed = True
             self.jump_speed = 0
-        if self.jump_allowed:
+            self.jump_cooldown -= 1
+        else:
+            self.jump_cooldown = 2
+        if self.jump_allowed and self.jump_cooldown <= 0:
             if pressed[pygame.K_SPACE]:
                 self.jump_allowed = False
                 self.jump_speed = 20
