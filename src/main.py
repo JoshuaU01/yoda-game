@@ -47,9 +47,13 @@ def main():
     image_world = load_image("media/images/background/map_gras.png", (screen_width, screen_height), do_resize=False)
 
     # Create objects
+    sprites = []  # Save all objects with a hitbox
     p1 = player.Player(300, 530, 57, 156, 10, 0, 57, 156, image_player)
     e1 = sniper_guy.SniperGuy(1100, 530, 84, 156, 10, 0, 84, 156, image_enemy)
     w1 = world.World(image_world, (screen_width, screen_height), False, False, 30)
+    sprites.append(p1)
+    sprites.append(e1)
+    sprites.append(w1)
 
     # Start the game loop
     while True:
@@ -68,7 +72,7 @@ def main():
                 fullscreen = not fullscreen
 
         # Update movement
-        p1.collide(e1.hitbox)
+        p1.collide(sprites[1:])
         p1.move()
         p1.jump(w1.gravity)
         p1.fall()
@@ -77,7 +81,7 @@ def main():
             bullet.move()
 
         # Update display
-        w1.draw(screen)
+        w1.draw(screen, show_hitbox=True)
         p1.update_hitbox()
         p1.draw(screen, show_hitbox=True)
         e1.update_hitbox()

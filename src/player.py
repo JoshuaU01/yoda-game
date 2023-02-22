@@ -68,37 +68,31 @@ class Player():
         else:
             self.cooldown -= 1
 
-    def collide(self, hitbox):
-        if self.hitbox.colliderect(hitbox):
-            # Check collision on left side
-            if hitbox.right - self.speed <= self.hitbox.left <= hitbox.right:
-                self.movement_lock[0] = True
-                self.pos_x = hitbox.right
-            else:
-                self.movement_lock[0] = False
+    def collide(self, sprites):
+        hitboxes = [sprite.hitbox for sprite in sprites]  # Convert list of objects into list of their hitboxes
+        self.movement_lock = [False, False, False, False]  # Assume all collisions as False before checking
+        if collided_hitboxes := [hitboxes[i] for i in self.hitbox.collidelistall(hitboxes)]:  # Check, if any object collides with the player
+            for hitbox in collided_hitboxes:  # Check collision for every object
+                # Check collision on left side
+                if hitbox.right - self.speed <= self.hitbox.left <= hitbox.right:
+                    self.movement_lock[0] += 1
+                    self.pos_x = hitbox.right
 
-            # Check for collision on right side
-            if hitbox.left + self.speed >= self.hitbox.right >= hitbox.left:
-                self.movement_lock[1] = True
-                self.pos_x = hitbox.left - self.width
-            else:
-                self.movement_lock[1] = False
+                # Check for collision on right side
+                if hitbox.left + self.speed >= self.hitbox.right >= hitbox.left:
+                    self.movement_lock[1] += 1
+                    self.pos_x = hitbox.left - self.width
 
-            # Check for collision on upper side
-            if hitbox.bottom - 40 <= self.hitbox.top <= hitbox.bottom:
-                self.jump_speed = 0
-                self.pos_y = hitbox.bottom
-            else:
-                self.movement_lock[2] = False
+                # Check for collision on upper side
+                if hitbox.bottom - 40 <= self.hitbox.top <= hitbox.bottom:
+                    self.jump_speed = 0
+                    self.pos_y = hitbox.bottom
 
-            # Check for collision on lower side
-            if hitbox.top + 40 >= self.hitbox.bottom >= hitbox.top:
-                self.movement_lock[3] = True
-                self.pos_y = hitbox.top - self.height
-            else:
-                self.movement_lock[3] = False
-        else:
-            self.movement_lock = [False, False, False, False]
+                # Check for collision on lower side
+                if hitbox.top + 40 >= self.hitbox.bottom >= hitbox.top:
+                    self.movement_lock[3] += 1
+                    self.pos_y = hitbox.top - self.height
+
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
 
