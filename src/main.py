@@ -45,6 +45,7 @@ def main():
     image_player = load_image("media/images/player/ziwomol/ziwomol_v3.png", (95, 260))
     image_enemy = load_image("media/images/template/stickman.png", (140, 260))
     image_world = load_image("media/images/background/map_gras.png", (screen_width, screen_height), do_resize=False)
+    image_bullet = load_image("media/images/bullet/bullet_small.png", (16, 16), do_resize=False)
 
     # Create objects
     sprites = []  # Save all objects with a hitbox
@@ -71,14 +72,27 @@ def main():
                     screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
                 fullscreen = not fullscreen
 
-        # Update movement
+        # Update player
         p1.collide(sprites[1:])
         p1.move()
         p1.jump(w1.gravity)
         p1.fall()
-        p1.shoot()
-        for bullet in p1.bullets:
-            bullet.move()
+        p1.shoot(image_bullet)
+        if p1.die():
+            print("Player p1 died.")
+            return None
+
+        # Update enemy
+        if e1.die():
+            print("Enemy e1 died.")
+            return None
+
+        # Update movement of player's bullets
+        for i, b in enumerate(p1.bullets):
+            destroy = b.collide(sprites[1:])
+            b.move()
+            if destroy:  # If bullet hit an object, destroy it
+                del p1.bullets[i]
 
         # Update display
         w1.draw(screen, show_hitbox=True)
@@ -86,9 +100,9 @@ def main():
         p1.draw(screen, show_hitbox=True)
         e1.update_hitbox()
         e1.draw(screen, show_hitbox=True)
-        for bullet in p1.bullets:
-            bullet.draw(screen)
-
+        for b in p1.bullets:
+            b.update_hitbox()
+            b.draw(screen, show_hitbox=True)
 
         pygame.display.update()
         clock.tick(60)  # Set the framerate to 60fps

@@ -14,7 +14,15 @@ class Enemy:
         self.hitbox_width = hitbox_width
         self.hitbox_height = hitbox_heigth
         self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
+        self.take_damage = True
+        self.health = 5
+
         self.image = pygame.transform.scale(image, (self.width, self.height))
+
+    def die(self):
+        if self.health <= 0:
+            return True
+        return False
 
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)

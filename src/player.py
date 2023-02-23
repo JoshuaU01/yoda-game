@@ -15,6 +15,9 @@ class Player():
         self.hitbox_width = hitbox_width
         self.hitbox_height = hitbox_heigth
         self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
+        self.take_damage = True
+        self.health = 10
+
         self.bullets = []
         self.cooldown = 0
 
@@ -60,15 +63,21 @@ class Player():
             self.pos_y -= self.jump_speed * 1.8
 
 
-    def shoot(self):
+    def shoot(self, image_bullet):
         pressed = pygame.key.get_pressed()
+        # Remove bullet, if out of display
+        for b in self.bullets:
+            if b.pos_x <= -10 - 16 or b.pos_x >= 1450:
+                self.bullets.remove(b)
+
         if self.cooldown <= 0:
             if pressed[pygame.K_a]:
-                self.cooldown = 10
-                if self.last_move == 0:
-                    self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 0.65, self.last_move)) #TODO check and change values
-                else:
-                    self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 0.65, self.last_move)) #TODO check and change values
+                if len(self.bullets) < 8:
+                    self.cooldown = 15
+                    if self.last_move == 0:
+                        self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 0.65, self.last_move, 3, image_bullet))
+                    else:
+                        self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 0.65, self.last_move, 3, image_bullet))
         else:
             self.cooldown -= 1
 
@@ -96,6 +105,11 @@ class Player():
                 if hitbox.top + 40 >= self.hitbox.bottom >= hitbox.top:
                     self.movement_lock[3] += 1
                     self.pos_y = hitbox.top - self.height
+
+    def die(self):
+        if self.health <= 0:
+            return True
+        return False
 
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
