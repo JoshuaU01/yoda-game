@@ -56,6 +56,11 @@ def main():
     sprites.append(e1)
     sprites.append(w1)
 
+    # Load blocks, items, enemies of level
+    w1.load_map()
+    for i, b in enumerate(w1.blocks):
+        sprites.append(w1.blocks[i])
+
     # Start the game loop
     while True:
         # Get input
@@ -103,6 +108,9 @@ def main():
         for b in p1.bullets:
             b.update_hitbox()
             b.draw(screen, show_hitbox=True)
+        for b in w1.blocks:
+            b.update_hitbox()
+            b.draw(screen)
 
         pygame.display.update()
         clock.tick(60)  # Set the framerate to 60fps
