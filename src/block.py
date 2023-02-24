@@ -9,6 +9,8 @@ class Block:
         self.height = size[1]
         self.hitbox = pygame.Rect(pos, size)
 
+        self.take_damage = False
+
     def update_hitbox(self):
         self.hitbox.update(self.pos_x, self.pos_y, self.width, self.height)
 
