@@ -1,73 +1,101 @@
 import pygame
 
-import bullet
+from character import Character
+from bullet import Bullet
 
-class Player():
+from colors import *
+from movements import *
 
-    def __init__(self, pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.width = width
-        self.height = height
-        self.speed = speed
-        self.jump_speed = jump_speed
+class Player(Character):
 
-        self.hitbox_width = hitbox_width
-        self.hitbox_height = hitbox_heigth
-        self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
+    def __init__(self, position, size, velocity, image):
+        super().__init__(position, size, velocity, image)
+
+        self.is_jumping = False
+        self.gravity = 1.6
+        self.jump_strength = 30
+        self.on_ground = False
+
+        self.last_move = RIGHT
+        self.jump_cooldown = 0
+
         self.take_damage = True
         self.health = 10
-
-        self.bullets = []
+        self.bullets = pygame.sprite.Group()
         self.cooldown = 0
 
-        self.movement_lock = [False, False, False, False]  # left, rigth, up, down
-        self.jump_allowed = True
-        self.jump_intended = False
-        self.jump_released = True
-        self.jump_cooldown = 0
-        self.image = pygame.transform.scale(image, (self.width, self.height))
-        self.last_move = 1
 
-    def move(self):
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_LEFT] and not self.movement_lock[0]:
-            self.pos_x -= self.speed
-            self.last_move = 0
-        if pressed[pygame.K_RIGHT] and not self.movement_lock[1]:
-            self.pos_x += self.speed
-            self.last_move = 1
+    def update(self, enemies, floors, blocks, screen_height):
+        self.handle_input()
+        self.apply_gravity()
+        self.move_and_check_collisions(enemies, floors, blocks)
 
-    def jump(self, gravity: (int, float)):
-        pressed = pygame.key.get_pressed()
-        if self.movement_lock[3]:
-            self.jump_allowed = True
-            self.jump_speed = 0
-            self.jump_cooldown -= 1
+    def handle_input(self):
+        keys = pygame.key.get_pressed()
+        self.velocity.x = 0
+        if keys[pygame.K_LEFT]:
+            self.velocity.x = -8
+            self.last_move = LEFT
+        if keys[pygame.K_RIGHT]:
+            self.velocity.x = 8
+            self.last_move = RIGHT
+        if keys[pygame.K_UP] and self.on_ground:
+            self.jump()
+
+    def jump(self):
+        self.velocity.y = -self.jump_strength
+        self.is_jumping = True
+        self.on_ground = False
+
+    def apply_gravity(self):
+        if not self.on_ground:
+            self.velocity.y += self.gravity
+
+    def move_and_check_collisions(self, enemies, floors, blocks):
+        old_rect = self.rect.copy()
+
+        # Check for collision in horizontal direction
+        self.rect.x += self.velocity.x
+        if pygame.sprite.spritecollideany(self, enemies) or pygame.sprite.spritecollideany(self, floors) or pygame.sprite.spritecollideany(self, blocks):
+            self.rect.x = old_rect.x
+
+        # Check for collision in vertical direction
+        self.rect.y += self.velocity.y
+        collision_enemy = pygame.sprite.spritecollideany(self, enemies)
+        collision_floor = pygame.sprite.spritecollideany(self, floors)
+        collision_block = pygame.sprite.spritecollideany(self, blocks)
+
+        #TODO reduce code complexity
+        if collision_enemy:
+            if self.velocity.y > 0:
+                self.rect.bottom = collision_enemy.rect.top
+                self.velocity.y = 0
+                self.on_ground = True
+            elif self.velocity.y < 0:
+                self.rect.top = collision_enemy.rect.bottom
+                self.velocity.y = 0
+        elif collision_floor:
+            self.rect.y = old_rect.y
+            self.on_ground = True
+            self.velocity.y = 0
+            if self.rect.bottom > collision_floor.rect.top:
+                self.rect.bottom = collision_floor.rect.top
+        elif collision_block:
+            if self.velocity.y > 0:
+                self.rect.bottom = collision_block.rect.top
+                self.velocity.y = 0
+                self.on_ground = True
+            elif self.velocity.y < 0:
+                self.rect.top = collision_block.rect.bottom
+                self.velocity.y = 0
         else:
-            self.jump_cooldown = 2
-        if self.jump_allowed and self.jump_cooldown <= 0:
-            if pressed[pygame.K_SPACE]:
-                self.jump_allowed = False
-                self.jump_speed = 20
-        else:  # Player is jumping
-            self.jump_speed -= 1  #TODO gravity / 10.0
-            if self.jump_speed > -20:
-                self.pos_y -= self.jump_speed * 1.8
-            else:  # Collision or end of jump
-                self.jump_allowed = True
-
-    def fall(self):
-        if not self.movement_lock[3] and self.jump_allowed and self.pos_y <= 530:
-            self.jump_speed -= 1
-            self.pos_y -= self.jump_speed * 1.8
-
+            self.on_ground = False
 
     def shoot(self, image_bullet):
         pressed = pygame.key.get_pressed()
         # Remove bullet, if out of display
         for b in self.bullets:
-            if b.pos_x <= -10 - 16 or b.pos_x >= 1450:
+            if b.position.x <= -10 - 16 or b.position.x >= 1450:
                 self.bullets.remove(b)
 
         if self.cooldown <= 0:
@@ -75,49 +103,21 @@ class Player():
                 if len(self.bullets) < 8:
                     self.cooldown = 15
                     if self.last_move == 0:
-                        self.bullets.append(bullet.Bullet(self.pos_x - self.width / 20, self.pos_y + self.height * 0.65, self.last_move, 3, image_bullet))
+                        self.bullets.add(Bullet((self.position.x - self.size.x / 20, self.position.y + self.size.y * 0.65), (3, 0), self.last_move, image_bullet))
                     else:
-                        self.bullets.append(bullet.Bullet(self.pos_x + self.width * 19/20, self.pos_y + self.height * 0.65, self.last_move, 3, image_bullet))
+                        self.bullets.add(Bullet((self.position.x + self.size.x * 19/20, self.position.y + self.size.y * 0.65), (3, 0), self.last_move, image_bullet))
         else:
             self.cooldown -= 1
-
-    def collide(self, sprites):
-        hitboxes = [sprite.hitbox for sprite in sprites]  # Convert list of objects into list of their hitboxes
-        self.movement_lock = [False, False, False, False]  # Assume all collisions as False before checking
-        if collided_hitboxes := [hitboxes[i] for i in self.hitbox.collidelistall(hitboxes)]:  # Check, if any object collides with the player
-            for hitbox in collided_hitboxes:  # Check collision for every object
-                # Check collision on left side
-                if hitbox.right - self.speed <= self.hitbox.left <= hitbox.right:
-                    self.movement_lock[0] += 1
-                    self.pos_x = hitbox.right
-
-                # Check for collision on right side
-                if hitbox.left + self.speed >= self.hitbox.right >= hitbox.left:
-                    self.movement_lock[1] += 1
-                    self.pos_x = hitbox.left - self.width
-
-                # Check for collision on upper side
-                if hitbox.bottom - 40 <= self.hitbox.top <= hitbox.bottom:
-                    self.jump_speed = 0
-                    self.pos_y = hitbox.bottom
-
-                # Check for collision on lower side
-                if hitbox.top + 40 >= self.hitbox.bottom >= hitbox.top:
-                    self.movement_lock[3] += 1
-                    self.pos_y = hitbox.top - self.height
 
     def die(self):
         if self.health <= 0:
             return True
         return False
 
-    def update_hitbox(self):
-        self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
-
     def draw(self, screen, show_hitbox=False):
-        if self.last_move == 0:
-            screen.blit(pygame.transform.flip(self.image, True, False), (self.pos_x, self.pos_y))
-        if self.last_move == 1:
-            screen.blit(self.image, (self.pos_x, self.pos_y))
+        if self.last_move == LEFT:
+            screen.blit(pygame.transform.flip(self.image, True, False), (self.rect.x, self.rect.y))
+        if self.last_move == RIGHT:
+            screen.blit(self.image, (self.rect.x, self.rect.y))
         if show_hitbox:
-            pygame.draw.rect(screen, (255,0,0), self.hitbox, 5)
+            pygame.draw.rect(screen, RED, self.rect, 5)

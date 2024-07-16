@@ -1,33 +1,24 @@
 import pygame
 
-class Enemy:
+from character import Character
 
-    def __init__(self, pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image):
+from colors import *
 
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.width = width
-        self.height = height
-        self.speed = speed
-        self.jump_speed = jump_speed
+class Enemy(Character):
 
-        self.hitbox_width = hitbox_width
-        self.hitbox_height = hitbox_heigth
-        self.hitbox = pygame.Rect(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
+    def __init__(self, position, size, velocity, image):
+        super().__init__(position, size, velocity, image)
+
         self.take_damage = True
         self.health = 5
 
-        self.image = pygame.transform.scale(image, (self.width, self.height))
 
     def die(self):
         if self.health <= 0:
             return True
         return False
 
-    def update_hitbox(self):
-        self.hitbox.update(self.pos_x, self.pos_y, self.hitbox_width, self.hitbox_height)
-
     def draw(self, screen, show_hitbox=False):
-        screen.blit(self.image, (self.pos_x, self.pos_y))
+        screen.blit(self.image, (self.position.x, self.position.y))
         if show_hitbox:
-            pygame.draw.rect(screen, (255,0,0), self.hitbox, 5)
+            pygame.draw.rect(screen, RED, self.rect, 5)

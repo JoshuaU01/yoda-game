@@ -1,20 +1,23 @@
 import pygame
 
-class Bullet:
-    def __init__(self, pos_x, pos_y, direction, speed, image):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.direction = direction
-        self.speed = speed
-        self.image = image
+from colors import *
 
-        self.hitbox = pygame.Rect(self.pos_x, self.pos_y, 16, 16)
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, position, velocity, direction, image):
+        super().__init__()
+        self.position = pygame.math.Vector2(position[0], position[1])
+        self.velocity = pygame.math.Vector2(velocity[0], velocity[1])
+        self.direction = direction
+        self.image = image
+        self.rect = self.image.get_rect()
+
+        self.hitbox = pygame.Rect(self.position.x, self.position.y, 16, 16)
 
     def move(self):
         if self.direction == 0:
-            self.pos_x -= self.speed
+            self.position.x -= self.velocity.x
         else:
-            self.pos_x += self.speed
+            self.position.x += self.velocity.x
 
     def collide(self, sprites):
         hitboxes = [sprite.hitbox for sprite in sprites]  # Convert list of objects into list of their hitboxes
@@ -26,8 +29,8 @@ class Bullet:
         return False
 
     def update_hitbox(self):
-        self.hitbox.update(self.pos_x, self.pos_y, 16, 16)
+        self.hitbox.update(self.position.x, self.position.y, 16, 16)
     def draw(self, screen, show_hitbox=False):
-        screen.blit(self.image, (self.pos_x, self.pos_y))
+        screen.blit(self.image, (self.position.x, self.position.y))
         if show_hitbox:
-            pygame.draw.rect(screen, (255,0,0), self.hitbox, 2)
+            pygame.draw.rect(screen, RED, self.hitbox, 2)

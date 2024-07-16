@@ -1,11 +1,11 @@
 import pygame
 
-import enemy
+from enemy import Enemy
 
-class SniperGuy(enemy.Enemy):
+class SniperGuy(Enemy):
 
-    def __init__(self, pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image):
-        super(SniperGuy, self).__init__(pos_x, pos_y, width, height, speed, jump_speed, hitbox_width, hitbox_heigth, image)
+    def __init__(self, position, size, velocity, image):
+        super().__init__(position, size, velocity, image)
 
     def shoot(self):
         pass

@@ -1,18 +1,20 @@
 import pygame
 
-class Block:
+from colors import *
 
-    def __init__(self, pos, size, image=None): #TODO
-        self.pos_x = pos[0]
-        self.pos_y = pos[1]
-        self.width = size[0]
-        self.height = size[1]
-        self.hitbox = pygame.Rect(pos, size)
+class Block(pygame.sprite.Sprite):
 
-        self.take_damage = False
+    def __init__(self, width, height, x, y):
+        super().__init__()
+        self.image = pygame.Surface([width, height])
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 
-    def update_hitbox(self):
-        self.hitbox.update(self.pos_x, self.pos_y, self.width, self.height)
+        #self.take_damage = False
 
-    def draw(self, screen, draw_border=[0,0,0,0]):
-        pygame.draw.rect(screen, (200,50,200), self.hitbox)
+    #def update_hitbox(self):
+        #self.hitbox.update(self.pos_x, self.pos_y, self.width, self.height)
+
+    #def draw(self, screen, draw_border=[0,0,0,0]):
+        #pygame.draw.rect(screen, (200,50,200), self.hitbox)
