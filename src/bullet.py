@@ -11,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect()
 
-        self.hitbox = pygame.Rect(self.position.x, self.position.y, 16, 16)
+        #self.hitbox = pygame.Rect(self.position.x, self.position.y, 16, 16)
 
     def move(self):
         if self.direction == 0:
