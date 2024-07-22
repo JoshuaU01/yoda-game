@@ -46,7 +46,7 @@ class Player(Character):
             if self.direction == LEFT:
                 self.image = pygame.transform.flip(self.image, True, False)
             self.direction = RIGHT
-        if keys[pygame.K_UP] and self.on_ground:
+        if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
         if keys[pygame.K_a]:
             self.shoot()
