@@ -2,67 +2,85 @@ import sys
 import os
 import pygame
 
-import player
-import enemy
-import sniper_guy
-import world
+os.chdir("..")  # Work from root directory of the project to include all media and source files
 
-def check_exit():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT or \
-                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            sys.exit()
+from player import Player
+from enemy import Enemy
+from sniper_guy import SniperGuy
+from world import World
+from floor import Floor
+from block import Block
 
-def check_collision(hitboxes):
-    if hitboxes[0].collidelist(hitboxes[1:]) != -1:
-        return True
+from colors import *
+from screen_dimensions import *
 
-def resize(old_size) -> int:
-    return int(old_size / resize_factor)
-
-if __name__ == '__main__':
-
+def main():
+    # Init pygame
     pygame.init()
     clock = pygame.time.Clock()
-    os.chdir("..")  # Work from root directory of the project to include all media and source files
 
+    # Init screen
+    RUNNING = True
+    FULLSCREEN = False
     pygame.display.set_caption("Joda Game")
-
     display_info = pygame.display.Info()
-    screen_width = display_info.current_w
-    screen_height = display_info.current_h
-    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-    global resize_factor
-    resize_factor = 950 / screen_height
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    image_player = pygame.image.load("media/images/player/ziwomol/ziwomol_v3.png")
-    image_player = pygame.transform.scale(image_player, (resize(95), resize(260)))
+    player_1 = Player((400, 530), (55, 151), 10, World.image_player, 10)
+    World.players.add(player_1)
+    World.all_sprites.add(player_1)
 
-    image_enemy = pygame.image.load("media/images/template/stickman.png")
-    image_enemy = pygame.transform.scale(image_enemy, (resize(140), resize(260)))
+    enemy_1 = SniperGuy((1130, 510), (84, 156), 0, World.image_enemy, 3)
+    World.enemies.add(enemy_1)
+    World.all_sprites.add(enemy_1)
 
+    floor = Floor(SCREEN_WIDTH, 145, 0, SCREEN_HEIGHT - 145, World.image_floor)
+    World.floors.add(floor)
+    World.all_sprites.add(floor)
 
-    player = player.Player(resize(300), resize(540), resize(96), resize(128), resize(10), resize(0), resize(95), resize(260), image_player)
-    enemy = sniper_guy.SniperGuy(resize(1200), resize(540), resize(96), resize(128), resize(10), resize(0), resize(140), resize(260), image_enemy)
-    world = world.World("media/images/background/map_gras.png", (screen_width, screen_height), False, False, resize(30))
+    block_positions = [
+        (100, 570),
+        (200, 420),
+        (300, 270),
+        (330, 270),
+        (360, 270),
+        (600, 310),
+        (800, 200)
+    ]
 
-    while True:
-        check_exit()  # Check for key inputs which close the game
+    for pos in block_positions:
+        block = Block(30, 30, pos[0], pos[1])
+        World.blocks.add(block)
+        World.all_sprites.add(block)
 
-        player.move()
-        player.jump(world.gravity)
+    # Start the game loop
+    while RUNNING:
+        # Get input
+        for event in pygame.event.get():
+            # Check for key inputs which close the game
+            if event.type == pygame.QUIT:
+                return None
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return None
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                if FULLSCREEN:
+                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                else:
+                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                FULLSCREEN = not FULLSCREEN
+
+        World.all_sprites.update()  # Update sprites
 
         # Update display
-        world.draw(screen)
-        player.update_hitbox()
-        player.draw(screen, show_hitbox=True)
-        enemy.update_hitbox()
-        enemy.draw(screen, show_hitbox=True)
+        screen.fill(WHITE)
+        screen.blit(World.image_background, (0, 0))
+        screen.blit(World.image_floor, (0, SCREEN_HEIGHT - 180))
+        World.all_sprites.draw(screen)
 
-        hitboxes = [player.hitbox, enemy.hitbox]
-        if check_collision(hitboxes):
-            player.movement_lock[1] = True
-        else:
-            player.movement_lock[1] = False
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(60)  # Set the framerate to 60fps
+
+
+if __name__ == '__main__':
+    main()
+    pygame.quit()
