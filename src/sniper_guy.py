@@ -4,8 +4,8 @@ from enemy import Enemy
 
 class SniperGuy(Enemy):
 
-    def __init__(self, position, size, velocity, image):
-        super().__init__(position, size, velocity, image)
+    def __init__(self, position, size, speed, image, lives):
+        super().__init__(position, size, speed, image, lives)
 
     def shoot(self):
         pass

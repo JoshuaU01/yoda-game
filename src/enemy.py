@@ -6,17 +6,16 @@ from colors import *
 
 class Enemy(Character):
 
-    def __init__(self, position, size, velocity, image):
-        super().__init__(position, size, velocity, image)
-
+    def __init__(self, position, size, speed, image, lives):
+        super().__init__(position, size, speed, image, lives)
         self.take_damage = True
-        self.health = 5
 
+    def update(self):
+        self.check_alive()
 
-    def die(self):
-        if self.health <= 0:
-            return True
-        return False
+    def lose_lives(self, amount):
+        self.lives -= amount
+
 
     def draw(self, screen, show_hitbox=False):
         screen.blit(self.image, (self.position.x, self.position.y))

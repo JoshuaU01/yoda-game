@@ -1,7 +1,5 @@
 import pygame
 
-from colors import *
-
 class Floor(pygame.sprite.Sprite):
     def __init__(self, width, height, x, y, image):
         super().__init__()
