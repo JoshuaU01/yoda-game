@@ -115,11 +115,3 @@ class Player(Character):
     def apply_cooldown(self):
         if self.cooldown > 0:
             self.cooldown -= 1
-
-    def draw(self, screen, show_hitbox=False):
-        if self.direction == LEFT:
-            screen.blit(pygame.transform.flip(self.image, True, False), (self.rect.x, self.rect.y))
-        if self.direction == RIGHT:
-            screen.blit(self.image, (self.rect.x, self.rect.y))
-        if show_hitbox:
-            pygame.draw.rect(screen, RED, self.rect, 5)

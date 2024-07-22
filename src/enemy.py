@@ -15,9 +15,3 @@ class Enemy(Character):
 
     def lose_lives(self, amount):
         self.lives -= amount
-
-
-    def draw(self, screen, show_hitbox=False):
-        screen.blit(self.image, (self.position.x, self.position.y))
-        if show_hitbox:
-            pygame.draw.rect(screen, RED, self.rect, 5)
