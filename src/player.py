@@ -5,6 +5,7 @@ from bullet import Bullet
 from world import World
 
 from colors import *
+from screen_dimensions import *
 from directions import *
 
 class Player(Character):
@@ -24,14 +25,13 @@ class Player(Character):
         self.bullets = pygame.sprite.Group()
         self.cooldown = 0
 
-
     def update(self):
         self.handle_input()
         self.apply_gravity()
         self.move_and_check_collisions()
-        #self.bullets.update()
         self.apply_cooldown()
         self.check_alive()
+        self.move_screen()
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
@@ -65,13 +65,13 @@ class Player(Character):
 
         # Check for collision in horizontal direction
         self.rect.x += self.velocity.x
-        if pygame.sprite.spritecollideany(self, World.enemies) or pygame.sprite.spritecollideany(self, World.floors) or pygame.sprite.spritecollideany(self, World.blocks):
+        if pygame.sprite.spritecollideany(self, World.enemies) or pygame.sprite.spritecollideany(self, World.borders) or pygame.sprite.spritecollideany(self, World.blocks):
             self.rect.x = old_rect.x
 
         # Check for collision in vertical direction
         self.rect.y += self.velocity.y
         collision_enemy = pygame.sprite.spritecollideany(self, World.enemies)
-        collision_floor = pygame.sprite.spritecollideany(self, World.floors)
+        collision_border = pygame.sprite.spritecollideany(self, World.borders)
         collision_block = pygame.sprite.spritecollideany(self, World.blocks)
 
         #TODO reduce code complexity
@@ -83,16 +83,16 @@ class Player(Character):
             elif self.velocity.y < 0:
                 self.rect.top = collision_enemy.rect.bottom
                 self.velocity.y = 0
-        elif collision_floor:
-            self.rect.bottom = collision_floor.rect.top
+        elif collision_border:
+            self.rect.bottom = collision_border.rect.top
             self.velocity.y = 0
             self.on_ground = True
 
             #self.rect.y = old_rect.y
             #self.on_ground = True
             #self.velocity.y = 0
-            #if self.rect.bottom > collision_floor.rect.top:
-            #    self.rect.bottom = collision_floor.rect.top
+            #if self.rect.bottom > collision_border.rect.top:
+            #    self.rect.bottom = collision_border.rect.top
         elif collision_block:
             if self.velocity.y > 0:
                 self.rect.bottom = collision_block.rect.top
@@ -115,3 +115,9 @@ class Player(Character):
     def apply_cooldown(self):
         if self.cooldown > 0:
             self.cooldown -= 1
+
+    def move_screen(self):
+        if ((self.rect.x <= (1/3) * SCREEN_WIDTH and self.velocity.x < 0) or
+                (self.rect.x >= (2/3) * SCREEN_WIDTH and self.velocity.x > 0)):
+            for sprite in World.all_sprites:
+                sprite.move_with_screen(self.velocity.x)

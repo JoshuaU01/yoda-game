@@ -1,8 +1,10 @@
 import pygame
 
+from object import Object
+
 from colors import *
 
-class Block(pygame.sprite.Sprite):
+class Block(Object):
 
     def __init__(self, width, height, x, y):
         super().__init__()

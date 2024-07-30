@@ -1,6 +1,8 @@
 import pygame
 
-class Character(pygame.sprite.Sprite):
+from asset import Asset
+
+class Character(Asset):
     def __init__(self, position, size, speed, image, lives=1000):
         super().__init__()
         self.image = pygame.transform.scale(image, (size[0], size[1]))

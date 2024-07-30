@@ -1,10 +1,11 @@
 import pygame
 
+from object import Object
 from world import World
 
 from screen_dimensions import *
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(Object):
     def __init__(self, position, size, speed, direction):
         super().__init__()
         self.image = pygame.transform.scale(World.image_bullet, (size[0], size[1]))
@@ -27,10 +28,10 @@ class Bullet(pygame.sprite.Sprite):
 
     def check_collisions(self):
         collision_enemy = pygame.sprite.spritecollideany(self, World.enemies)
-        collision_floor = pygame.sprite.spritecollideany(self, World.floors)
+        collision_border = pygame.sprite.spritecollideany(self, World.borders)
         collision_block = pygame.sprite.spritecollideany(self, World.blocks)
 
-        if collision_enemy or collision_floor or collision_block:
+        if collision_enemy or collision_border or collision_block:
             if collision_enemy:  #TODO apply to all instances which inherit from Character
                 collision_enemy.lose_lives(1)
             self.kill()

@@ -8,7 +8,7 @@ from player import Player
 from enemy import Enemy
 from sniper_guy import SniperGuy
 from world import World
-from floor import Floor
+from border import Border
 from block import Block
 
 from colors import *
@@ -30,13 +30,21 @@ def main():
     World.players.add(player_1)
     World.all_sprites.add(player_1)
 
-    enemy_1 = SniperGuy((1130, 510), (84, 156), 0, World.image_enemy, 3)
+    enemy_1 = SniperGuy((900, 510), (84, 156), 0, World.image_enemy, 3)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
 
-    floor = Floor(SCREEN_WIDTH, 145, 0, SCREEN_HEIGHT - 145, World.image_floor)
-    World.floors.add(floor)
+    enemy_2 = SniperGuy((2000, 200), (60, 110), -2, World.image_enemy, 5)
+    World.enemies.add(enemy_2)
+    World.all_sprites.add(enemy_2)
+
+    floor = Border(5 * SCREEN_WIDTH, 145, 0, SCREEN_HEIGHT - 145)
+    World.borders.add(floor)
     World.all_sprites.add(floor)
+
+    wall_left = Border(100, SCREEN_HEIGHT + 200, -100, -100)
+    World.borders.add(wall_left)
+    World.all_sprites.add(wall_left)
 
     block_positions = [
         (100, 570),
@@ -45,7 +53,14 @@ def main():
         (330, 270),
         (360, 270),
         (600, 310),
-        (800, 200)
+        (800, 200),
+        (1280, 500),
+        (1500, 420),
+        (1600, 280),
+        (1970, 310),
+        (2000, 310),
+        (2030, 310),
+        (2060, 310),
     ]
 
     for pos in block_positions:
