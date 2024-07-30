@@ -27,12 +27,17 @@ class Bullet(Object):
         #self.rect.y += self.velocity.y #TODO work out self.dirction as vector 1x2?
 
     def check_collisions(self):
+        collision_player = pygame.sprite.spritecollideany(self, World.players)
         collision_enemy = pygame.sprite.spritecollideany(self, World.enemies)
         collision_border = pygame.sprite.spritecollideany(self, World.borders)
         collision_block = pygame.sprite.spritecollideany(self, World.blocks)
 
-        if collision_enemy or collision_border or collision_block:
-            if collision_enemy:  #TODO apply to all instances which inherit from Character
+        if collision_player or collision_enemy or collision_border or collision_block:
+            # TODO apply to all instances which inherit from Character
+            # TODO Implement that player can't hit themself
+            if collision_player:
+                collision_player.lose_lives(1)
+            if collision_enemy:
                 collision_enemy.lose_lives(1)
             self.kill()
 

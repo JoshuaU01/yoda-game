@@ -20,21 +20,19 @@ def main():
     clock = pygame.time.Clock()
 
     # Init screen
-    RUNNING = True
-    FULLSCREEN = False
     pygame.display.set_caption("Joda Game")
     display_info = pygame.display.Info()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    player_1 = Player((400, 530), (55, 151), 10, World.image_player, 10)
+    player_1 = Player((400, 530), (55, 151), 10, World.image_player, 2)
     World.players.add(player_1)
     World.all_sprites.add(player_1)
 
-    enemy_1 = SniperGuy((900, 510), (84, 156), 0, World.image_enemy, 3)
+    enemy_1 = Enemy((900, 510), (84, 156), 0, World.image_enemy, 3)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
 
-    enemy_2 = SniperGuy((2000, 200), (60, 110), -2, World.image_enemy, 5)
+    enemy_2 = SniperGuy((2200, 200), (60, 110), -2, World.image_enemy, 5)
     World.enemies.add(enemy_2)
     World.all_sprites.add(enemy_2)
 
@@ -57,10 +55,10 @@ def main():
         (1280, 500),
         (1500, 420),
         (1600, 280),
-        (1970, 310),
-        (2000, 310),
-        (2030, 310),
-        (2060, 310),
+        (2170, 310),
+        (2200, 310),
+        (2230, 310),
+        (2260, 310),
     ]
 
     for pos in block_positions:
@@ -69,7 +67,7 @@ def main():
         World.all_sprites.add(block)
 
     # Start the game loop
-    while RUNNING:
+    while World.RUNNING:
         # Get input
         for event in pygame.event.get():
             # Check for key inputs which close the game
@@ -78,11 +76,11 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return None
             if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                if FULLSCREEN:
+                if World.FULLSCREEN:
                     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                 else:
                     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
-                FULLSCREEN = not FULLSCREEN
+                World.FULLSCREEN = not World.FULLSCREEN
 
         World.all_sprites.update()  # Update sprites
 

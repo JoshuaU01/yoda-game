@@ -13,7 +13,12 @@ class Character(Asset):
         self.speed = speed
         self.lives = lives
 
+    def lose_lives(self, amount):
+        self.lives -= amount
+
     def check_alive(self):
         if self.lives <= 0:
             print(f"{self.__str__()} has died.")
             self.kill()
+            return False
+        return True

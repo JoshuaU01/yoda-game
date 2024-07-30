@@ -4,6 +4,9 @@ from screen_dimensions import *
 
 class World(pygame.sprite.Sprite):
 
+    RUNNING = True
+    FULLSCREEN = False
+
     players = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
     borders = pygame.sprite.Group()

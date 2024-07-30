@@ -12,6 +12,3 @@ class Enemy(Character):
 
     def update(self):
         self.check_alive()
-
-    def lose_lives(self, amount):
-        self.lives -= amount

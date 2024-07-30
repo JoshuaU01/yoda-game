@@ -117,7 +117,12 @@ class Player(Character):
             self.cooldown -= 1
 
     def move_screen(self):
-        if ((self.rect.x <= (1/3) * SCREEN_WIDTH and self.velocity.x < 0) or
-                (self.rect.x >= (2/3) * SCREEN_WIDTH and self.velocity.x > 0)):
+        if ((self.rect.x <= (2/3) * SCREEN_WIDTH and self.velocity.x < 0) or
+                (self.rect.x >= (1/3) * SCREEN_WIDTH and self.velocity.x > 0)):
             for sprite in World.all_sprites:
                 sprite.move_with_screen(self.velocity.x)
+
+    def check_alive(self):
+        alive = super().check_alive()
+        if not alive:
+            World.RUNNING = False
