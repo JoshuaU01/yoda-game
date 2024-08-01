@@ -10,6 +10,7 @@ from sniper_guy import SniperGuy
 from world import World
 from border import Border
 from block import Block
+from camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
 
 from colors import *
 from screen_dimensions import *
@@ -44,6 +45,10 @@ def main():
     World.borders.add(wall_left)
     World.all_sprites.add(wall_left)
 
+    wall_right = Border(100, SCREEN_HEIGHT + 200, 2600, -100)
+    World.borders.add(wall_right)
+    World.all_sprites.add(wall_right)
+
     block_positions = [
         (100, 570),
         (200, 420),
@@ -66,29 +71,55 @@ def main():
         World.blocks.add(block)
         World.all_sprites.add(block)
 
+    # Initialize camera
+    camera = Camera(player_1, SCREEN_WIDTH, SCREEN_HEIGHT)
+    follow_cam_mode = FollowCamMode(camera)
+    border_cam_mode = BorderCamMode(camera, wall_left.rect.right, wall_right.rect.left)
+    auto_cam_mode = AutoCamMode(camera, 1)
+    camera.set_method(border_cam_mode)
+    character_focus_index = 0
+
     # Start the game loop
     while World.RUNNING:
         # Get input
         for event in pygame.event.get():
             # Check for key inputs which close the game
             if event.type == pygame.QUIT:
-                return None
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                return None
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                if World.FULLSCREEN:
-                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-                else:
-                    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
-                World.FULLSCREEN = not World.FULLSCREEN
+                World.RUNNING = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    World.RUNNING = False
+                # Check for key inputs which toggle between windows and full screen
+                elif event.key == pygame.K_f:
+                    if World.FULLSCREEN:
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    else:
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                    World.FULLSCREEN = not World.FULLSCREEN
+                # Check for key inputs which set the camera
+                elif event.key == pygame.K_1:
+                    camera.set_method(follow_cam_mode)
+                elif event.key == pygame.K_2:
+                    camera.set_method(border_cam_mode)
+                elif event.key == pygame.K_3:
+                    camera.set_method(auto_cam_mode)
+                elif event.key == pygame.K_4:
+                    characters_list = World.players.sprites() + World.enemies.sprites()
+                    if character_focus_index >= len(characters_list) - 1:
+                        character_focus_index = 0
+                    else:
+                        character_focus_index += 1
+                    camera.set_target(characters_list[character_focus_index])
 
-        World.all_sprites.update()  # Update sprites
+        World.all_sprites.update()
+        camera.scroll()
 
         # Update display
         screen.fill(WHITE)
         screen.blit(World.image_background, (0, 0))
         screen.blit(World.image_floor, (0, SCREEN_HEIGHT - 180))
-        World.all_sprites.draw(screen)
+        for sprite in World.all_sprites:
+            screen.blit(sprite.image, camera.apply_offset(sprite))
 
         pygame.display.update()
         clock.tick(60)  # Set the framerate to 60fps

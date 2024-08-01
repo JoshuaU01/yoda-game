@@ -15,11 +15,12 @@ class Bullet(Object):
 
         self.speed = speed
         self.direction = direction
+        self.TTL = 80
 
     def update(self):
         self.move()
         self.check_collisions()
-        self.check_boundaries()
+        self.check_TTL()
 
     def move(self):
         self.velocity.x = self.speed * self.direction
@@ -41,6 +42,7 @@ class Bullet(Object):
                 collision_enemy.lose_lives(1)
             self.kill()
 
-    def check_boundaries(self):
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > SCREEN_HEIGHT:
+    def check_TTL(self):
+        self.TTL -= 1
+        if self.TTL <= 0:
             self.kill()

@@ -31,7 +31,6 @@ class Player(Character):
         self.move_and_check_collisions()
         self.apply_cooldown()
         self.check_alive()
-        self.move_screen()
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
@@ -115,12 +114,6 @@ class Player(Character):
     def apply_cooldown(self):
         if self.cooldown > 0:
             self.cooldown -= 1
-
-    def move_screen(self):
-        if ((self.rect.x <= (1/3) * SCREEN_WIDTH and self.velocity.x < 0) or
-                (self.rect.x >= (1/3) * SCREEN_WIDTH and self.velocity.x > 0)):
-            for sprite in World.all_sprites:
-                sprite.move_with_screen(self.velocity.x)
 
     def check_alive(self):
         alive = super().check_alive()
