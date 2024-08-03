@@ -28,7 +28,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     # Create player
-    player_1 = Player((200, 530), (40, 110), 10, World.image_player, 2)
+    player_1 = Player((200, 530), (41, 116), 10, World.image_player, 2)
     World.players.add(player_1)
     World.all_sprites.add(player_1)
 

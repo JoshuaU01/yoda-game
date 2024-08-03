@@ -14,7 +14,7 @@ class Player(Character):
         super().__init__(position, size, speed, image, lives)
 
         self.is_jumping = False
-        self.gravity = 1.4
+        self.gravity = 1.3
         self.jump_strength = 20
         self.on_ground = False
 
