@@ -5,7 +5,7 @@ import pygame
 os.chdir("..")  # Work from root directory of the project to include all media and source files
 
 from player import Player
-from enemy import Enemy
+from runner import Runner
 from sniper_guy import SniperGuy
 from world import World
 from sprite_sheet import SpriteSheet
@@ -33,7 +33,7 @@ def main():
     World.all_sprites.add(player_1)
 
     # Create enemies
-    enemy_1 = Enemy((600, 500), (70, 130), 0, World.image_enemy, 5)
+    enemy_1 = Runner((600, 500), (70, 130), 0, World.image_enemy, 5)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
     enemy_2 = SniperGuy((2195, 100), (60, 110), -2, World.image_enemy, 3)
