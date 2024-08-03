@@ -30,6 +30,7 @@ class Player(Character):
         self.apply_gravity()
         self.move_and_check_collisions()
         self.apply_cooldown()
+        self.check_boundaries()
         self.check_alive()
 
     def handle_input(self):

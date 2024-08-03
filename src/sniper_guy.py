@@ -16,11 +16,12 @@ class SniperGuy(Enemy):
         self.cooldown = 0
 
     def update(self):
-        self.check_alive()
         self.shoot()
         self.apply_gravity()
         self.move_and_check_collisions()
         self.apply_cooldown()
+        self.check_boundaries()
+        self.check_alive()
 
     def shoot(self):
         if self.cooldown <= 0:

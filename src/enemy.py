@@ -14,9 +14,10 @@ class Enemy(Character):
         self.take_damage = True
 
     def update(self):
-        self.check_alive()
         self.apply_gravity()
         self.move_and_check_collisions()
+        self.check_boundaries()
+        self.check_alive()
 
     def apply_gravity(self):
         if not self.on_ground:

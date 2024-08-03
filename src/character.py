@@ -2,6 +2,8 @@ import pygame
 
 from asset import Asset
 
+from screen_dimensions import *
+
 class Character(Asset):
     def __init__(self, position, size, speed, image, lives=1000):
         super().__init__()
@@ -22,3 +24,7 @@ class Character(Asset):
             self.kill()
             return False
         return True
+
+    def check_boundaries(self):
+        if self.rect.top > (12/10) * SCREEN_HEIGHT:
+            self.lose_lives(1000)
