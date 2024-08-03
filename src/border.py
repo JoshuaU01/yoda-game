@@ -5,7 +5,7 @@ from object import Object
 from colors import *
 
 class Border(Object):
-    def __init__(self, width, height, x, y):
+    def __init__(self, x, y, width, height):
         super().__init__()
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
         #self.image.fill(RED)  # Debug purposes

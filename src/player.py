@@ -14,8 +14,8 @@ class Player(Character):
         super().__init__(position, size, speed, image, lives)
 
         self.is_jumping = False
-        self.gravity = 1.6
-        self.jump_strength = 25
+        self.gravity = 1.4
+        self.jump_strength = 20
         self.on_ground = False
 
         self.direction = RIGHT
@@ -106,7 +106,7 @@ class Player(Character):
     def shoot(self):
         if self.cooldown <= 0:
             if len(self.bullets) < 5:
-                bullet = Bullet((self.rect.x + self.rect.width * 0.5*(self.direction+1), self.rect.y + self.rect.height * (2/3)), (16, 16), 12, self.direction)
+                bullet = Bullet((self.rect.x + self.rect.width * (1/2) * (self.direction + 1), self.rect.y + self.rect.height * (2/3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
                 World.all_sprites.add(bullet)
                 self.cooldown = 8

@@ -18,11 +18,13 @@ class SniperGuy(Enemy):
     def update(self):
         self.check_alive()
         self.shoot()
+        self.apply_gravity()
+        self.move_and_check_collisions()
         self.apply_cooldown()
 
     def shoot(self):
         if self.cooldown <= 0:
-            bullet = Bullet((self.rect.x, self.rect.y), (24, 8), 24, LEFT)
+            bullet = Bullet((self.rect.x, self.rect.y + (2/5) * self.rect.height), (24, 4), 32, LEFT)
             self.bullets.add(bullet)
             World.all_sprites.add(bullet)
             self.cooldown = 120

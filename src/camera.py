@@ -24,14 +24,15 @@ class Camera(ABC):
     def apply_offset(self, entity):
         return entity.rect.move(-self.offset)
 
-class CameraScroller(ABC):
 
+class CameraScroller(ABC):
     def __init__(self, camera):
         self.camera = camera
 
     @abstractmethod
     def scroll(self):
         pass
+
 
 class FollowCamMode(CameraScroller):
     def __init__(self, camera):
@@ -51,6 +52,7 @@ class BorderCamMode(CameraScroller):
         self.camera.offset.x = self.camera.target.rect.centerx + self.camera.const.x
         self.camera.offset.x = max(self.camera.offset.x, self.left_border)
         self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
+
 
 class AutoCamMode(CameraScroller):
     def __init__(self, camera, scroll_speed):
