@@ -13,4 +13,4 @@ Made with Pygame
         - Miro Board: https://miro.com/app/board/uXjVPSaBfNA=/
 
     - Conventions:
-        - PEP 8: https://realpython.com/python-pep8/
+        - PEP 8 (mostly): https://realpython.com/python-pep8/
