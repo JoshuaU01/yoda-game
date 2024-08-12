@@ -2,6 +2,7 @@ import pygame
 
 from screen_dimensions import *
 
+
 class World(pygame.sprite.Sprite):
 
     RUNNING = True
@@ -22,7 +23,8 @@ class World(pygame.sprite.Sprite):
 
     image_player = load_image("media/images/player/ziwomol/ziwomol_v3.png")
     image_enemy = load_image("media/images/template/stickman.png")
-    image_background = load_image("media/images/background/map_grass_background.png", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
+    image_background = load_image(
+        "media/images/background/map_grass_background.png", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
     image_floor = load_image("media/images/background/map_grass_floor.png", size=(SCREEN_WIDTH, 180))
     image_bullet = load_image("media/images/bullet/bullet_small.png")
 

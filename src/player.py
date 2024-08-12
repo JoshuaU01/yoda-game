@@ -8,6 +8,7 @@ from colors import *
 from screen_dimensions import *
 from directions import *
 
+
 class Player(Character):
 
     def __init__(self, position, size, speed, image, lives=10):
@@ -65,7 +66,9 @@ class Player(Character):
 
         # Check for collision in horizontal direction
         self.rect.x += self.velocity.x
-        if pygame.sprite.spritecollideany(self, World.enemies) or pygame.sprite.spritecollideany(self, World.borders) or pygame.sprite.spritecollideany(self, World.blocks):
+        if pygame.sprite.spritecollideany(self, World.enemies) or pygame.sprite.spritecollideany(
+                self, World.borders) or pygame.sprite.spritecollideany(
+            self, World.blocks):
             self.rect.x = old_rect.x
 
         # Check for collision in vertical direction
@@ -74,7 +77,7 @@ class Player(Character):
         collision_border = pygame.sprite.spritecollideany(self, World.borders)
         collision_block = pygame.sprite.spritecollideany(self, World.blocks)
 
-        #TODO reduce code complexity
+        # TODO reduce code complexity
         if collision_enemy:
             if self.velocity.y > 0:
                 self.rect.bottom = collision_enemy.rect.top
@@ -88,10 +91,10 @@ class Player(Character):
             self.velocity.y = 0
             self.on_ground = True
 
-            #self.rect.y = old_rect.y
-            #self.on_ground = True
-            #self.velocity.y = 0
-            #if self.rect.bottom > collision_border.rect.top:
+            # self.rect.y = old_rect.y
+            # self.on_ground = True
+            # self.velocity.y = 0
+            # if self.rect.bottom > collision_border.rect.top:
             #    self.rect.bottom = collision_border.rect.top
         elif collision_block:
             if self.velocity.y > 0:
@@ -107,7 +110,9 @@ class Player(Character):
     def shoot(self):
         if self.cooldown <= 0:
             if len(self.bullets) < 5:
-                bullet = Bullet((self.rect.x + self.rect.width * (1/2) * (self.direction + 1), self.rect.y + self.rect.height * (2/3)), (12, 12), 12, self.direction)
+                bullet = Bullet(
+                    (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1),
+                     self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
                 World.all_sprites.add(bullet)
                 self.cooldown = 8

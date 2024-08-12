@@ -4,6 +4,7 @@ from object import Object
 
 from colors import *
 
+
 class Block(Object):
 
     def __init__(self, image, x, y, width, height):

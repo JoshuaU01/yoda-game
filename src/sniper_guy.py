@@ -6,6 +6,7 @@ from world import World
 
 from directions import *
 
+
 class SniperGuy(Enemy):
 
     def __init__(self, position, size, speed, image, lives):
@@ -25,7 +26,7 @@ class SniperGuy(Enemy):
 
     def shoot(self):
         if self.cooldown <= 0:
-            bullet = Bullet((self.rect.x, self.rect.y + (2/5) * self.rect.height), (24, 4), 32, LEFT)
+            bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, LEFT)
             self.bullets.add(bullet)
             World.all_sprites.add(bullet)
             self.cooldown = 120

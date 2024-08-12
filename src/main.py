@@ -17,6 +17,7 @@ from camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
 from colors import *
 from screen_dimensions import *
 
+
 def main():
     # Init pygame
     pygame.init()
@@ -41,9 +42,9 @@ def main():
     World.all_sprites.add(enemy_2)
 
     # Create borders
-    #floor = Border(0, SCREEN_HEIGHT, 10 * SCREEN_HEIGHT, 100)
-    #World.borders.add(floor)
-    #World.all_sprites.add(floor)
+    # floor = Border(0, SCREEN_HEIGHT, 10 * SCREEN_HEIGHT, 100)
+    # World.borders.add(floor)
+    # World.all_sprites.add(floor)
     left_wall = Border(-100, -100, 100, SCREEN_HEIGHT + 200)
     World.borders.add(left_wall)
     World.all_sprites.add(left_wall)
@@ -105,7 +106,6 @@ def main():
 
         pygame.display.update()
         clock.tick(60)  # Set the framerate to 60fps
-        print(player_1.rect)
 
 
 if __name__ == '__main__':

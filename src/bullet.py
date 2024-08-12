@@ -5,6 +5,7 @@ from world import World
 
 from screen_dimensions import *
 
+
 class Bullet(Object):
     def __init__(self, position, size, speed, direction):
         super().__init__()
@@ -25,7 +26,7 @@ class Bullet(Object):
     def move(self):
         self.velocity.x = self.speed * self.direction
         self.rect.x += self.velocity.x
-        #self.rect.y += self.velocity.y #TODO work out self.dirction as vector 1x2?
+        # self.rect.y += self.velocity.y #TODO work out self.dirction as vector 1x2?
 
     def check_collisions(self):
         collision_player = pygame.sprite.spritecollideany(self, World.players)

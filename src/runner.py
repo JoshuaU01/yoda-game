@@ -6,6 +6,7 @@ from world import World
 
 from directions import *
 
+
 class Runner(Enemy):
 
     def __init__(self, position, size, speed, image, lives):

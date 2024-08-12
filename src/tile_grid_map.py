@@ -5,6 +5,7 @@ import numpy as np
 from world import World
 from block import Block
 
+
 class TileGridMap(pygame.sprite.Sprite):
 
     block_id_to_name = {
@@ -40,6 +41,7 @@ class TileGridMap(pygame.sprite.Sprite):
                 if cell >= 0:
                     spritename = TileGridMap.block_id_to_name[cell]
                     sprite = self.sprite_sheet.get_sprite(spritename)
-                    block = Block(sprite, horizontal * self.grid_size, vertical * self.grid_size, self.grid_size, self.grid_size)
+                    block = Block(
+                        sprite, horizontal * self.grid_size, vertical * self.grid_size, self.grid_size, self.grid_size)
                     World.blocks.add(block)
                     World.all_sprites.add(block)

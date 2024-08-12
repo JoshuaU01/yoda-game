@@ -5,6 +5,7 @@ from world import World
 
 from colors import *
 
+
 class Enemy(Character):
 
     def __init__(self, position, size, speed, image, lives):
