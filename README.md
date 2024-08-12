@@ -3,7 +3,7 @@ Ahhh yesss...Real game yes yes
 Made with Pygame
 
 - Requirements:
-    - Python >= 3.6
+    - Python >= 3.11
     - Pygame (newest version should work)
 
 
