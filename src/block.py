@@ -6,8 +6,21 @@ from colors import *
 
 
 class Block(Object):
+    """
+    A rectangular object with a hitbox.
+    """
 
-    def __init__(self, image, x, y, width, height):
+    def __init__(self, image: pygame.Surface, x: int, y: int, width: int, height: int) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            image (pygame.Surface): The image of the block.
+            x (int): The horizontal position of the left border of the block.
+            y (int): The vertical position of the upper border of the block.
+            width (int): The width of the block.
+            height (int): The height of the block.
+        """
         super().__init__()
         self.image = pygame.transform.scale(image, (width, height))
         self.rect = self.image.get_rect()

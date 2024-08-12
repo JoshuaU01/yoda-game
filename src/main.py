@@ -9,7 +9,7 @@ from runner import Runner
 from sniper_guy import SniperGuy
 from world import World
 from sprite_sheet import SpriteSheet
-from tile_grid_map import TileGridMap
+from grid_map import GridMap
 from border import Border
 from block import Block
 from camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
@@ -18,7 +18,10 @@ from colors import *
 from screen_dimensions import *
 
 
-def main():
+def main() -> None:
+    """
+    The main function containing the game loop
+    """
     # Init pygame
     pygame.init()
     clock = pygame.time.Clock()
@@ -42,9 +45,6 @@ def main():
     World.all_sprites.add(enemy_2)
 
     # Create borders
-    # floor = Border(0, SCREEN_HEIGHT, 10 * SCREEN_HEIGHT, 100)
-    # World.borders.add(floor)
-    # World.all_sprites.add(floor)
     left_wall = Border(-100, -100, 100, SCREEN_HEIGHT + 200)
     World.borders.add(left_wall)
     World.all_sprites.add(left_wall)
@@ -62,8 +62,9 @@ def main():
 
     # Load sprite sheets and maps
     grass_sheet = SpriteSheet("media/images/blocks/grass_sheet_64")
-    layer_0 = TileGridMap("media/maps/grass_level_layer_0.csv", grass_sheet, 32)
+    layer_0 = GridMap("media/maps/grass_level_layer_0", grass_sheet, 32)
     layer_0.load_csv()
+    layer_0.build()
     layer_0.render()
 
     # Start the game loop
@@ -95,8 +96,8 @@ def main():
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
 
-        World.all_sprites.update()
-        camera.scroll()
+        World.all_sprites.update()  # Update all assets
+        camera.scroll()  # Update the camera offset
 
         # Update display
         screen.fill(WHITE)
@@ -104,7 +105,7 @@ def main():
         for sprite in World.all_sprites:
             screen.blit(sprite.image, camera.apply_offset(sprite))
 
-        pygame.display.update()
+        pygame.display.update()  # Update some pygame internals
         clock.tick(60)  # Set the framerate to 60fps
 
 

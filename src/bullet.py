@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pygame
 
 from object import Object
@@ -7,7 +9,20 @@ from screen_dimensions import *
 
 
 class Bullet(Object):
-    def __init__(self, position, size, speed, direction):
+    """
+    A projectile that entities can shoot to deal damage to other entities.
+    """
+
+    def __init__(self, position: Tuple[float, float], size: Tuple[int, int], speed: int, direction: int) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            position (Tuple[float, float]): The position of the center of the bullet.
+            size (Tuple[int, int]): The size of the bullet.
+            speed (int): The speed of the bullet.
+            direction (int): The shoot direction of the bullet.
+        """
         super().__init__()
         self.image = pygame.transform.scale(World.image_bullet, (size[0], size[1]))
         self.rect = self.image.get_rect()
@@ -18,17 +33,26 @@ class Bullet(Object):
         self.direction = direction
         self.TTL = 80
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Updates the object with every frame.
+        """
         self.move()
         self.check_collisions()
         self.check_TTL()
 
-    def move(self):
+    def move(self) -> None:
+        """
+        Makes the bullet move with a certain speed into a given direction.
+        """
         self.velocity.x = self.speed * self.direction
         self.rect.x += self.velocity.x
         # self.rect.y += self.velocity.y #TODO work out self.dirction as vector 1x2?
 
-    def check_collisions(self):
+    def check_collisions(self) -> None:
+        """
+        Checks collisions with other assets and carries out actions.
+        """
         collision_player = pygame.sprite.spritecollideany(self, World.players)
         collision_enemy = pygame.sprite.spritecollideany(self, World.enemies)
         collision_border = pygame.sprite.spritecollideany(self, World.borders)
@@ -43,7 +67,10 @@ class Bullet(Object):
                 collision_enemy.lose_lives(1)
             self.kill()
 
-    def check_TTL(self):
+    def check_TTL(self) -> None:
+        """
+        Destroys the bullet after a certain time.
+        """
         self.TTL -= 1
         if self.TTL <= 0:
             self.kill()

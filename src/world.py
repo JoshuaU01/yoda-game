@@ -1,9 +1,14 @@
+from typing import Tuple, Optional
+
 import pygame
 
 from screen_dimensions import *
 
 
 class World(pygame.sprite.Sprite):
+    """
+    A class for global variables and functions.
+    """
 
     RUNNING = True
     FULLSCREEN = False
@@ -15,7 +20,17 @@ class World(pygame.sprite.Sprite):
     all_sprites = pygame.sprite.Group()
 
     @staticmethod
-    def load_image(image_path, size=None):
+    def load_image(image_path: str, size: Optional[Tuple[int, int]] = None) -> pygame.Surface:
+        """
+        Loads an image from its relative path and returns it.
+
+        Args:
+            image_path (str): The relative path to the image file.
+            size (Optional[Tuple[int, int]]): If specified, the image will be resized to this size.
+
+        Returns:
+            pygame.Surface: The loaded image.
+        """
         image = pygame.image.load(image_path)
         if size:
             image = pygame.transform.scale(image, size)
@@ -28,5 +43,8 @@ class World(pygame.sprite.Sprite):
     image_floor = load_image("media/images/background/map_grass_floor.png", size=(SCREEN_WIDTH, 180))
     image_bullet = load_image("media/images/bullet/bullet_small.png")
 
-    def __init__(self, background, size, blocks, enemies, gravity=9.81):
+    def __init__(self) -> None:
+        """
+        Creates an instance of this class.
+        """
         super().__init__()

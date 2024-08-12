@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pygame
 
 from character import Character
@@ -10,8 +12,23 @@ from directions import *
 
 
 class Player(Character):
+    """
+    A class for the player.
+    """
 
-    def __init__(self, position, size, speed, image, lives=10):
+    def __init__(
+            self, position: Tuple[int, int], size: Tuple[int, int], speed: int, image: pygame.Surface,
+            lives: int = 10) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            position (Tuple[int, int]): The position of the top left corner of the player.
+            size (Tuple[int, int]): The size of the player.
+            speed (int): The maximum speed of the player.
+            image (pygame.Surface): The image of the player.
+            lives (int): The number of lives of the player.
+        """
         super().__init__(position, size, speed, image, lives)
 
         self.is_jumping = False
@@ -26,7 +43,10 @@ class Player(Character):
         self.bullets = pygame.sprite.Group()
         self.cooldown = 0
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Updates the player with every frame.
+        """
         self.handle_input()
         self.apply_gravity()
         self.move_and_check_collisions()
@@ -34,7 +54,10 @@ class Player(Character):
         self.check_boundaries()
         self.check_alive()
 
-    def handle_input(self):
+    def handle_input(self) -> None:
+        """
+        Detects the key inputs and triggers actions from them.
+        """
         keys = pygame.key.get_pressed()
         self.velocity.x = 0
         if keys[pygame.K_LEFT]:
@@ -52,16 +75,25 @@ class Player(Character):
         if keys[pygame.K_a]:
             self.shoot()
 
-    def jump(self):
+    def jump(self) -> None:
+        """
+        Starts a jump.
+        """
         self.velocity.y = -self.jump_strength
         self.is_jumping = True
         self.on_ground = False
 
-    def apply_gravity(self):
+    def apply_gravity(self) -> None:
+        """
+        Pulls the player down while in the air.
+        """
         if not self.on_ground:
             self.velocity.y += self.gravity
 
-    def move_and_check_collisions(self):
+    def move_and_check_collisions(self) -> None:
+        """
+        Calculates the new position of the player with respect to their movement and other assets.
+        """
         old_rect = self.rect.copy()
 
         # Check for collision in horizontal direction
@@ -107,7 +139,10 @@ class Player(Character):
         else:
             self.on_ground = False
 
-    def shoot(self):
+    def shoot(self) -> None:
+        """
+        Lets the player shoot bullets.
+        """
         if self.cooldown <= 0:
             if len(self.bullets) < 5:
                 bullet = Bullet(
@@ -117,11 +152,17 @@ class Player(Character):
                 World.all_sprites.add(bullet)
                 self.cooldown = 8
 
-    def apply_cooldown(self):
+    def apply_cooldown(self) -> None:
+        """
+        Counts down a timer for the next allowed shot.
+        """
         if self.cooldown > 0:
             self.cooldown -= 1
 
-    def check_alive(self):
+    def check_alive(self) -> None:
+        """
+        Decides, if the character has enough lives to be allowed to live.
+        """
         alive = super().check_alive()
         if not alive:
             World.RUNNING = False
