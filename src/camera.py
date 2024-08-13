@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 
 import pygame
 from abc import ABC, abstractmethod
@@ -9,12 +10,12 @@ class Camera():
     A system that makes it possible to follow an asset (e.g. player) on the screen
     """
 
-    def __init__(self, target: any, width: int, height: int) -> None:
+    def __init__(self, target: Any, width: int, height: int) -> None:
         """
         Creates an instance of this class.
 
         Args:
-            target (any): The asset that the camera follows.
+            target (Any): The asset that the camera follows.
             width (int): The width of the camera frame, usually the width of the screen.
             height (int): The height of the camera frame, usually the height of the screen.
         """
@@ -33,12 +34,12 @@ class Camera():
         """
         self.method = method
 
-    def set_target(self, target: any) -> None:
+    def set_target(self, target: Any) -> None:
         """
         Changes the target that the camera follows.
 
         Args:
-            target (any): The asset that the camera follows.
+            target (Any): The asset that the camera follows.
         """
         self.target = target
 
@@ -58,12 +59,12 @@ class Camera():
         """
         self.method.scroll()
 
-    def apply_offset(self, entity: any) -> pygame.Rect:
+    def apply_offset(self, entity: Any) -> pygame.Rect:
         """
         Retrieves the rect of the entity adapted to the camera frame.
 
         Args:
-            entity (any): The entity whose offset shall be calculated.
+            entity (Any): The entity whose offset shall be calculated.
 
         Returns:
             pygame.Rect: The new rect of the entity that has been pushed into the camera frame.
