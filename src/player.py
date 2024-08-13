@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pygame
 
 from character import Character
@@ -17,14 +15,14 @@ class Player(Character):
     """
 
     def __init__(
-            self, position: Tuple[int, int], size: Tuple[int, int], speed: int, image: pygame.Surface,
+            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
             lives: int = 10) -> None:
         """
         Creates an instance of this class.
 
         Args:
-            position (Tuple[int, int]): The position of the top left corner of the player.
-            size (Tuple[int, int]): The size of the player.
+            position (tuple[int, int]): The position of the top left corner of the player.
+            size (tuple[int, int]): The size of the player.
             speed (int): The maximum speed of the player.
             image (pygame.Surface): The image of the player.
             lives (int): The number of lives of the player.

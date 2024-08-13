@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pygame
 
 from enemy import Enemy
@@ -15,14 +13,14 @@ class Runner(Enemy):
     """
 
     def __init__(
-            self, position: Tuple[int, int], size: Tuple[int, int], speed: int, image: pygame.Surface,
+            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
             lives: int) -> None:
         """
         Creates an instance of this class.
 
         Args:
-            position (Tuple[int, int]): The position of the top left corner of the runner.
-            size (Tuple[int, int]): The size of the runner.
+            position (tuple[int, int]): The position of the top left corner of the runner.
+            size (tuple[int, int]): The size of the runner.
             speed (int): The maximum speed of the runner.
             image (pygame.Surface): The image of the runner.
             lives (int): The number of lives of the runner.

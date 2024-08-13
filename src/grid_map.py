@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 import pygame
 import csv
@@ -57,12 +57,12 @@ class GridMap(pygame.sprite.Sprite):
                             self.map[vertical][horizontal] = int(cell)
         return self.map
 
-    def build(self) -> List[Block]:
+    def build(self) -> list[Block]:
         """
         Builds the map with blocks.
 
         Returns:
-            List[Block]: All blocks that have been created for this map in a list.
+            list[Block]: All blocks that have been created for this map in a list.
         """
         for vertical, row in enumerate(self.map):
             for horizontal, cell in enumerate(row):

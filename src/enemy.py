@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pygame
 
 from character import Character
@@ -14,14 +12,14 @@ class Enemy(Character):
     """
 
     def __init__(
-            self, position: Tuple[int, int], size: Tuple[int, int], speed: int, image: pygame.Surface,
+            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
             lives: int) -> None:
         """
         Creates an instance of this class.
 
         Args:
-            position (Tuple[int, int]): The position of the top left corner of the enemy.
-            size (Tuple[int, int]): The size of the enemy.
+            position (tuple[int, int]): The position of the top left corner of the enemy.
+            size (tuple[int, int]): The size of the enemy.
             speed (int): The maximum speed of the enemy.
             image (pygame.Surface): The image of the enemy.
             lives (int): The number of lives of the enemy.

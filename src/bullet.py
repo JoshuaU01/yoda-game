@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pygame
 
 from object import Object
@@ -13,13 +11,13 @@ class Bullet(Object):
     A projectile that entities can shoot to deal damage to other entities.
     """
 
-    def __init__(self, position: Tuple[float, float], size: Tuple[int, int], speed: int, direction: int) -> None:
+    def __init__(self, position: tuple[float, float], size: tuple[int, int], speed: int, direction: int) -> None:
         """
         Creates an instance of this class.
 
         Args:
-            position (Tuple[float, float]): The position of the center of the bullet.
-            size (Tuple[int, int]): The size of the bullet.
+            position (tuple[float, float]): The position of the center of the bullet.
+            size (tuple[int, int]): The size of the bullet.
             speed (int): The speed of the bullet.
             direction (int): The shoot direction of the bullet.
         """

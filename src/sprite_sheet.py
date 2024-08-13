@@ -33,6 +33,4 @@ class SpriteSheet:
         sprite = pygame.Surface((width, height), pygame.SRCALPHA)
         sprite.set_colorkey((0, 0, 0))  # TODO Better color key?
         sprite.blit(self.texture_file, (0, 0), (x, y, width, height))
-        print(type(name), type(sprite))
-        exit()
         return sprite

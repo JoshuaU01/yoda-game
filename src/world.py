@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Optional
 
 import pygame
 
@@ -20,13 +20,13 @@ class World(pygame.sprite.Sprite):
     all_sprites = pygame.sprite.Group()
 
     @staticmethod
-    def load_image(image_path: str, size: Optional[Tuple[int, int]] = None) -> pygame.Surface:
+    def load_image(image_path: str, size: Optional[tuple[int, int]] = None) -> pygame.Surface:
         """
         Loads an image from its relative path and returns it.
 
         Args:
             image_path (str): The relative path to the image file.
-            size (Optional[Tuple[int, int]]): If specified, the image will be resized to this size.
+            size (Optional[tuple[int, int]]): If specified, the image will be resized to this size.
 
         Returns:
             pygame.Surface: The loaded image.
