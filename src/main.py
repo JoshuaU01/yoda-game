@@ -32,7 +32,7 @@ def main() -> None:
     World.all_sprites.add(player_1)
 
     # Create enemies
-    enemy_1 = Runner((600, 500), (70, 130), 0, World.image_enemy, 5)
+    enemy_1 = Runner((600, 500), (70, 130), 2, World.image_enemy, 5, 1300)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
     enemy_2 = SniperGuy((2195, 100), (60, 110), -2, World.image_enemy, 3)

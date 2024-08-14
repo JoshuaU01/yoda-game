@@ -116,12 +116,6 @@ class Player(Character):
             self.rect.bottom = collision_border.rect.top
             self.velocity.y = 0
             self.on_ground = True
-
-            # self.rect.y = old_rect.y
-            # self.on_ground = True
-            # self.velocity.y = 0
-            # if self.rect.bottom > collision_border.rect.top:
-            #    self.rect.bottom = collision_border.rect.top
         elif collision_block:
             if self.velocity.y > 0:
                 self.rect.bottom = collision_block.rect.top
