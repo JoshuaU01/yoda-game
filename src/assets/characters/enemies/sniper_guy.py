@@ -1,10 +1,8 @@
 import pygame
 
-from enemy import Enemy
-from bullet import Bullet
-from world import World
-
-from directions import *
+from src.assets.characters.enemy import Enemy
+from src.assets.objects.bullet import Bullet
+from src.environment.world import World, Directions
 
 
 class SniperGuy(Enemy):
@@ -47,7 +45,7 @@ class SniperGuy(Enemy):
         Lets the sniper guy shoot bullets.
         """
         if self.cooldown <= 0:
-            bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, LEFT)
+            bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
             self.bullets.add(bullet)
             World.all_sprites.add(bullet)
             self.cooldown = 120

@@ -2,8 +2,6 @@ from typing import Optional
 
 import pygame
 
-from screen_dimensions import *
-
 
 class World(pygame.sprite.Sprite):
     """
@@ -12,6 +10,9 @@ class World(pygame.sprite.Sprite):
 
     RUNNING = True
     FULLSCREEN = False
+
+    SCREEN_WIDTH = 1440  # display_info.current_w
+    SCREEN_HEIGHT = 800  # display_info.current_h
 
     players = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
@@ -48,3 +49,31 @@ class World(pygame.sprite.Sprite):
         Creates an instance of this class.
         """
         super().__init__()
+
+
+class Colors:
+    """
+    This class contains the 8bit RGB representation of the colors used in the game.
+    """
+
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    GREY = (128, 128, 128)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    YELLOW = (255, 255, 0)
+    PURPLE = (128, 0, 128)
+    CYAN = (0, 255, 255)
+    MAGENTA = (255, 0, 255)
+    ORANGE = (255, 165, 0)
+    BROWN = (128, 128, 128)
+
+
+class Directions:
+    """
+    This class contains the integer representation of the directions.
+    """
+
+    LEFT = -1
+    RIGHT = 1

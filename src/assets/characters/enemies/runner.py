@@ -1,10 +1,6 @@
 import pygame
 
-from enemy import Enemy
-from bullet import Bullet
-from world import World
-
-from directions import *
+from src.assets.characters.enemy import Enemy
 
 
 class Runner(Enemy):

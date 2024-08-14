@@ -1,21 +1,16 @@
-import sys
 import os
 import pygame
 
 os.chdir("..")  # Work from root directory of the project to include all media and source files
 
-from player import Player
-from runner import Runner
-from sniper_guy import SniperGuy
-from world import World
-from sprite_sheet import SpriteSheet
-from grid_map import GridMap
-from border import Border
-from block import Block
-from camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
-
-from colors import *
-from screen_dimensions import *
+from src.assets.characters.player import Player
+from src.assets.characters.enemies.runner import Runner
+from src.assets.characters.enemies.sniper_guy import SniperGuy
+from src.assets.objects.border import Border
+from src.environment.sprite_sheet import SpriteSheet
+from src.environment.grid_map import GridMap
+from src.environment.world import World, Colors
+from src.environment.camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
 
 
 def main() -> None:
@@ -29,7 +24,7 @@ def main() -> None:
     # Init screen
     pygame.display.set_caption("Joda Game")
     display_info = pygame.display.Info()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
 
     # Create player
     player_1 = Player((200, 530), (41, 116), 10, World.image_player, 2)
@@ -45,15 +40,15 @@ def main() -> None:
     World.all_sprites.add(enemy_2)
 
     # Create borders
-    left_wall = Border(-100, -100, 100, SCREEN_HEIGHT + 200)
+    left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
     World.borders.add(left_wall)
     World.all_sprites.add(left_wall)
-    right_wall = Border(2560, -100, 100, SCREEN_HEIGHT + 200)
+    right_wall = Border(2560, -100, 100, World.SCREEN_HEIGHT + 200)
     World.borders.add(right_wall)
     World.all_sprites.add(right_wall)
 
     # Init camera
-    camera = Camera(player_1, SCREEN_WIDTH, SCREEN_HEIGHT)
+    camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
     follow_cam_mode = FollowCamMode(camera)
     border_cam_mode = BorderCamMode(camera, left_wall.rect.right, right_wall.rect.left)
     auto_cam_mode = AutoCamMode(camera, 1)
@@ -80,9 +75,9 @@ def main() -> None:
                 # Check for key inputs which toggle between windows and full screen
                 elif event.key == pygame.K_f:
                     if World.FULLSCREEN:
-                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                        screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
                     else:
-                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT), pygame.FULLSCREEN)
                     World.FULLSCREEN = not World.FULLSCREEN
                 # Check for key inputs which set the camera
                 elif event.key == pygame.K_1:
@@ -100,7 +95,7 @@ def main() -> None:
         camera.scroll()  # Update the camera offset
 
         # Update display
-        screen.fill(WHITE)
+        screen.fill(Colors.WHITE)
         screen.blit(World.image_background, (0, 0))
         for sprite in World.all_sprites:
             screen.blit(sprite.image, camera.apply_offset(sprite))

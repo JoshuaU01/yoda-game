@@ -1,8 +1,6 @@
 import pygame
 
-from object import Object
-
-from colors import *
+from src.assets.object import Object
 
 
 class Border(Object):
@@ -22,6 +20,6 @@ class Border(Object):
         """
         super().__init__()
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
-        # self.image.fill(RED)  # Debug purposes
+        # self.image.fill(Colors.RED)  # Debug purposes
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)

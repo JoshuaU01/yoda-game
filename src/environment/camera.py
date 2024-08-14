@@ -5,7 +5,7 @@ import pygame
 from abc import ABC, abstractmethod
 
 
-class Camera():
+class Camera:
     """
     A system that makes it possible to follow an asset (e.g. player) on the screen
     """

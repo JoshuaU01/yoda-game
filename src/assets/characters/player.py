@@ -1,12 +1,8 @@
 import pygame
 
-from character import Character
-from bullet import Bullet
-from world import World
-
-from colors import *
-from screen_dimensions import *
-from directions import *
+from src.assets.character import Character
+from src.assets.objects.bullet import Bullet
+from src.environment.world import World, Directions
 
 
 class Player(Character):
@@ -34,7 +30,7 @@ class Player(Character):
         self.jump_strength = 20
         self.on_ground = False
 
-        self.direction = RIGHT
+        self.direction = Directions.RIGHT
         self.jump_cooldown = 0
 
         self.take_damage = True
@@ -60,14 +56,14 @@ class Player(Character):
         self.velocity.x = 0
         if keys[pygame.K_LEFT]:
             self.velocity.x = - self.speed
-            if self.direction == RIGHT:
+            if self.direction == Directions.RIGHT:
                 self.image = pygame.transform.flip(self.image, True, False)
-            self.direction = LEFT
+            self.direction = Directions.LEFT
         if keys[pygame.K_RIGHT]:
             self.velocity.x = self.speed
-            if self.direction == LEFT:
+            if self.direction == Directions.LEFT:
                 self.image = pygame.transform.flip(self.image, True, False)
-            self.direction = RIGHT
+            self.direction = Directions.RIGHT
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
         if keys[pygame.K_a]:
@@ -142,13 +138,13 @@ class Player(Character):
         Lets the player shoot bullets.
         """
         if self.cooldown <= 0:
-            if len(self.bullets) < 5:
+            if len(self.bullets) < 3:
                 bullet = Bullet(
                     (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1),
                      self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
                 World.all_sprites.add(bullet)
-                self.cooldown = 8
+                self.cooldown = 12
 
     def apply_cooldown(self) -> None:
         """

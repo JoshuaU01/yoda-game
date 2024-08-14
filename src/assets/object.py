@@ -1,4 +1,4 @@
-from asset import Asset
+from src.asset import Asset
 
 
 class Object(Asset):

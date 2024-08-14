@@ -1,9 +1,7 @@
 import pygame
 
-from object import Object
-from world import World
-
-from screen_dimensions import *
+from src.assets.object import Object
+from src.environment.world import World
 
 
 class Bullet(Object):

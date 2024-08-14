@@ -1,8 +1,7 @@
 import pygame
 
-from asset import Asset
-
-from screen_dimensions import *
+from src.asset import Asset
+from src.environment.world import World
 
 
 class Character(Asset):
@@ -58,5 +57,5 @@ class Character(Asset):
         """
         Practically kills a character who fell out of the world.
         """
-        if self.rect.top > (12 / 10) * SCREEN_HEIGHT:
+        if self.rect.top > (12 / 10) * World.SCREEN_HEIGHT:
             self.lose_lives(1000)

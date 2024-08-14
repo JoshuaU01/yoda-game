@@ -1,9 +1,7 @@
 import pygame
 
-from character import Character
-from world import World
-
-from colors import *
+from src.assets.character import Character
+from src.environment.world import World
 
 
 class Enemy(Character):

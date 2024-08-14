@@ -4,9 +4,9 @@ import pygame
 import csv
 import numpy as np
 
-from world import World
-from block import Block
-from sprite_sheet import SpriteSheet
+from src.environment.world import World
+from src.assets.objects.block import Block
+from src.environment.sprite_sheet import SpriteSheet
 
 
 class GridMap(pygame.sprite.Sprite):

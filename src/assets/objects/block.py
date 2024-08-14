@@ -1,8 +1,6 @@
 import pygame
 
-from object import Object
-
-from colors import *
+from src.assets.object import Object
 
 
 class Block(Object):
