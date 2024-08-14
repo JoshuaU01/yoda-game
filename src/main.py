@@ -61,8 +61,8 @@ def main() -> None:
     character_focus_index = 0
 
     # Load sprite sheets and maps
-    grass_sheet = SpriteSheet("media/images/blocks/grass_sheet_64")
-    layer_0 = GridMap("media/maps/grass_level_layer_0", grass_sheet, 32)
+    meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
+    layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
     layer_0.load_csv()
     layer_0.build()
     layer_0.render()

@@ -15,8 +15,18 @@ class GridMap(pygame.sprite.Sprite):
     """
 
     block_id_to_name = {
-        0: "dirt_block_2_64.png",
-        1: "grass_block_1_64.png",
+        0: "dirt_block_01.png",
+        1: "dirt_block_02.png",
+        2: "dirt_block_03.png",
+        3: "dirt_block_04.png",
+        4: "grass_block_01.png",
+        5: "grass_block_02.png",
+        6: "grass_block_03.png",
+        7: "grass_block_04.png",
+        8: "grass_block_05.png",
+        9: "grass_block_06.png",
+        10: "grass_block_07.png",
+        11: "grass_block_08.png",
     }
 
     def __init__(self, map_filename: str, sprite_sheet: SpriteSheet, grid_size: int) -> None:
@@ -54,7 +64,7 @@ class GridMap(pygame.sprite.Sprite):
                 for vertical, row in enumerate(map_list):
                     for horizontal, cell in enumerate(row):
                         if str.isdigit(cell):  # TODO Also check if it fits in int8
-                            self.map[vertical][horizontal] = int(cell)
+                            self.map[vertical, horizontal] = int(cell)
         return self.map
 
     def build(self) -> list[Block]:
