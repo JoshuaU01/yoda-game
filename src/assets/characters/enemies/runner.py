@@ -89,6 +89,7 @@ class Runner(Enemy):
         else:  # Runner is facing the opposite direction of the target
             if self.delay <= 0:
                 self.direction *= -1  # Turn around
+                self.image = pygame.transform.flip(self.image, True, False)
                 self.delay = 20  # Reset delay after turn
             else:
                 self.delay -= 1
@@ -101,8 +102,9 @@ class Runner(Enemy):
         old_x = self.rect.x
         self.rect.x += self.velocity.x
         if self.collision:  # Pre-check, if the runner would collide with something.
-            self.direction *= -1
+            self.direction *= -1  # Turn around
             self.velocity.x *= -1
+            self.image = pygame.transform.flip(self.image, True, False)
         self.rect.x = old_x  # Always reset the horizontal position, as the position update will be done later
 
     def run(self) -> None:
