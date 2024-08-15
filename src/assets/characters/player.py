@@ -43,7 +43,8 @@ class Player(Character):
         """
         self.handle_input()
         self.apply_gravity()
-        self.move_and_check_collisions()
+        self.update_position_x()
+        self.update_position_y()
         self.apply_cooldown()
         self.check_boundaries()
         self.check_alive()
@@ -83,49 +84,6 @@ class Player(Character):
         """
         if not self.on_ground:
             self.velocity.y += self.gravity
-
-    def move_and_check_collisions(self) -> None:
-        """
-        Calculates the new position of the player with respect to their movement and other assets.
-        """
-        old_rect = self.rect.copy()
-
-        # Check for collision in horizontal direction
-        self.rect.x += self.velocity.x
-        if pygame.sprite.spritecollideany(self, World.enemies) or pygame.sprite.spritecollideany(
-                self, World.borders) or pygame.sprite.spritecollideany(
-            self, World.blocks):
-            self.rect.x = old_rect.x
-
-        # Check for collision in vertical direction
-        self.rect.y += self.velocity.y
-        collision_enemy = pygame.sprite.spritecollideany(self, World.enemies)
-        collision_border = pygame.sprite.spritecollideany(self, World.borders)
-        collision_block = pygame.sprite.spritecollideany(self, World.blocks)
-
-        # TODO reduce code complexity
-        if collision_enemy:
-            if self.velocity.y > 0:
-                self.rect.bottom = collision_enemy.rect.top
-                self.velocity.y = 0
-                self.on_ground = True
-            elif self.velocity.y < 0:
-                self.rect.top = collision_enemy.rect.bottom
-                self.velocity.y = 0
-        elif collision_border:
-            self.rect.bottom = collision_border.rect.top
-            self.velocity.y = 0
-            self.on_ground = True
-        elif collision_block:
-            if self.velocity.y > 0:
-                self.rect.bottom = collision_block.rect.top
-                self.velocity.y = 0
-                self.on_ground = True
-            elif self.velocity.y < 0:
-                self.rect.top = collision_block.rect.bottom
-                self.velocity.y = 0
-        else:
-            self.on_ground = False
 
     def shoot(self) -> None:
         """

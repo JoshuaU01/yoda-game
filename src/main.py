@@ -32,12 +32,15 @@ def main() -> None:
     World.all_sprites.add(player_1)
 
     # Create enemies
-    enemy_1 = Runner((600, 500), (70, 130), 2, World.image_enemy, 5, 1300)
+    enemy_1 = Runner((600, 500), (70, 130), 3, World.image_enemy, 5, 500)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
-    enemy_2 = SniperGuy((2195, 100), (60, 110), -2, World.image_enemy, 3)
+    enemy_2 = SniperGuy((2195, 100), (60, 110), 0, World.image_enemy, 3)
     World.enemies.add(enemy_2)
     World.all_sprites.add(enemy_2)
+    enemy_3 = Runner((2500, 600), (70, 130), 4, World.image_enemy, 1, 300)
+    World.enemies.add(enemy_3)
+    World.all_sprites.add(enemy_3)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)

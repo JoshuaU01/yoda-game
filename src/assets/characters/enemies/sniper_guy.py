@@ -35,7 +35,8 @@ class SniperGuy(Enemy):
         """
         self.shoot()
         self.apply_gravity()
-        self.move_and_check_collisions()
+        self.update_position_x()
+        self.update_position_y()
         self.apply_cooldown()
         self.check_boundaries()
         self.check_alive()
