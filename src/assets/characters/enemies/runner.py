@@ -65,6 +65,18 @@ class Runner(Enemy):
             return True
         return False
 
+    def is_facing(self, asset: Asset) -> bool:
+        """
+        Checks, if the runner is facing a specified asset.
+
+        Params:
+            asset (Asset): The asset to check.
+
+        Returns:
+            bool: Whether the runner is facing the asset.
+        """
+        return (asset.rect.x - self.rect.x) * self.direction >= 0
+
     def look_for_players(self) -> Optional[Player]:
         """
         Checks, if any player is within the detection range of the runner.
@@ -73,7 +85,7 @@ class Runner(Enemy):
             Optional[Player]: A near player.
         """
         for player in World.players:
-            if self.is_near(player):
+            if self.is_near(player) and self.is_facing(player):
                 return player
         return None
 
@@ -84,9 +96,9 @@ class Runner(Enemy):
         Args:
             target (Asset): The target of the runner.
         """
-        if (target.rect.x - self.rect.x) * self.direction >= 0:  # Runner is facing the target
+        if self.is_facing(target):
             self.delay = 20  # Reset delay
-        else:  # Runner is facing the opposite direction of the target
+        else:
             if self.delay <= 0:
                 self.direction *= -1  # Turn around
                 self.image = pygame.transform.flip(self.image, True, False)

@@ -11,6 +11,19 @@ class Character(Asset):
     A super class for all players and enemies.
     """
 
+    @property
+    def collision(self) -> Optional[Asset]:
+        """
+        The first found collision to any other character, border or block
+
+        Returns:
+            Optional[Asset]: The asset that collided with the character
+        """
+        sprites_to_be_checked = [sprite for sprite in
+                                 (World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
+                                  World.blocks.sprites()) if sprite != self]
+        return pygame.sprite.spritecollideany(self, sprites_to_be_checked)
+
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
             lives: int = 1000) -> None:
@@ -32,19 +45,6 @@ class Character(Asset):
 
         self.speed = speed
         self.lives = lives
-
-    @property
-    def collision(self) -> Optional[Asset]:
-        """
-        The first found collision to any other character, border or block
-
-        Returns:
-            Optional[Asset]: The asset that collided with the character
-        """
-        sprites_to_be_checked = [sprite for sprite in
-                                 (World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
-                                  World.blocks.sprites()) if sprite != self]
-        return pygame.sprite.spritecollideany(self, sprites_to_be_checked)
 
     def update_position_x(self) -> None:
         """
