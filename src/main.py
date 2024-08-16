@@ -27,18 +27,18 @@ def main() -> None:
     screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
 
     # Create player
-    player_1 = Player((200, 530), (41, 116), 10, World.image_player, 2)
+    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 2)
     World.players.add(player_1)
     World.all_sprites.add(player_1)
 
     # Create enemies
-    enemy_1 = Runner((600, 500), (70, 130), 3, World.image_enemy, 5, 500)
+    enemy_1 = Runner((600, 450), (70, 180), 3, World.image_runner, 5, 500)
     World.enemies.add(enemy_1)
     World.all_sprites.add(enemy_1)
-    enemy_2 = SniperGuy((2195, 100), (60, 110), 0, World.image_enemy, 3)
+    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.image_stickman, 3)
     World.enemies.add(enemy_2)
     World.all_sprites.add(enemy_2)
-    enemy_3 = Runner((2500, 600), (70, 130), 4, World.image_enemy, 1, 300)
+    enemy_3 = Runner((2380, 350), (70, 180), 4, World.image_runner, 1, 300)
     World.enemies.add(enemy_3)
     World.all_sprites.add(enemy_3)
 
@@ -46,7 +46,7 @@ def main() -> None:
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
     World.borders.add(left_wall)
     World.all_sprites.add(left_wall)
-    right_wall = Border(2560, -100, 100, World.SCREEN_HEIGHT + 200)
+    right_wall = Border(3520, -100, 100, World.SCREEN_HEIGHT + 200)
     World.borders.add(right_wall)
     World.all_sprites.add(right_wall)
 

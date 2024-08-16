@@ -38,7 +38,8 @@ class World(pygame.sprite.Sprite):
         return image
 
     image_player = load_image("media/images/player/ziwomol/ziwomol_v3.png")
-    image_enemy = load_image("media/images/template/stickman.png")
+    image_stickman = load_image("media/images/template/stickman.png")
+    image_runner = load_image("media/images/enemies/runner/runner_v2.png")
     image_background = load_image(
         "media/images/background/map_grass_background.png", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
     image_floor = load_image("media/images/background/map_grass_floor.png", size=(SCREEN_WIDTH, 180))
