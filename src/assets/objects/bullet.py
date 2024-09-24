@@ -58,9 +58,9 @@ class Bullet(Object):
             # TODO apply to all instances which inherit from Character
             # TODO Implement that player can't hit themself
             if collision_player:
-                collision_player.lose_lives(1)
+                collision_player.lose_health(1)
             if collision_enemy:
-                collision_enemy.lose_lives(1)
+                collision_enemy.lose_health(1)
             self.kill()
 
     def check_TTL(self) -> None:
