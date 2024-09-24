@@ -16,7 +16,7 @@ class Runner(Enemy):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            lives: int, detection_range: int) -> None:
+            health: int, detect_range: tuple[int, int]) -> None:
         """
         Creates an instance of this class.
 
@@ -25,18 +25,22 @@ class Runner(Enemy):
             size (tuple[int, int]): The size of the runner.
             speed (int): The maximum speed of the runner.
             image (pygame.Surface): The image of the runner.
-            lives (int): The number of lives of the runner.
-            detection_range (int): The range of an area that a runner can detect an asset in.
+            health (int): The number of lives of the runner.
+            detect_range (tuple[int, int]): The horizontal and vertical range that a runner can detect an asset in.
         """
-        super().__init__(position, size, speed, image, lives)
+        super().__init__(position, size, speed, image, health)
 
         self.direction = Directions.RIGHT
         self.take_damage = True
 
         self.state = self.walk
         self.target = None
-        self.detection_range = detection_range
+        self.detect_range = detect_range
+        self.attack_range = tuple(x * (2 / 3) for x in self.detect_range)
         self.delay = 20
+
+        self.is_stomping = False
+        self.stomp_cooldown = 0
 
     def update(self) -> None:
         """
@@ -45,25 +49,12 @@ class Runner(Enemy):
         self.apply_gravity()
         self.state = self.determine_state()
         self.state()
+        self.attack()
+        self.apply_stomp_cooldown()
         self.update_position_x()
         self.update_position_y()
         self.check_boundaries()
         self.check_alive()
-
-    def is_near(self, asset: Asset) -> bool:
-        """
-        Checks, if an asset is near the runner.
-
-        Args:
-            asset (Optional[Asset]): The asset to check.
-
-        Returns:
-            bool: Whether the asset is near the runner.
-        """
-        elliptic_distance = math.sqrt((self.rect.x - asset.rect.x) ** 2 + 2 * (self.rect.y - asset.rect.y) ** 2)
-        if elliptic_distance <= self.detection_range:
-            return True
-        return False
 
     def is_facing(self, asset: Asset) -> bool:
         """
@@ -85,7 +76,7 @@ class Runner(Enemy):
             Optional[Player]: A near player.
         """
         for player in World.players:
-            if self.is_near(player) and self.is_facing(player):
+            if self.is_near(player, self.detect_range) and self.is_facing(player):
                 return player
         return None
 
@@ -133,9 +124,41 @@ class Runner(Enemy):
         Returns:
             Callable[[], None]: A reference to the selected state method.
         """
-        if self.target and self.is_near(self.target):
+        if self.target and self.is_near(self.target, self.detect_range):
             return self.run
         self.target = self.look_for_players()
         if self.target:
             return self.run
         return self.walk
+
+    def stomp(self) -> None:
+        """
+        Starts the stomp attack of the runner.
+        """
+        if self.on_ground:
+            self.velocity.y = -10
+            self.on_ground = False
+        self.is_stomping = True
+        self.stomp_cooldown = 40
+
+    def attack(self) -> None:
+        """
+        Handles the attack of the runner.
+        """
+        if self.state == self.run and self.target and self.is_near(
+                self.target, self.attack_range) and self.stomp_cooldown <= 0:
+            self.stomp()
+        if self.is_stomping and self.on_ground:
+            if self.target and self.is_near(
+                    self.target, (self.attack_range[0], 40)):
+                self.target.health -= 1
+                print(f"{self.target} got hit!")
+            # TODO shake the camera (observer)
+            self.is_stomping = False
+
+    def apply_stomp_cooldown(self) -> None:
+        """
+        Counts down a timer for the next allowed stomp attack.
+        """
+        if not self.is_stomping and self.stomp_cooldown > 0:
+            self.stomp_cooldown -= 1

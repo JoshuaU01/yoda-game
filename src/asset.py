@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pygame
 
 
@@ -12,3 +14,17 @@ class Asset(pygame.sprite.Sprite):
         """
         super().__init__()
         self.rect = pygame.Rect(0, 0, 0, 0)  # Placeholder
+
+    def is_near(self, asset: Asset, distance: tuple[int | float, int | float]) -> bool:  # TODO use masks
+        """
+        Checks, if an asset is near the asset.
+
+        Args:
+            asset (Optional[Asset]): The asset to check.
+            distance (tuple[int | float, int | float]): The semi-axles of the elliptic area that is considered near.
+
+        Returns:
+            bool: Whether the asset is near the asset.
+        """
+        return ((self.rect.centerx - asset.rect.centerx) ** 2 / distance[0] ** 2) + (
+                (self.rect.centery - asset.rect.centery) ** 2 / distance[1] ** 2) <= 1

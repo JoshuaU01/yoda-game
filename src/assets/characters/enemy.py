@@ -11,7 +11,7 @@ class Enemy(Character):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            lives: int) -> None:
+            health: int) -> None:
         """
         Creates an instance of this class.
 
@@ -20,11 +20,10 @@ class Enemy(Character):
             size (tuple[int, int]): The size of the enemy.
             speed (int): The maximum speed of the enemy.
             image (pygame.Surface): The image of the enemy.
-            lives (int): The number of lives of the enemy.
+            health (int): The number of lives of the enemy.
         """
-        super().__init__(position, size, speed, image, lives)
+        super().__init__(position, size, speed, image, health)
         self.gravity = 1.3
-        self.on_ground = False
         self.take_damage = True
 
     def update(self) -> None:

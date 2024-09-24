@@ -12,7 +12,7 @@ class SniperGuy(Enemy):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            lives: int) -> None:
+            health: int) -> None:
         """
         Creates an instance of this class.
 
@@ -21,9 +21,9 @@ class SniperGuy(Enemy):
             size (tuple[int, int]): The size of the sniper guy.
             speed (int): The maximum speed of the sniper guy.
             image (pygame.Surface): The image of the sniper guy.
-            lives (int): The number of lives of the sniper guy.
+            health (int): The number of lives of the sniper guy.
         """
-        super().__init__(position, size, speed, image, lives)
+        super().__init__(position, size, speed, image, health)
 
         self.take_damage = True
         self.bullets = pygame.sprite.Group()

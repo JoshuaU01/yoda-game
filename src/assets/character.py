@@ -26,7 +26,7 @@ class Character(Asset):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            lives: int = 1000) -> None:
+            health: int = 1000) -> None:
         """
         Creates an instance of this class.
 
@@ -35,7 +35,7 @@ class Character(Asset):
             size (tuple[int, int]): The size of the character.
             speed (int): The maximum speed of the character.
             image (pygame.Surface): The image of the character.
-            lives (int): The number of lives of the character.
+            health (int): The number of lives of the character.
         """
         super().__init__()
         self.image = pygame.transform.scale(image, (size[0], size[1]))
@@ -43,8 +43,9 @@ class Character(Asset):
         self.rect.topleft = (position[0], position[1])
         self.velocity = pygame.math.Vector2()
 
+        self.on_ground = False
         self.speed = speed
-        self.lives = lives
+        self.health = health
 
     def update_position_x(self) -> None:
         """
@@ -71,30 +72,30 @@ class Character(Asset):
         else:
             self.on_ground = False
 
-    def lose_lives(self, amount: int) -> None:
+    def lose_health(self, amount: int) -> None:
         """
         Decreases the number of lives of the character.
 
         Args:
             amount (int): The amount lost lives.
         """
-        self.lives -= amount
+        self.health -= amount
 
     def check_boundaries(self) -> None:
         """
         Practically kills a character who fell out of the world.
         """
         if self.rect.top > (12 / 10) * World.SCREEN_HEIGHT:
-            self.lose_lives(1000)
+            self.lose_health(1000)
 
     def check_alive(self) -> bool:
         """
-        Decides, if the character has enough lives to be allowed to live.
+        Decides, if the character has enough health to be allowed to live.
 
         Returns:
             bool: Whether the character is still alive or not.
         """
-        if self.lives <= 0:
+        if self.health <= 0:
             print(f"{self.__str__()} has died.")
             self.kill()
             return False
