@@ -192,6 +192,28 @@ class AutoCamModeX(CameraScrollMode):
         """
         self.camera.offset.x += self.scroll_speed
 
+
+class FollowCamModeY(CameraScrollMode):
+    """
+    A scrolling method that keeps the target in a fixed position in the camera frame.
+    """
+
+    def __init__(self, camera: Camera) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            camera (Camera): The passed camera object.
+        """
+        super().__init__(camera)
+
+    def scroll(self) -> None:
+        """
+        Calculates the offset between camera and screen.
+        """
+        self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y
+
+
 class BorderCamModeY(CameraScrollMode):
     """
     Scrolls the vertical axis. Uses borders that can not be seen past and scrolling thresholds.
@@ -228,3 +250,26 @@ class BorderCamModeY(CameraScrollMode):
 
         self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
         self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
+
+
+class AutoCamModeY(CameraScrollMode):
+    """
+    A scrolling method that continuously scrolls with a certain speed, regardless of the target.
+    """
+
+    def __init__(self, camera: Camera, scroll_speed: int) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            camera (Camera): The passed camera object.
+            scroll_speed (int): The scroll speed of the camera.
+        """
+        super().__init__(camera)
+        self.scroll_speed = scroll_speed
+
+    def scroll(self) -> None:
+        """
+        Constantly increases the offset between camera and screen.
+        """
+        self.camera.offset.y += self.scroll_speed
