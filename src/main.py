@@ -53,9 +53,9 @@ def main() -> None:
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
     follow_cam_mode_x = FollowCamModeX(camera)
-    border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left)
+    border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
     auto_cam_mode_x = AutoCamModeX(camera, 1)
-    border_cam_mode_y = BorderCamModeY(camera, -2*World.SCREEN_HEIGHT, World.SCREEN_HEIGHT, 180, 100)
+    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, camera.height, 180, 100)
     camera.set_horizontal_method(border_cam_mode_x)
     camera.set_vertical_method(border_cam_mode_y)
     character_focus_index = 0

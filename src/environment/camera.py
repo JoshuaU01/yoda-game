@@ -139,7 +139,7 @@ class BorderCamModeX(CameraScrollMode):
     Like FollowCamModeX, but with defined borders that can't be seen past.
     """
 
-    def __init__(self, camera: Camera, left_border: int, right_border: int) -> None:
+    def __init__(self, camera: Camera, left_border: int, right_border: int, direction_switch_scroll_speed: tuple[int, int] = (0, 0)) -> None:
         """
         Creates an instance of this class.
 
@@ -147,15 +147,24 @@ class BorderCamModeX(CameraScrollMode):
             camera (Camera): The passed camera object.
             left_border (int): The horizontal position of the left border that can't be seen past.
             right_border (int): The horizontal position of the right border that can't be seen past.
+            direction_switch_scroll_speed (tuple[int, int]): Additional scroll speed (left and right) that is applied when the target is switching its direction.
         """
         super().__init__(camera)
         self.left_border = left_border
         self.right_border = right_border
+        self.direction_switch_scroll_speed = direction_switch_scroll_speed
 
     def scroll(self) -> None:
         """
         Calculates the offset between camera and screen with respect to the borders.
+        This mode also dynamically adapts the constant offset of the target, depending on the direction it is moving towards.
+        The condition for this behaviour to appear is direction_switch_scroll_speed > 0.
         """
+        if self.camera.target.velocity.x < 0 and self.camera.const.x > -(6 / 10) * self.camera.width:  # Movement to the left
+            self.camera.const.x = max(self.camera.const.x - self.direction_switch_scroll_speed[0], -(6 / 10) * self.camera.width)
+        elif self.camera.target.velocity.x > 0 and self.camera.const.x < -(4 / 10) * self.camera.width:  # Movement to the right
+            self.camera.const.x = min(self.camera.const.x + self.direction_switch_scroll_speed[1], -(4 / 10) * self.camera.width)
+
         self.camera.offset.x = self.camera.target.rect.centerx + self.camera.const.x
         self.camera.offset.x = max(self.camera.offset.x, self.left_border)
         self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
@@ -208,13 +217,14 @@ class BorderCamModeY(CameraScrollMode):
     def scroll(self) -> None:
         """
         Calculates the offset between camera and screen with respect to the borders and thresholds.
+        The borders work just like in the BorderCamModeX mode.
+        The thresholds (up and down) must be overcome in order to scroll the camera. This prevents hectic camera movement on the y-axis.
         """
-
-        offset_diff = self.camera.target.rect.centery + self.camera.const[1] - self.camera.offset.y
+        offset_diff = self.camera.target.rect.centery + self.camera.const.y - self.camera.offset.y  # Difference between new and current offset
         if offset_diff < -self.upper_threshold:
-            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const[1] + self.upper_threshold
+            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y + self.upper_threshold
         elif offset_diff > self.lower_threshold:
-            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const[1] - self.lower_threshold
+            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y - self.lower_threshold
 
         self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
         self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
