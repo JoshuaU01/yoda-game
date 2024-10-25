@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 from typing import Any
 
 import pygame
 from abc import ABC, abstractmethod
+
+from src.environment.world import World
 
 
 class Camera:
@@ -23,16 +26,28 @@ class Camera:
         self.width = width
         self.height = height
         self.offset = pygame.math.Vector2(0, 0)
-        self.const = pygame.math.Vector2(-(4 / 10) * self.width, 0)
+        self.const = pygame.math.Vector2(-(4 / 10) * self.width, -(4 / 10) * self.height)
 
-    def set_method(self, method: CameraScrollMode) -> None:
+        self.horizontal_method = None
+        self.vertical_method = None
+
+    def set_horizontal_method(self, method: CameraScrollMode) -> None:
         """
-        Changes the behaviour of the camera while scrolling.
+        Changes the behaviour of the camera on the x-axis while scrolling.
 
         Args:
             method (CameraScrollMode): The scroll method that the camera uses.
         """
-        self.method = method
+        self.horizontal_method = method
+
+    def set_vertical_method(self, method: CameraScrollMode) -> None:
+        """
+        Changes the behaviour of the camera on the y-axis while scrolling.
+
+        Args:
+            method (CameraScrollMode): The scroll method that the camera uses.
+        """
+        self.vertical_method = method
 
     def set_target(self, target: Any) -> None:
         """
@@ -57,7 +72,11 @@ class Camera:
         """
         Calls the scroll method of the active scroll mode.
         """
-        self.method.scroll()
+        if self.horizontal_method and self.vertical_method:
+            self.horizontal_method.scroll()
+            self.vertical_method.scroll()
+        else:
+            print("WARNING: Both horizontal and vertical camera methods must be defined!")
 
     def apply_offset(self, entity: Any) -> pygame.Rect:
         """
@@ -94,7 +113,7 @@ class CameraScrollMode(ABC):
         ...
 
 
-class FollowCamMode(CameraScrollMode):
+class FollowCamModeX(CameraScrollMode):
     """
     A scrolling method that keeps the target in a fixed position in the camera frame.
     """
@@ -115,9 +134,9 @@ class FollowCamMode(CameraScrollMode):
         self.camera.offset.x = self.camera.target.rect.centerx + self.camera.const.x
 
 
-class BorderCamMode(CameraScrollMode):
+class BorderCamModeX(CameraScrollMode):
     """
-    Like FollowCamMode, but with defined borders that can't be seen past.
+    Like FollowCamModeX, but with defined borders that can't be seen past.
     """
 
     def __init__(self, camera: Camera, left_border: int, right_border: int) -> None:
@@ -142,7 +161,7 @@ class BorderCamMode(CameraScrollMode):
         self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
 
 
-class AutoCamMode(CameraScrollMode):
+class AutoCamModeX(CameraScrollMode):
     """
     A scrolling method that continuously scrolls with a certain speed, regardless of the target.
     """
@@ -163,3 +182,39 @@ class AutoCamMode(CameraScrollMode):
         Constantly increases the offset between camera and screen.
         """
         self.camera.offset.x += self.scroll_speed
+
+class BorderCamModeY(CameraScrollMode):
+    """
+    Scrolls the vertical axis. Uses borders that can not be seen past and scrolling thresholds.
+    """
+
+    def __init__(self, camera: Camera, upper_border: int, lower_border: int, upper_threshold: int, lower_threshold: int) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            camera (Camera): The passed camera object.
+            upper_border (int): The vertical position of the upper border that can't be seen past.
+            lower_border (int): The vertical position of the lower border that can't be seen past.
+            upper_threshold (int): The upwards change of the targets position must be greater than this value to scroll the camera up.
+            lower_threshold (int): The downwards change of the targets position must be greater than this value to scroll the camera down.
+        """
+        super().__init__(camera)
+        self.upper_border = upper_border
+        self.lower_border = lower_border
+        self.upper_threshold = upper_threshold
+        self.lower_threshold = lower_threshold
+
+    def scroll(self) -> None:
+        """
+        Calculates the offset between camera and screen with respect to the borders and thresholds.
+        """
+
+        offset_diff = self.camera.target.rect.centery + self.camera.const[1] - self.camera.offset.y
+        if offset_diff < -self.upper_threshold:
+            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const[1] + self.upper_threshold
+        elif offset_diff > self.lower_threshold:
+            self.camera.offset.y = self.camera.target.rect.centery + self.camera.const[1] - self.lower_threshold
+
+        self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
+        self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
