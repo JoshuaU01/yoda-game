@@ -273,3 +273,27 @@ class AutoCamModeY(CameraScrollMode):
         Constantly increases the offset between camera and screen.
         """
         self.camera.offset.y += self.scroll_speed
+
+
+class PageCamModeY(CameraScrollMode):
+    """
+    A scrolling mode that turns the page when the target exceeds the borders of the camera frame.
+    """
+
+    def __init__(self, camera: Camera) -> None:
+        """
+        Creates an instance of this class.
+
+        Args:
+            camera (Camera): The passed camera object.
+        """
+        super().__init__(camera)
+
+    def scroll(self) -> None:
+        """
+        Increases or decreases the camera offset by its height, depending on the page the target stands on.
+        """
+        if self.camera.target.rect.bottom - self.camera.offset.y < 0:
+            self.camera.offset.y -= self.camera.height
+        elif self.camera.target.rect.bottom - self.camera.offset.y > self.camera.height:
+            self.camera.offset.y += self.camera.height

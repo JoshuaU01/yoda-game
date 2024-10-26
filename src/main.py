@@ -10,7 +10,7 @@ from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
 from src.environment.world import World, Colors
-from src.environment.camera import Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY, BorderCamModeY, AutoCamModeY
+from src.environment.camera import Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY, BorderCamModeY, AutoCamModeY, PageCamModeY
 
 
 def main() -> None:
@@ -58,6 +58,7 @@ def main() -> None:
     follow_cam_mode_y = FollowCamModeY(camera)
     border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, camera.height, 180, 100)
     auto_cam_mode_y = AutoCamModeY(camera, -1)
+    page_cam_mode_y = PageCamModeY(camera)
     camera.set_horizontal_method(border_cam_mode_x)
     camera.set_vertical_method(border_cam_mode_y)
     character_focus_index = 0
@@ -101,6 +102,8 @@ def main() -> None:
                 elif event.key == pygame.K_6:
                     camera.set_vertical_method(auto_cam_mode_y)
                 elif event.key == pygame.K_7:
+                    camera.set_vertical_method(page_cam_mode_y)
+                elif event.key == pygame.K_8:
                     characters_list = World.players.sprites() + World.enemies.sprites()
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
