@@ -10,7 +10,8 @@ from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
 from src.environment.world import World, Colors
-from src.environment.camera import Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY, BorderCamModeY, AutoCamModeY, PageCamModeY
+from src.environment.camera import (Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY,
+                                    BorderCamModeY, AutoCamModeY, PageCamModeY)
 
 
 def main() -> None:
@@ -62,7 +63,6 @@ def main() -> None:
     camera.set_horizontal_method(border_cam_mode_x)
     camera.set_vertical_method(border_cam_mode_y)
     character_focus_index = 0
-
 
     # Load sprite sheets and maps
     meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
