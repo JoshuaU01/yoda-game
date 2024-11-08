@@ -39,8 +39,9 @@ class Runner(Enemy):
         self.attack_range = tuple(x * (2 / 3) for x in self.detect_range)
         self.delay = 20
 
+        self.gravity = 1.2
         self.is_stomping = False
-        self.stomp_cooldown = 0
+        self.stomp_cooldown = 10
 
     def update(self) -> None:
         """
@@ -136,10 +137,10 @@ class Runner(Enemy):
         Starts the stomp attack of the runner.
         """
         if self.on_ground:
-            self.velocity.y = -10
+            self.velocity.y = -12
             self.on_ground = False
         self.is_stomping = True
-        self.stomp_cooldown = 40
+        self.stomp_cooldown = 50
 
     def attack(self) -> None:
         """

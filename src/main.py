@@ -10,7 +10,8 @@ from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
 from src.environment.world import World, Colors
-from src.environment.camera import Camera, FollowCamMode, BorderCamMode, AutoCamMode
+from src.environment.camera import (Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY,
+                                    BorderCamModeY, AutoCamModeY, PageCamModeY)
 
 
 def main() -> None:
@@ -52,10 +53,15 @@ def main() -> None:
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
-    follow_cam_mode = FollowCamMode(camera)
-    border_cam_mode = BorderCamMode(camera, left_wall.rect.right, right_wall.rect.left)
-    auto_cam_mode = AutoCamMode(camera, 1)
-    camera.set_method(border_cam_mode)
+    follow_cam_mode_x = FollowCamModeX(camera)
+    border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
+    auto_cam_mode_x = AutoCamModeX(camera, 1)
+    follow_cam_mode_y = FollowCamModeY(camera)
+    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, camera.height, 180, 100)
+    auto_cam_mode_y = AutoCamModeY(camera, -1)
+    page_cam_mode_y = PageCamModeY(camera)
+    camera.set_horizontal_method(border_cam_mode_x)
+    camera.set_vertical_method(border_cam_mode_y)
     character_focus_index = 0
 
     # Load sprite sheets and maps
@@ -84,12 +90,20 @@ def main() -> None:
                     World.FULLSCREEN = not World.FULLSCREEN
                 # Check for key inputs which set the camera
                 elif event.key == pygame.K_1:
-                    camera.set_method(follow_cam_mode)
+                    camera.set_horizontal_method(follow_cam_mode_x)
                 elif event.key == pygame.K_2:
-                    camera.set_method(border_cam_mode)
+                    camera.set_horizontal_method(border_cam_mode_x)
                 elif event.key == pygame.K_3:
-                    camera.set_method(auto_cam_mode)
+                    camera.set_horizontal_method(auto_cam_mode_x)
                 elif event.key == pygame.K_4:
+                    camera.set_vertical_method(follow_cam_mode_y)
+                elif event.key == pygame.K_5:
+                    camera.set_vertical_method(border_cam_mode_y)
+                elif event.key == pygame.K_6:
+                    camera.set_vertical_method(auto_cam_mode_y)
+                elif event.key == pygame.K_7:
+                    camera.set_vertical_method(page_cam_mode_y)
+                elif event.key == pygame.K_8:
                     characters_list = World.players.sprites() + World.enemies.sprites()
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
