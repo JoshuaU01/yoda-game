@@ -24,6 +24,7 @@ class Player(Character):
             health (int): The number of lives of the player.
         """
         super().__init__(position, size, speed, image, health)
+        World.players.add(self)
 
         self.is_jumping = False
         self.gravity = 1.3
@@ -94,7 +95,6 @@ class Player(Character):
                     (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1),
                      self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
-                World.all_sprites.add(bullet)
                 self.shoot_cooldown = 12
 
     def apply_shoot_cooldown(self) -> None:

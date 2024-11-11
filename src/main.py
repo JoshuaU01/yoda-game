@@ -32,31 +32,19 @@ def main() -> None:
     layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
     layer_0.load_csv()
     layer_0.build()
-    layer_0.render()
+    # layer_0.render()  # Currently turned off, because all sprites are now grouped during their initialization.
 
     # Create player
     player_1 = Player((200, 280), (41, 116), 10, World.image_player, 3)
-    World.players.add(player_1)
-    World.all_sprites.add(player_1)
 
     # Create enemies
     enemy_1 = Runner((600, 450), (70, 180), 3, World.image_runner, 5, (600, 400))
-    World.enemies.add(enemy_1)
-    World.all_sprites.add(enemy_1)
     enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.image_stickman, 3)
-    World.enemies.add(enemy_2)
-    World.all_sprites.add(enemy_2)
     enemy_3 = Runner((2380, 350), (70, 180), 4, World.image_runner, 1, (300, 200))
-    World.enemies.add(enemy_3)
-    World.all_sprites.add(enemy_3)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
-    World.borders.add(left_wall)
-    World.all_sprites.add(left_wall)
     right_wall = Border(3520, -100, 100, World.SCREEN_HEIGHT + 200)
-    World.borders.add(right_wall)
-    World.all_sprites.add(right_wall)
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)

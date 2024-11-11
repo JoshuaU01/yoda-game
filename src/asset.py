@@ -15,6 +15,7 @@ class Asset(pygame.sprite.Sprite):
         Creates an instance of this class.
         """
         super().__init__()
+        World.all_sprites.add(self)
         self.rect = pygame.Rect(0, 0, 0, 0)  # Placeholder
 
     def is_near(self, asset: Asset, distance: tuple[int | float, int | float]) -> bool:  # TODO use masks

@@ -48,7 +48,6 @@ class SniperGuy(Enemy):
         if self.cooldown <= 0:
             bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
             self.bullets.add(bullet)
-            World.all_sprites.add(bullet)
             self.cooldown = 120
 
     def apply_cooldown(self) -> None:

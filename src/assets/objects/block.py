@@ -1,6 +1,7 @@
 import pygame
 
 from src.assets.object import Object
+from src.environment.world import World
 
 
 class Block(Object):
@@ -20,6 +21,7 @@ class Block(Object):
             height (int): The height of the block.
         """
         super().__init__()
+        World.blocks.add(self)
         self.image = pygame.transform.scale(image, (width, height))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)

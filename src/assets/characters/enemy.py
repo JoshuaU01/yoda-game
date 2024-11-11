@@ -23,6 +23,7 @@ class Enemy(Character):
             health (int): The number of lives of the enemy.
         """
         super().__init__(position, size, speed, image, health)
+        World.enemies.add(self)
         self.gravity = 1.3
         self.take_damage = True
 

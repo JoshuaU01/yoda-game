@@ -49,7 +49,6 @@ class Character(Asset):
         self.health = health
 
         self.health_bar = HealthBar(self)
-        World.all_sprites.add(self.health_bar)
 
     def update_position_x(self) -> None:
         """

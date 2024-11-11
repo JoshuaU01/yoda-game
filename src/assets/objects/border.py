@@ -1,6 +1,7 @@
 import pygame
 
 from src.assets.object import Object
+from src.environment.world import World
 
 
 class Border(Object):
@@ -19,6 +20,7 @@ class Border(Object):
             height (int): The height of the border.
         """
         super().__init__()
+        World.borders.add(self)
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
         # self.image.fill(Colors.RED)  # Debug purposes
         self.rect = self.image.get_rect()
