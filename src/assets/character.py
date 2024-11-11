@@ -3,6 +3,7 @@ from typing import Optional
 import pygame
 
 from src.asset import Asset
+from src.assets.objects.health_bar import HealthBar
 from src.environment.world import World
 
 
@@ -46,6 +47,9 @@ class Character(Asset):
         self.on_ground = False
         self.speed = speed
         self.health = health
+
+        self.health_bar = HealthBar(self)
+        World.all_sprites.add(self.health_bar)
 
     def update_position_x(self) -> None:
         """

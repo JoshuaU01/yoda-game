@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import pygame
 
+from src.environment.world import World
+
 
 class Asset(pygame.sprite.Sprite):
     """

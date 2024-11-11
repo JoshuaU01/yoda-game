@@ -44,6 +44,8 @@ class World(pygame.sprite.Sprite):
         "media/images/background/map_grass_background.png", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
     image_floor = load_image("media/images/background/map_grass_floor.png", size=(SCREEN_WIDTH, 180))
     image_bullet = load_image("media/images/bullet/bullet_small.png")
+    image_full_heart = load_image("media/images/heart/full_heart.png", size=(16, 16))
+    image_half_heart = load_image("media/images/heart/half_heart.png", size=(8, 16))
 
     def __init__(self) -> None:
         """

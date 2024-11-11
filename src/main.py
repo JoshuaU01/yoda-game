@@ -27,8 +27,15 @@ def main() -> None:
     display_info = pygame.display.Info()
     screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
 
+    # Load sprite sheets and maps
+    meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
+    layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
+    layer_0.load_csv()
+    layer_0.build()
+    layer_0.render()
+
     # Create player
-    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 2)
+    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 3)
     World.players.add(player_1)
     World.all_sprites.add(player_1)
 
@@ -63,13 +70,6 @@ def main() -> None:
     camera.set_horizontal_method(border_cam_mode_x)
     camera.set_vertical_method(border_cam_mode_y)
     character_focus_index = 0
-
-    # Load sprite sheets and maps
-    meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
-    layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
-    layer_0.load_csv()
-    layer_0.build()
-    layer_0.render()
 
     # Start the game loop
     while World.RUNNING:
