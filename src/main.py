@@ -95,6 +95,9 @@ def main() -> None:
                     characters_list = World.players.sprites() + World.enemies.sprites()
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
+                elif event.key == pygame.K_9:
+                    for character in (World.players.sprites() + World.enemies.sprites()):
+                        character.health_bar.toggle_on_off()
 
         World.all_sprites.update()  # Update all assets
         camera.scroll()  # Update the camera offset
@@ -103,7 +106,8 @@ def main() -> None:
         screen.fill(Colors.WHITE)
         screen.blit(World.image_background, (0, 0))
         for sprite in World.all_sprites:
-            screen.blit(sprite.image, camera.apply_offset(sprite))
+            if sprite.visible:
+                screen.blit(sprite.image, camera.apply_offset(sprite))
 
         pygame.display.update()  # Update some pygame internals
         clock.tick(60)  # Set the framerate to 60fps

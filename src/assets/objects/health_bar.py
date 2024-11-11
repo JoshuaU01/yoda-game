@@ -20,6 +20,7 @@ class HealthBar(Object):
         Creates an instance of this class.
         """
         super().__init__()
+        self.visible = True
         self.character = character
         self.hearts = self.character.health / 2
         self.padding = 1
@@ -65,3 +66,21 @@ class HealthBar(Object):
         if self.hearts % 1 != 0:
             self.image.blit(
                 World.image_half_heart, (int(self.hearts) * (World.image_full_heart.get_width() + self.padding), 0))
+
+    def show(self) -> None:
+        """
+        Make the health bar visible.
+        """
+        self.visible = True
+
+    def hide(self) -> None:
+        """
+        Make the health bar invisible.
+        """
+        self.visible = False
+
+    def toggle_on_off(self) -> None:
+        """
+        Toggle visibility of the health bar.
+        """
+        self.visible = not self.visible
