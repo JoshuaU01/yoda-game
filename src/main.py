@@ -28,6 +28,7 @@ def main() -> None:
     screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
 
     # Load sprite sheets and maps
+    World.load_images()
     meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
     layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
     layer_0.load_csv()
