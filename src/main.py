@@ -33,7 +33,7 @@ def main() -> None:
     layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
     layer_0.load_csv()
     layer_0.build()
-    # layer_0.render()  # Currently turned off, because all sprites are now grouped during their initialization.
+    layer_0.render()
 
     # Create player
     player_1 = Player((200, 280), (41, 116), 10, World.image_player, 3)

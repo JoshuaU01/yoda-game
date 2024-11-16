@@ -19,7 +19,8 @@ class HealthBar(Object):
         """
         Creates an instance of this class.
         """
-        super().__init__()
+        sprite_groups = [World.all_sprites]
+        super().__init__(sprite_groups=sprite_groups)
         self.visible = True
         self.character = character
         self.hearts = self.character.health / 2

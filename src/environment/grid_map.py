@@ -86,8 +86,7 @@ class GridMap(pygame.sprite.Sprite):
 
     def render(self) -> None:
         """
-        Prepares the map blocks for the screen by adding them to the sprites groups.
+        Prepares the map blocks for the screen by adding them to the sprite groups.
         """
-        for block in self.blocks:
-            World.blocks.add(block)
-            World.all_sprites.add(block)
+        World.all_sprites.add(*self.blocks)
+        World.blocks.add(*self.blocks)
