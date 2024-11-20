@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 import pygame
 from abc import ABC, abstractmethod
@@ -72,11 +72,10 @@ class Camera:
         """
         Calls the scroll method of the active scroll mode.
         """
-        if self.horizontal_method and self.vertical_method:
+        if self.horizontal_method:
             self.horizontal_method.scroll()
+        if self.vertical_method:
             self.vertical_method.scroll()
-        else:
-            print("WARNING: Both horizontal and vertical camera methods must be defined!")
 
     def apply_offset(self, entity: Any) -> pygame.Rect:
         """
@@ -115,31 +114,10 @@ class CameraScrollMode(ABC):
 
 class FollowCamModeX(CameraScrollMode):
     """
-    A scrolling method that keeps the target in a fixed position in the camera frame.
+    A scrolling method that follows the target in the camera frame.
     """
 
-    def __init__(self, camera: Camera) -> None:
-        """
-        Creates an instance of this class.
-
-        Args:
-            camera (Camera): The passed camera object.
-        """
-        super().__init__(camera)
-
-    def scroll(self) -> None:
-        """
-        Calculates the offset between camera and screen.
-        """
-        self.camera.offset.x = self.camera.target.rect.centerx + self.camera.const.x
-
-
-class BorderCamModeX(CameraScrollMode):
-    """
-    Like FollowCamModeX, but with defined borders that can't be seen past.
-    """
-
-    def __init__(self, camera: Camera, left_border: int, right_border: int, direction_switch_scroll_speed: tuple[int, int] = (0, 0)) -> None:
+    def __init__(self, camera: Camera, left_border: Optional[int] = None, right_border: Optional[int] = None, direction_switch_scroll_speed: tuple[int, int] = (0, 0)) -> None:
         """
         Creates an instance of this class.
 
@@ -160,14 +138,20 @@ class BorderCamModeX(CameraScrollMode):
         This mode also dynamically adapts the constant offset of the target, depending on the direction it is moving towards.
         The condition for this behaviour to appear is direction_switch_scroll_speed > 0.
         """
+        # Adjust the relative position of the target in the camera frame (const)
         if self.camera.target.velocity.x < 0 and self.camera.const.x > -(6 / 10) * self.camera.width:  # Movement to the left
             self.camera.const.x = max(self.camera.const.x - self.direction_switch_scroll_speed[0], -(6 / 10) * self.camera.width)
         elif self.camera.target.velocity.x > 0 and self.camera.const.x < -(4 / 10) * self.camera.width:  # Movement to the right
             self.camera.const.x = min(self.camera.const.x + self.direction_switch_scroll_speed[1], -(4 / 10) * self.camera.width)
 
+        # Calculate the new camera offset
         self.camera.offset.x = self.camera.target.rect.centerx + self.camera.const.x
-        self.camera.offset.x = max(self.camera.offset.x, self.left_border)
-        self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
+
+        # Mind the borders, if specified
+        if self.left_border is not None:
+            self.camera.offset.x = max(self.camera.offset.x, self.left_border)
+        if self.right_border is not None:
+            self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
 
 
 class AutoCamModeX(CameraScrollMode):
@@ -175,7 +159,7 @@ class AutoCamModeX(CameraScrollMode):
     A scrolling method that continuously scrolls with a certain speed, regardless of the target.
     """
 
-    def __init__(self, camera: Camera, scroll_speed: int) -> None:
+    def __init__(self, camera: Camera, scroll_speed: int, left_border: Optional[int] = None, right_border: Optional[int] = None) -> None:
         """
         Creates an instance of this class.
 
@@ -185,6 +169,8 @@ class AutoCamModeX(CameraScrollMode):
         """
         super().__init__(camera)
         self.scroll_speed = scroll_speed
+        self.left_border = left_border
+        self.right_border = right_border
 
     def scroll(self) -> None:
         """
@@ -192,13 +178,20 @@ class AutoCamModeX(CameraScrollMode):
         """
         self.camera.offset.x += self.scroll_speed
 
+        # Mind the borders, if specified
+        if self.left_border is not None:
+            self.camera.offset.x = max(self.camera.offset.x, self.left_border)
+        if self.right_border is not None:
+            self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
 
-class FollowCamModeY(CameraScrollMode):
+
+class PageCamModeX(CameraScrollMode):
     """
-    A scrolling method that keeps the target in a fixed position in the camera frame.
+    A scrolling mode that turns the page when the target exceeds the borders of the camera frame.
     """
 
-    def __init__(self, camera: Camera) -> None:
+    def __init__(self, camera: Camera, left_border: Optional[int] = None,
+                 right_border: Optional[int] = None) -> None:
         """
         Creates an instance of this class.
 
@@ -206,20 +199,30 @@ class FollowCamModeY(CameraScrollMode):
             camera (Camera): The passed camera object.
         """
         super().__init__(camera)
+        self.left_border = left_border
+        self.right_border = right_border
 
     def scroll(self) -> None:
         """
-        Calculates the offset between camera and screen.
+        Increases or decreases the camera offset by its width, depending on the page the target is in.
         """
-        self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y
+        if self.camera.target.rect.right - self.camera.offset.x < 0:  # Scroll left
+            self.camera.offset.x -= self.camera.width
+        elif self.camera.target.rect.left - self.camera.offset.x > self.camera.width:  # Scroll right
+            self.camera.offset.x += self.camera.width
 
+        # Mind the borders, if specified
+        if self.left_border is not None:
+            self.camera.offset.x = max(self.camera.offset.x, self.left_border)
+        if self.right_border is not None:
+            self.camera.offset.x = min(self.camera.offset.x, self.right_border - self.camera.width)
 
-class BorderCamModeY(CameraScrollMode):
+class FollowCamModeY(CameraScrollMode):
     """
     Scrolls the vertical axis. Uses borders that can not be seen past and scrolling thresholds.
     """
 
-    def __init__(self, camera: Camera, upper_border: int, lower_border: int, upper_threshold: int, lower_threshold: int) -> None:
+    def __init__(self, camera: Camera, upper_border: Optional[int] = None, lower_border: Optional[int] = None, upper_threshold: int = 0, lower_threshold: int = 0) -> None:
         """
         Creates an instance of this class.
 
@@ -242,14 +245,20 @@ class BorderCamModeY(CameraScrollMode):
         The borders work just like in the BorderCamModeX mode.
         The thresholds (up and down) must be overcome in order to scroll the camera. This prevents hectic camera movement on the y-axis.
         """
-        offset_diff = self.camera.target.rect.centery + self.camera.const.y - self.camera.offset.y  # Difference between new and current offset
+        # Calculate the difference between new and current offset
+        offset_diff = self.camera.target.rect.centery + self.camera.const.y - self.camera.offset.y
+
+        # Mind the thresholds, if specified and calculate the new offset
         if offset_diff < -self.upper_threshold:
             self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y + self.upper_threshold
         elif offset_diff > self.lower_threshold:
             self.camera.offset.y = self.camera.target.rect.centery + self.camera.const.y - self.lower_threshold
 
-        self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
-        self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
+        # Mind the borders, if specified
+        if self.upper_border is not None:
+            self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
+        if self.lower_border is not None:
+            self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
 
 
 class AutoCamModeY(CameraScrollMode):
@@ -257,7 +266,7 @@ class AutoCamModeY(CameraScrollMode):
     A scrolling method that continuously scrolls with a certain speed, regardless of the target.
     """
 
-    def __init__(self, camera: Camera, scroll_speed: int) -> None:
+    def __init__(self, camera: Camera, scroll_speed: int, upper_border: Optional[int] = None, lower_border: Optional[int] = None) -> None:
         """
         Creates an instance of this class.
 
@@ -267,6 +276,8 @@ class AutoCamModeY(CameraScrollMode):
         """
         super().__init__(camera)
         self.scroll_speed = scroll_speed
+        self.upper_border = upper_border
+        self.lower_border = lower_border
 
     def scroll(self) -> None:
         """
@@ -274,13 +285,19 @@ class AutoCamModeY(CameraScrollMode):
         """
         self.camera.offset.y += self.scroll_speed
 
+        # Mind the borders, if specified
+        if self.upper_border is not None:
+            self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
+        if self.lower_border is not None:
+            self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
+
 
 class PageCamModeY(CameraScrollMode):
     """
     A scrolling mode that turns the page when the target exceeds the borders of the camera frame.
     """
 
-    def __init__(self, camera: Camera) -> None:
+    def __init__(self, camera: Camera, upper_border: Optional[int] = None, lower_border: Optional[int] = None) -> None:
         """
         Creates an instance of this class.
 
@@ -288,12 +305,23 @@ class PageCamModeY(CameraScrollMode):
             camera (Camera): The passed camera object.
         """
         super().__init__(camera)
+        self.upper_border = upper_border
+        self.lower_border = lower_border
 
     def scroll(self) -> None:
         """
         Increases or decreases the camera offset by its height, depending on the page the target stands on.
         """
-        if self.camera.target.rect.bottom - self.camera.offset.y < 0:
+        if self.camera.target.rect.bottom - self.camera.offset.y < 0:  # Scroll up
             self.camera.offset.y -= self.camera.height
-        elif self.camera.target.rect.bottom - self.camera.offset.y > self.camera.height:
+        elif self.camera.target.rect.bottom - self.camera.offset.y > self.camera.height:  # Scroll down
             self.camera.offset.y += self.camera.height
+
+        # Mind the borders, if specified
+        if self.upper_border is not None:
+            self.camera.offset.y = max(self.camera.offset.y, self.upper_border)
+        if self.lower_border is not None:
+            self.camera.offset.y = min(self.camera.offset.y, self.lower_border - self.camera.height)
+
+class IndicatorCamModeY:
+    pass
