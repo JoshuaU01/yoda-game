@@ -1,6 +1,7 @@
 import pygame
 
 from src.assets.object import Object
+from src.environment.world import World
 
 
 class Block(Object):

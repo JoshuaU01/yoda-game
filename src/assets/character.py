@@ -3,6 +3,7 @@ from typing import Optional
 import pygame
 
 from src.asset import Asset
+from src.assets.objects.health_bar import HealthBar
 from src.environment.world import World
 
 
@@ -26,7 +27,7 @@ class Character(Asset):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int = 1000) -> None:
+            health: int = 1000, sprite_groups: Optional[list[pygame.sprite.Group]] = None) -> None:
         """
         Creates an instance of this class.
 
@@ -36,8 +37,10 @@ class Character(Asset):
             speed (int): The maximum speed of the character.
             image (pygame.Surface): The image of the character.
             health (int): The number of lives of the character.
+            sprite_groups: (Optional[list[pygame.sprite.Group]]): The global sprite groups that the character will be
+            put in during initialization.
         """
-        super().__init__()
+        super().__init__(sprite_groups=sprite_groups)
         self.image = pygame.transform.scale(image, (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.topleft = (position[0], position[1])
@@ -46,6 +49,8 @@ class Character(Asset):
         self.on_ground = False
         self.speed = speed
         self.health = health
+
+        self.health_bar = HealthBar(self)
 
     def update_position_x(self) -> None:
         """

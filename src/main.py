@@ -26,29 +26,25 @@ def main() -> None:
     display_info = pygame.display.Info()
     screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
 
+    # Load sprite sheets and maps
+    World.load_images()
+    meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
+    layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
+    layer_0.load_csv()
+    layer_0.build()
+    layer_0.render()
+
     # Create player
-    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 2)
-    World.players.add(player_1)
-    World.all_sprites.add(player_1)
+    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 3)
 
     # Create enemies
     enemy_1 = Runner((600, 450), (70, 180), 3, World.image_runner, 5, (600, 400))
-    World.enemies.add(enemy_1)
-    World.all_sprites.add(enemy_1)
     enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.image_stickman, 3)
-    World.enemies.add(enemy_2)
-    World.all_sprites.add(enemy_2)
     enemy_3 = Runner((2380, 350), (70, 180), 4, World.image_runner, 1, (300, 200))
-    World.enemies.add(enemy_3)
-    World.all_sprites.add(enemy_3)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
-    World.borders.add(left_wall)
-    World.all_sprites.add(left_wall)
     right_wall = Border(3520, -100, 100, World.SCREEN_HEIGHT + 200)
-    World.borders.add(right_wall)
-    World.all_sprites.add(right_wall)
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
@@ -63,14 +59,6 @@ def main() -> None:
     camera.set_horizontal_method(follow_cam_mode_x_2)
     camera.set_vertical_method(follow_cam_mode_y_2)
     character_focus_index = 0
-
-
-    # Load sprite sheets and maps
-    meadow_sheet = SpriteSheet("media/images/blocks/meadow_sheet")
-    layer_0 = GridMap("media/maps/meadow_level_layer_0", meadow_sheet, 32)
-    layer_0.load_csv()
-    layer_0.build()
-    layer_0.render()
 
     # Start the game loop
     while World.RUNNING:
@@ -110,6 +98,9 @@ def main() -> None:
                     characters_list = World.players.sprites() + World.enemies.sprites()
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
+                elif event.key == pygame.K_0:
+                    for character in (World.players.sprites() + World.enemies.sprites()):
+                        character.health_bar.toggle_on_off()
 
         World.all_sprites.update()  # Update all assets
         camera.scroll()  # Update the camera offset
@@ -118,7 +109,8 @@ def main() -> None:
         screen.fill(Colors.WHITE)
         screen.blit(World.image_background, (0, 0))
         for sprite in World.all_sprites:
-            screen.blit(sprite.image, camera.apply_offset(sprite))
+            if sprite.visible:
+                screen.blit(sprite.image, camera.apply_offset(sprite))
 
         pygame.display.update()  # Update some pygame internals
         clock.tick(60)  # Set the framerate to 60fps

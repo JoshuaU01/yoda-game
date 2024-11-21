@@ -22,7 +22,8 @@ class Enemy(Character):
             image (pygame.Surface): The image of the enemy.
             health (int): The number of lives of the enemy.
         """
-        super().__init__(position, size, speed, image, health)
+        sprite_groups = [World.all_sprites, World.enemies]
+        super().__init__(position, size, speed, image, health=health, sprite_groups=sprite_groups)
         self.gravity = 1.3
         self.take_damage = True
 
