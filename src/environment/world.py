@@ -14,6 +14,9 @@ class World(pygame.sprite.Sprite):
     SCREEN_WIDTH = 1440  # display_info.current_w
     SCREEN_HEIGHT = 800  # display_info.current_h
 
+    hitboxes_visible = False
+    health_bars_visible = True
+
     players = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
     borders = pygame.sprite.Group()

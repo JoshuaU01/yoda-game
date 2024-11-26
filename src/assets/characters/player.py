@@ -12,7 +12,7 @@ class Player(Character):
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int = 10) -> None:
+            health: int) -> None:
         """
         Creates an instance of this class.
 

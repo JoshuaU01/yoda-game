@@ -21,7 +21,7 @@ class HealthBar(Object):
         """
         sprite_groups = [World.all_sprites]
         super().__init__(sprite_groups=sprite_groups)
-        self.visible = True
+        self.visible = World.health_bars_visible
         self.character = character
         self.hearts = self.character.health / 2
         self.padding = 1
@@ -42,6 +42,7 @@ class HealthBar(Object):
         # Only draw the health bar, if it changed.
         if self.hearts != previous_hearts:
             self.fill()
+        self.check_character_alive()
 
     def update_position(self) -> None:
         """
@@ -82,6 +83,13 @@ class HealthBar(Object):
 
     def toggle_on_off(self) -> None:
         """
-        Toggle visibility of the health bar.
+        Toggles the visibility of the health bar.
         """
         self.visible = not self.visible
+
+    def check_character_alive(self) -> None:
+        """
+        Checks, if the character is alive.
+        """
+        if self.character.health <= 0:
+            self.kill()

@@ -44,12 +44,13 @@ class Character(Asset):
         self.image = pygame.transform.scale(image, (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.topleft = (position[0], position[1])
-        self.velocity = pygame.math.Vector2()
+        self.mask = pygame.mask.from_surface(self.image)
 
+        self.velocity = pygame.math.Vector2()
         self.on_ground = False
         self.speed = speed
-        self.health = health
 
+        self.health = health
         self.health_bar = HealthBar(self)
 
     def update_position_x(self) -> None:

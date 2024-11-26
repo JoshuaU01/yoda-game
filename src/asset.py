@@ -24,6 +24,13 @@ class Asset(pygame.sprite.Sprite):
         super().__init__(*sprite_groups)
         self.rect = pygame.Rect(0, 0, 0, 0)  # Placeholder
         self.visible = True
+        self.hitbox_visible = World.hitboxes_visible
+
+    def toggle_hitbox_visibility(self) -> None:
+        """
+        Toggles the visibility of the hitbox of the asset.
+        """
+        self.hitbox_visible = not self.hitbox_visible
 
     def is_near(self, asset: Asset, distance: tuple[int | float, int | float]) -> bool:  # TODO use masks
         """
@@ -36,5 +43,7 @@ class Asset(pygame.sprite.Sprite):
         Returns:
             bool: Whether the asset is near the asset.
         """
+        if distance[0] <= 0 or distance[1] <= 0:
+            return False
         return ((self.rect.centerx - asset.rect.centerx) ** 2 / distance[0] ** 2) + (
                 (self.rect.centery - asset.rect.centery) ** 2 / distance[1] ** 2) <= 1

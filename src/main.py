@@ -97,8 +97,18 @@ def main() -> None:
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
                 elif event.key == pygame.K_9:
+                    World.health_bars_visible = not World.health_bars_visible
                     for character in (World.players.sprites() + World.enemies.sprites()):
                         character.health_bar.toggle_on_off()
+                elif event.key == pygame.K_0:
+                    World.hitboxes_visible = not World.hitboxes_visible
+                    for asset in (World.all_sprites.sprites()):
+                        asset.toggle_hitbox_visibility()
+                elif event.key == pygame.K_BACKSPACE:
+                    Runner(
+                        (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
+                         player_1.rect.bottom - 90), (35, 90), 3, World.image_runner, 1, (0, 0),
+                        direction=player_1.direction)
 
         World.all_sprites.update()  # Update all assets
         camera.scroll()  # Update the camera offset
@@ -109,6 +119,8 @@ def main() -> None:
         for sprite in World.all_sprites:
             if sprite.visible:
                 screen.blit(sprite.image, camera.apply_offset(sprite))
+            if sprite.hitbox_visible:
+                pygame.draw.rect(screen, Colors.WHITE, camera.apply_offset(sprite), 1)
 
         pygame.display.update()  # Update some pygame internals
         clock.tick(60)  # Set the framerate to 60fps
