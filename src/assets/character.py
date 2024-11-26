@@ -13,17 +13,25 @@ class Character(Asset):
     """
 
     @property
-    def collision(self) -> Optional[Asset]:
+    def collision(self) -> list[Asset]:
         """
-        The first found collision to any other character, border or block
+        All found collisions to any other character, border or block
 
         Returns:
-            Optional[Asset]: The asset that collided with the character
+            list[Asset]: The assets that collided with the character
         """
-        sprites_to_be_checked = [sprite for sprite in
-                                 (World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
-                                  World.blocks.sprites()) if sprite != self]
-        return pygame.sprite.spritecollideany(self, sprites_to_be_checked, pygame.sprite.collide_rect)
+        combined_sprites = (
+                World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
+                World.blocks.sprites())  # A list is way faster than a separate group
+        if self in combined_sprites:
+            combined_sprites.remove(self)
+
+        return pygame.sprite.spritecollide(self, combined_sprites, False, pygame.sprite.collide_rect)
+
+    @property
+    def precise_collision(self):
+        collisions = self.collision
+        return pygame.sprite.spritecollideany(self, collisions, pygame.sprite.collide_mask)
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
@@ -59,21 +67,24 @@ class Character(Asset):
         """
         old_x = self.rect.x
         self.rect.x += self.velocity.x
-        if self.collision:
+        if self.precise_collision:
             self.rect.x = old_x
 
     def update_position_y(self) -> None:
         """
-        Calculates the new vertical position of the character with respect to collision.
+        Calculates the new vertical position of the character with respect to collisions.
         """
+        old_y = self.rect.y
         self.rect.y += self.velocity.y
-        if collision_y := self.collision:
+        if collisions_y := self.precise_collision:
             if self.velocity.y > 0:
-                self.rect.bottom = collision_y.rect.top
+                # self.rect.bottom = collisions_y.rect.top
+                self.rect.y = old_y
                 self.velocity.y = 0
                 self.on_ground = True
             elif self.velocity.y < 0:
-                self.rect.top = collision_y.rect.bottom
+                # self.rect.top = collisions_y.rect.bottom
+                self.rect.y = old_y
                 self.velocity.y = 0
         else:
             self.on_ground = False
