@@ -24,6 +24,7 @@ class Bullet(Object):
         self.image = pygame.transform.scale(World.image_bullet, (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.center = (position[0], position[1])
+        self.mask = pygame.mask.from_surface(self.image)
         self.velocity = pygame.math.Vector2(0, 0)
 
         self.speed = speed

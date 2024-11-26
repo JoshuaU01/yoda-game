@@ -34,6 +34,7 @@ class Runner(Enemy):
         self.direction = direction
         self.image = pygame.transform.flip(
             self.image, self.direction == Directions.LEFT, False)  # TODO Generalize image flipping
+        self.mask = pygame.mask.from_surface(self.image)
 
         self.take_damage = True
 
@@ -98,6 +99,7 @@ class Runner(Enemy):
             if self.delay <= 0:
                 self.direction *= -1  # Turn around
                 self.image = pygame.transform.flip(self.image, True, False)
+                self.mask = pygame.mask.from_surface(self.image)
                 self.delay = 20  # Reset delay after turn
             else:
                 self.delay -= 1
@@ -113,6 +115,7 @@ class Runner(Enemy):
             self.direction *= -1  # Turn around
             self.velocity.x *= -1
             self.image = pygame.transform.flip(self.image, True, False)
+            self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = old_x  # Always reset the horizontal position, as the position update will be done later
 
     def run(self) -> None:

@@ -23,7 +23,7 @@ class Character(Asset):
         sprites_to_be_checked = [sprite for sprite in
                                  (World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
                                   World.blocks.sprites()) if sprite != self]
-        return pygame.sprite.spritecollideany(self, sprites_to_be_checked)
+        return pygame.sprite.spritecollideany(self, sprites_to_be_checked, pygame.sprite.collide_rect)
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,

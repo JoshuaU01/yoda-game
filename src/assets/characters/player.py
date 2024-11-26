@@ -59,11 +59,13 @@ class Player(Character):
             self.velocity.x = - self.speed
             if self.direction == Directions.RIGHT:
                 self.image = pygame.transform.flip(self.image, True, False)
+                self.mask = pygame.mask.from_surface(self.image)
             self.direction = Directions.LEFT
         if keys[pygame.K_RIGHT]:
             self.velocity.x = self.speed
             if self.direction == Directions.LEFT:
                 self.image = pygame.transform.flip(self.image, True, False)
+                self.mask = pygame.mask.from_surface(self.image)
             self.direction = Directions.RIGHT
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()

@@ -109,6 +109,12 @@ def main() -> None:
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
                          player_1.rect.bottom - 90), (35, 90), 3, World.image_runner, 1, (0, 0),
                         direction=player_1.direction)
+                elif event.key == pygame.K_F1:  # TODO remove (debugging)
+                    player_1.image = pygame.transform.scale(player_1.image, (100, 250))
+                    midbottom = player_1.rect.midbottom
+                    player_1.rect = player_1.image.get_rect()
+                    player_1.rect.midbottom = midbottom
+                    player_1.mask = pygame.mask.from_surface(player_1.image)
 
         World.all_sprites.update()  # Update all assets
         camera.scroll()  # Update the camera offset
