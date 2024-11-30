@@ -26,8 +26,8 @@ class HealthBar(Object):
         self.hearts = self.character.health / 2
         self.padding = 1
         self.image = pygame.Surface(
-            (math.ceil(self.hearts) * (World.image_full_heart.get_width() + self.padding),
-             World.image_full_heart.get_height()), pygame.SRCALPHA)
+            (math.ceil(self.hearts) * (World.images["full_heart"].get_width() + self.padding),
+             World.images["full_heart"].get_height()), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         self.rect.topleft = self.character.rect.left, self.character.rect.top - 30
         self.fill()
@@ -63,11 +63,13 @@ class HealthBar(Object):
         self.image.fill((0, 0, 0, 0))  # Clear the health bar.
         # Draw the full hearts onto the health bar.
         for i in range(int(self.hearts)):
-            self.image.blit(World.image_full_heart, (i * (World.image_full_heart.get_width() + self.padding), 0))
+            self.image.blit(
+                World.images["full_heart"], (i * (World.images["full_heart"].get_width() + self.padding), 0))
         # Draw the half heart at the end, if it exists.
         if self.hearts % 1 != 0:
             self.image.blit(
-                World.image_half_heart, (int(self.hearts) * (World.image_full_heart.get_width() + self.padding), 0))
+                World.images["half_heart"],
+                (int(self.hearts) * (World.images["full_heart"].get_width() + self.padding), 0))
 
     def show(self) -> None:
         """

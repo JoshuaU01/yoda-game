@@ -23,6 +23,8 @@ class World(pygame.sprite.Sprite):
     blocks = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
 
+    images = dict()
+
     @staticmethod
     def load_image(image_path: str, size: Optional[tuple[int, int]] = None) -> pygame.Surface:
         """
@@ -45,16 +47,16 @@ class World(pygame.sprite.Sprite):
         """
         Loads in all the single images that are not part of a sprite sheet.
         """
-        World.image_player = World.load_image("media/images/player/ziwomol/ziwomol_v3.png")
-        World.image_stickman = World.load_image("media/images/template/stickman.png")
-        World.image_runner = World.load_image("media/images/enemies/runner/runner_v2.png")
-        World.image_background = World.load_image(
+        World.images["player"] = World.load_image("media/images/player/ziwomol/ziwomol_v3.png")
+        World.images["stickman"] = World.load_image("media/images/template/stickman.png")
+        World.images["runner"] = World.load_image("media/images/enemies/runner/runner_v2.png")
+        World.images["background"] = World.load_image(
             "media/images/background/map_grass_background.png", size=(World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
-        World.image_floor = World.load_image(
+        World.images["floor"] = World.load_image(
             "media/images/background/map_grass_floor.png", size=(World.SCREEN_WIDTH, 180))
-        World.image_bullet = World.load_image("media/images/bullet/bullet_small.png")
-        World.image_full_heart = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
-        World.image_half_heart = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
+        World.images["bullet"] = World.load_image("media/images/bullet/bullet_small.png")
+        World.images["full_heart"] = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
+        World.images["half_heart"] = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
 
     def __init__(self) -> None:
         """

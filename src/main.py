@@ -36,12 +36,12 @@ def main() -> None:
     layer_0.render()
 
     # Create player
-    player_1 = Player((200, 280), (41, 116), 10, World.image_player, 3)
+    player_1 = Player((200, 280), (41, 116), 10, World.images["player"], 3)
 
     # Create enemies
-    enemy_1 = Runner((600, 450), (70, 180), 3, World.image_runner, 5, (600, 400))
-    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.image_stickman, 3)
-    enemy_3 = Runner((2380, 350), (70, 180), 4, World.image_runner, 1, (300, 200))
+    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], 5, (600, 400))
+    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.images["stickman"], 3)
+    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], 1, (300, 200))
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
@@ -107,7 +107,7 @@ def main() -> None:
                 elif event.key == pygame.K_BACKSPACE:
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
-                         player_1.rect.bottom - 90), (35, 90), 3, World.image_runner, 1, (0, 0),
+                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], 1, (0, 0),
                         direction=player_1.direction)
                 elif event.key == pygame.K_F1:  # TODO remove (debugging)
                     player_1.image = pygame.transform.scale(player_1.image, (100, 250))
@@ -121,7 +121,7 @@ def main() -> None:
 
         # Update display
         screen.fill(Colors.WHITE)
-        screen.blit(World.image_background, (0, 0))
+        screen.blit(World.images["background"], (0, 0))
         for sprite in World.all_sprites:
             if sprite.visible:
                 screen.blit(sprite.image, camera.apply_offset(sprite))
