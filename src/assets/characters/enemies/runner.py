@@ -15,8 +15,16 @@ class Runner(Enemy):
     """
 
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int, detect_range: tuple[int, int], direction: Directions = Directions.RIGHT) -> None:
+            self,
+            position: tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            detect_range: tuple[int, int],
+            health: int,
+            take_damage: bool = True,
+            direction: Directions = Directions.RIGHT) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -25,18 +33,17 @@ class Runner(Enemy):
             size (tuple[int, int]): The size of the runner.
             speed (int): The maximum speed of the runner.
             image (pygame.Surface): The image of the runner.
-            health (int): The number of lives of the runner.
             detect_range (tuple[int, int]): The horizontal and vertical range that a runner can detect an asset in.
+            health (int): The number of lives of the runner.
+            take_damage (bool): Whether the runner can take damage.
             direction (Directions): The horizontal direction the runner is facing.
         """
-        super().__init__(position, size, speed, image, health)
+        super().__init__(position, size, speed, image, health, take_damage=take_damage)
 
         self.direction = direction
         self.image = pygame.transform.flip(
             self.image, self.direction == Directions.LEFT, False)  # TODO Generalize image flipping
         self.mask = pygame.mask.from_surface(self.image)
-
-        self.take_damage = True
 
         self.state = self.walk
         self.target = None

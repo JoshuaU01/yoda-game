@@ -12,37 +12,16 @@ class Character(Asset):
     A super class for all players and enemies.
     """
 
-    @property
-    def collision(self) -> list[Asset]:
-        """
-        All found collisions to any other character, border or block
-
-        Returns:
-            list[Asset]: The assets that collided with the character
-        """
-        combined_sprites = (
-                World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
-                World.blocks.sprites())  # A list is way faster than a separate sprite group
-        if self in combined_sprites:
-            combined_sprites.remove(self)
-
-        return pygame.sprite.spritecollide(self, combined_sprites, False, pygame.sprite.collide_rect)
-
-    @property
-    def precise_collision(self):
-        collisions = self.collision
-        return pygame.sprite.spritecollide(self, collisions, False, pygame.sprite.collide_mask)
-
-    @property
-    def precise_collision_with_coords(self):
-        precise_collisions = self.precise_collision
-        collision_coordinates = [pygame.sprite.collide_mask(self, collided_asset) for collided_asset in
-                                 precise_collisions]
-        return list(zip(precise_collisions, collision_coordinates))
-
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int = 1000, sprite_groups: Optional[list[pygame.sprite.Group]] = None) -> None:
+            self,
+            position: tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            health: int = 1000,
+            take_damage: bool = True,
+            sprite_groups: Optional[list[pygame.sprite.Group]] = None) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -52,6 +31,7 @@ class Character(Asset):
             speed (int): The maximum speed of the character.
             image (pygame.Surface): The image of the character.
             health (int): The number of lives of the character.
+            take_damage (bool): Whether the character can take damage.
             sprite_groups: (Optional[list[pygame.sprite.Group]]): The global sprite groups that the character will be
             put in during initialization.
         """
@@ -67,6 +47,7 @@ class Character(Asset):
 
         self.health = health
         self.health_bar = HealthBar(self)
+        self.take_damage = take_damage
 
     def update_position_x(self) -> None:
         """

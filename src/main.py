@@ -39,9 +39,9 @@ def main() -> None:
     player_1 = Player((200, 280), (41, 116), 10, World.images["player"], 3)
 
     # Create enemies
-    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], 5, (600, 400))
+    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], (600, 400), 5)
     enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.images["stickman"], 3)
-    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], 1, (300, 200))
+    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], (300, 200), 1)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
@@ -107,9 +107,9 @@ def main() -> None:
                 elif event.key == pygame.K_BACKSPACE:
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
-                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], 1, (0, 0),
+                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], (0, 0), 1,
                         direction=player_1.direction)
-                elif event.key == pygame.K_F1:  # TODO remove (debugging)
+                elif event.key == pygame.K_F1:
                     player_1.image = pygame.transform.scale(player_1.image, (100, 250))
                     midbottom = player_1.rect.midbottom
                     player_1.rect = player_1.image.get_rect()

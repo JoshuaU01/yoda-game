@@ -11,8 +11,14 @@ class SniperGuy(Enemy):
     """
 
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int) -> None:
+            self,
+            position: tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            health: int,
+            take_damage: bool = True) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -22,10 +28,10 @@ class SniperGuy(Enemy):
             speed (int): The maximum speed of the sniper guy.
             image (pygame.Surface): The image of the sniper guy.
             health (int): The number of lives of the sniper guy.
+            take_damage (bool): Whether the sniper guy can take damage.
         """
-        super().__init__(position, size, speed, image, health)
+        super().__init__(position, size, speed, image, health, take_damage=take_damage)
 
-        self.take_damage = True
         self.bullets = pygame.sprite.Group()
         self.cooldown = 0
 
@@ -46,7 +52,7 @@ class SniperGuy(Enemy):
         Lets the sniper guy shoot bullets.
         """
         if self.cooldown <= 0:
-            bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
+            bullet = Bullet(self, (self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
             self.bullets.add(bullet)
             self.cooldown = 120
 

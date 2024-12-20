@@ -11,8 +11,15 @@ class Player(Character):
     """
 
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int) -> None:
+            self,
+            position:
+            tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            health: int,
+            take_damage: bool = True) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -22,9 +29,11 @@ class Player(Character):
             speed (int): The maximum speed of the player.
             image (pygame.Surface): The image of the player.
             health (int): The number of lives of the player.
+            take_damage (bool): Whether the player can take damage.
         """
         sprite_groups = [World.all_sprites, World.players]
-        super().__init__(position, size, speed, image, health=health, sprite_groups=sprite_groups)
+        super().__init__(
+            position, size, speed, image, health=health, take_damage=take_damage, sprite_groups=sprite_groups)
 
         self.is_jumping = False
         self.gravity = 1.3
@@ -33,7 +42,6 @@ class Player(Character):
         self.direction = Directions.RIGHT
         self.jump_cooldown = 0
 
-        self.take_damage = True
         self.bullets = pygame.sprite.Group()
         self.shoot_cooldown = 0
 
@@ -94,8 +102,8 @@ class Player(Character):
         if self.shoot_cooldown <= 0:
             if len(self.bullets) < 3:
                 bullet = Bullet(
-                    (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1),
-                     self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
+                    self, (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1) + self.direction * 15,
+                           self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
                 self.shoot_cooldown = 12
 

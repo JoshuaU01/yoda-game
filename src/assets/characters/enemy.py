@@ -10,8 +10,14 @@ class Enemy(Character):
     """
 
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int) -> None:
+            self,
+            position: tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            health: int,
+            take_damage: bool = True) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -21,11 +27,12 @@ class Enemy(Character):
             speed (int): The maximum speed of the enemy.
             image (pygame.Surface): The image of the enemy.
             health (int): The number of lives of the enemy.
+            take_damage (bool): Whether the enemy can take damage.
         """
         sprite_groups = [World.all_sprites, World.enemies]
-        super().__init__(position, size, speed, image, health=health, sprite_groups=sprite_groups)
+        super().__init__(
+            position, size, speed, image, health=health, take_damage=take_damage, sprite_groups=sprite_groups)
         self.gravity = 1.3
-        self.take_damage = True
 
     def update(self) -> None:
         """

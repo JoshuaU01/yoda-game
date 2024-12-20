@@ -19,3 +19,4 @@ class Object(Asset):
             put in during initialization.
         """
         super().__init__(sprite_groups=sprite_groups)
+        self.take_damage = False
