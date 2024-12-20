@@ -22,7 +22,7 @@ class Character(Asset):
         """
         combined_sprites = (
                 World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
-                World.blocks.sprites())  # A list is way faster than a separate group
+                World.blocks.sprites())  # A list is way faster than a separate sprite group
         if self in combined_sprites:
             combined_sprites.remove(self)
 
@@ -31,7 +31,14 @@ class Character(Asset):
     @property
     def precise_collision(self):
         collisions = self.collision
-        return pygame.sprite.spritecollideany(self, collisions, pygame.sprite.collide_mask)
+        return pygame.sprite.spritecollide(self, collisions, False, pygame.sprite.collide_mask)
+
+    @property
+    def precise_collision_with_coords(self):
+        precise_collisions = self.precise_collision
+        collision_coordinates = [pygame.sprite.collide_mask(self, collided_asset) for collided_asset in
+                                 precise_collisions]
+        return list(zip(precise_collisions, collision_coordinates))
 
     def __init__(
             self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
@@ -65,26 +72,29 @@ class Character(Asset):
         """
         Calculates the new horizontal position of the character with respect to collisions.
         """
-        old_x = self.rect.x
         self.rect.x += self.velocity.x
-        if self.precise_collision:
-            self.rect.x = old_x
+        if collisions_x := self.collision:
+            collided_asset = collisions_x[0]
+            if self.velocity.x > 0:  # Moving right
+                self.rect.right = collided_asset.rect.left
+                self.velocity.x = 0
+            elif self.velocity.x < 0:  # Moving left
+                self.rect.left = collided_asset.rect.right
+                self.velocity.x = 0
 
     def update_position_y(self) -> None:
         """
         Calculates the new vertical position of the character with respect to collisions.
         """
-        old_y = self.rect.y
         self.rect.y += self.velocity.y
-        if collisions_y := self.precise_collision:
-            if self.velocity.y > 0:
-                # self.rect.bottom = collisions_y.rect.top
-                self.rect.y = old_y
+        if collisions_y := self.collision:
+            collided_asset = collisions_y[0]
+            if self.velocity.y > 0:  # Moving downwards
+                self.rect.bottom = collided_asset.rect.top
                 self.velocity.y = 0
                 self.on_ground = True
-            elif self.velocity.y < 0:
-                # self.rect.top = collisions_y.rect.bottom
-                self.rect.y = old_y
+            elif self.velocity.y < 0:  # Moving upwards
+                self.rect.top = collided_asset.rect.bottom
                 self.velocity.y = 0
         else:
             self.on_ground = False
