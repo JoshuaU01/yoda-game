@@ -1,10 +1,12 @@
+from abc import ABC
+
 import pygame
 
 from src.assets.character import Character
 from src.environment.world import World, Directions
 
 
-class Enemy(Character):
+class Enemy(Character, ABC):
     """
     A super class for all enemy types.
     """
@@ -35,18 +37,6 @@ class Enemy(Character):
             position, size, speed, image, direction, health=health, can_take_damage=can_take_damage,
             sprite_groups=sprite_groups)
         self.gravity = 1.3
-
-    # TODO remove? Decide if enemy, character or asset can be intantiated
-    def update(self) -> None:
-        """
-        Updates the enemy with every frame.
-        """
-        self.apply_gravity()
-        self.update_position_x()
-        self.update_position_y()
-        self.check_boundaries()
-        self.check_alive()
-        self.animate()
 
     def apply_gravity(self) -> None:
         """

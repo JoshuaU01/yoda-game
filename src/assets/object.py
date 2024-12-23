@@ -1,11 +1,12 @@
 from typing import Optional
 
+from abc import ABC
 import pygame
 
 from src.asset import Asset
 
 
-class Object(Asset):
+class Object(Asset, ABC):
     """
     A super class for all types of objects like blocks, borders, etc.
     """

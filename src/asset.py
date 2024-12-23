@@ -1,12 +1,13 @@
 from __future__ import annotations
 from typing import Optional
 
+from abc import ABC
 import pygame
 
 from src.environment.world import World
 
 
-class Asset(pygame.sprite.Sprite):
+class Asset(pygame.sprite.Sprite, ABC):
     """
     A super class for all entities, objects, etc.
     """

@@ -1,5 +1,6 @@
 from typing import Optional
 
+from abc import ABC
 import pygame
 
 from src.asset import Asset
@@ -8,7 +9,7 @@ from src.environment.world import World, Directions
 from src.utils import counter
 
 
-class Character(Asset):
+class Character(Asset, ABC):
     """
     A super class for all players and enemies.
     """
