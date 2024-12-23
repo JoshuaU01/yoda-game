@@ -8,6 +8,9 @@ def up_and_down(limit: int) -> Generator[int, None, None]:
 
     Args:
         limit (int): The upper limit.
+
+    Returns:
+        Generator[int, None, None]: A generator object that yields numbers.
     """
     if limit <= 0:
         print("Limit must be > 0.")
