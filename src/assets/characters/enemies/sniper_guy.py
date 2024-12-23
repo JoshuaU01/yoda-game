@@ -17,6 +17,8 @@ class SniperGuy(Enemy):
             speed: int,
             image: pygame.Surface,
             direction: Directions,
+            bullet_speed: int,
+            bullet_TTL: int,
             health: int,
             can_take_damage: bool = True) \
             -> None:
@@ -34,7 +36,9 @@ class SniperGuy(Enemy):
         super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
         self.bullets = pygame.sprite.Group()
-        self.cooldown = 0
+        self.bullet_speed = bullet_speed
+        self.bullet_TTL = bullet_TTL
+        self.cooldown = 20
 
     def update(self) -> None:
         """
@@ -54,7 +58,9 @@ class SniperGuy(Enemy):
         Lets the sniper guy shoot bullets.
         """
         if self.cooldown <= 0:
-            bullet = Bullet(self, (self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
+            bullet = Bullet(
+                self, (self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (int(self.bullet_speed / 1.3), 4),
+                self.bullet_speed, Directions.LEFT, time_to_live=self.bullet_TTL)
             self.bullets.add(bullet)
             self.cooldown = 120
 

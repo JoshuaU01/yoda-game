@@ -89,7 +89,7 @@ class Player(Character):
             if len(self.bullets) < 3:
                 bullet = Bullet(
                     self, (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1) + self.direction * 15,
-                           self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
+                           self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction, time_to_live=30)
                 self.bullets.add(bullet)
                 self.shoot_cooldown = 20
 

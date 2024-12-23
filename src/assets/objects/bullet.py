@@ -12,7 +12,7 @@ class Bullet(Object):
 
     def __init__(
             self, owner: Character, position: tuple[float, float], size: tuple[int, int], speed: int,
-            direction: int) -> None:
+            direction: int, time_to_live: int = 80) -> None:
         """
         Creates an instance of this class.
 
@@ -34,7 +34,7 @@ class Bullet(Object):
 
         self.speed = speed
         self.direction = direction
-        self.TTL = 80
+        self.TTL = time_to_live
 
     def update(self) -> None:
         """

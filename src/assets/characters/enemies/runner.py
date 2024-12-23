@@ -48,7 +48,7 @@ class Runner(Enemy):
 
         self.gravity = 1.2
         self.is_stomping = False
-        self.stomp_cooldown = 10
+        self.stomp_cooldown = 50
 
     def update(self) -> None:
         """
@@ -145,7 +145,7 @@ class Runner(Enemy):
         if self.on_ground:
             self.velocity.y = -12
         self.is_stomping = True
-        self.stomp_cooldown = 50
+        self.stomp_cooldown = 90
 
     def attack(self) -> None:
         """

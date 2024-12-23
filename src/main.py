@@ -36,16 +36,17 @@ def main() -> None:
     layer_0.render()
 
     # Create player
-    player_1 = Player((200, 280), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
+    player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
 
     # Create enemies
-    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], Directions.RIGHT, (600, 400), 5)
-    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.images["stickman"], Directions.LEFT, 3)
-    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], Directions.RIGHT, (300, 200), 1)
+    enemy_1 = Runner((600, 800), (60, 150), 3, World.images["runner"], Directions.RIGHT, (600, 400), 5)
+    enemy_2 = SniperGuy((2160, 490), (60, 110), 0, World.images["stickman"], Directions.LEFT, 32, 80, 3)
+    enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (300, 200), 1)
+    enemy_4 = SniperGuy((4000, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 10)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
-    right_wall = Border(3520, -100, 100, World.SCREEN_HEIGHT + 200)
+    right_wall = Border(130 * layer_0.grid_size, -100, 100, World.SCREEN_HEIGHT + 200)
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
@@ -53,7 +54,7 @@ def main() -> None:
     border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
     auto_cam_mode_x = AutoCamModeX(camera, 1)
     follow_cam_mode_y = FollowCamModeY(camera)
-    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, camera.height, 180, 100)
+    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, 35 * layer_0.grid_size, 180, 100)
     auto_cam_mode_y = AutoCamModeY(camera, -1)
     page_cam_mode_y = PageCamModeY(camera)
     camera.set_horizontal_method(border_cam_mode_x)
