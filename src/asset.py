@@ -66,7 +66,7 @@ class Asset(pygame.sprite.Sprite):
         self.visible = True
         self.hitbox_visible = World.hitboxes_visible
 
-        self.take_damage = False  # Placeholder
+        self.can_take_damage = False  # Placeholder
 
     def toggle_hitbox_visibility(self) -> None:
         """

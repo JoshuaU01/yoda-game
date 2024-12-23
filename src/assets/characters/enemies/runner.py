@@ -20,10 +20,10 @@ class Runner(Enemy):
             size: tuple[int, int],
             speed: int,
             image: pygame.Surface,
+            direction: Directions,
             detect_range: tuple[int, int],
             health: int,
-            take_damage: bool = True,
-            direction: Directions = Directions.RIGHT) \
+            can_take_damage: bool = True) \
             -> None:
         """
         Creates an instance of this class.
@@ -35,15 +35,10 @@ class Runner(Enemy):
             image (pygame.Surface): The image of the runner.
             detect_range (tuple[int, int]): The horizontal and vertical range that a runner can detect an asset in.
             health (int): The number of lives of the runner.
-            take_damage (bool): Whether the runner can take damage.
+            can_take_damage (bool): Whether the runner can take damage.
             direction (Directions): The horizontal direction the runner is facing.
         """
-        super().__init__(position, size, speed, image, health, take_damage=take_damage)
-
-        self.direction = direction
-        self.image = pygame.transform.flip(
-            self.image, self.direction == Directions.LEFT, False)  # TODO Generalize image flipping
-        self.mask = pygame.mask.from_surface(self.image)
+        super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
         self.state = self.walk
         self.target = None
@@ -68,6 +63,7 @@ class Runner(Enemy):
         self.update_position_y()
         self.check_boundaries()
         self.check_alive()
+        self.animate()
 
     def is_facing(self, asset: Asset) -> bool:
         """
@@ -105,8 +101,6 @@ class Runner(Enemy):
         else:
             if self.delay <= 0:
                 self.direction *= -1  # Turn around
-                self.image = pygame.transform.flip(self.image, True, False)
-                self.mask = pygame.mask.from_surface(self.image)
                 self.delay = 20  # Reset delay after turn
             else:
                 self.delay -= 1
@@ -121,8 +115,6 @@ class Runner(Enemy):
         if self.collision:  # Pre-check, if the runner would collide with something.
             self.direction *= -1  # Turn around
             self.velocity.x *= -1
-            self.image = pygame.transform.flip(self.image, True, False)
-            self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = old_x  # Always reset the horizontal position, as the position update will be done later
 
     def run(self) -> None:
@@ -166,7 +158,8 @@ class Runner(Enemy):
         if self.is_stomping and self.on_ground:
             if self.target and self.is_near(
                     self.target, (self.attack_range[0], 40)):
-                self.target.health -= 1
+                if self.target.can_take_damage and hasattr(self.target, "take_damage"):
+                    self.target.take_damage(1)  # Only vulnerable assets take damage
                 print(f"{self.target} got hit!")
             # TODO shake the camera (observer)
             self.is_stomping = False

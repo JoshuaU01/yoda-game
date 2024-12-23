@@ -59,9 +59,9 @@ class Bullet(Object):
         collisions = self.precise_collision
         if collisions:
             for collided_asset in collisions:
-                if collided_asset.take_damage and hasattr(
-                        collided_asset, "lose_health") and collided_asset is not self.owner:
-                    collided_asset.lose_health(1)  # Only vulnerable assets take damage
+                if collided_asset.can_take_damage and hasattr(
+                        collided_asset, "take_damage") and collided_asset is not self.owner:
+                    collided_asset.take_damage(1)  # Only vulnerable assets take damage
             self.kill()
 
     def check_TTL(self) -> None:

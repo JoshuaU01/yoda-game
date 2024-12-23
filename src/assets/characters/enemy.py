@@ -1,7 +1,7 @@
 import pygame
 
 from src.assets.character import Character
-from src.environment.world import World
+from src.environment.world import World, Directions
 
 
 class Enemy(Character):
@@ -15,8 +15,9 @@ class Enemy(Character):
             size: tuple[int, int],
             speed: int,
             image: pygame.Surface,
+            direction: Directions,
             health: int,
-            take_damage: bool = True) \
+            can_take_damage: bool = True) \
             -> None:
         """
         Creates an instance of this class.
@@ -27,13 +28,15 @@ class Enemy(Character):
             speed (int): The maximum speed of the enemy.
             image (pygame.Surface): The image of the enemy.
             health (int): The number of lives of the enemy.
-            take_damage (bool): Whether the enemy can take damage.
+            can_take_damage (bool): Whether the enemy can take damage.
         """
         sprite_groups = [World.all_sprites, World.enemies]
         super().__init__(
-            position, size, speed, image, health=health, take_damage=take_damage, sprite_groups=sprite_groups)
+            position, size, speed, image, direction, health=health, can_take_damage=can_take_damage,
+            sprite_groups=sprite_groups)
         self.gravity = 1.3
 
+    # TODO remove? Decide if enemy, character or asset can be intantiated
     def update(self) -> None:
         """
         Updates the enemy with every frame.
@@ -43,6 +46,7 @@ class Enemy(Character):
         self.update_position_y()
         self.check_boundaries()
         self.check_alive()
+        self.animate()
 
     def apply_gravity(self) -> None:
         """

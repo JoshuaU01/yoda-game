@@ -17,8 +17,9 @@ class Player(Character):
             size: tuple[int, int],
             speed: int,
             image: pygame.Surface,
+            direction: Directions,
             health: int,
-            take_damage: bool = True) \
+            can_take_damage: bool = True) \
             -> None:
         """
         Creates an instance of this class.
@@ -29,17 +30,16 @@ class Player(Character):
             speed (int): The maximum speed of the player.
             image (pygame.Surface): The image of the player.
             health (int): The number of lives of the player.
-            take_damage (bool): Whether the player can take damage.
+            can_take_damage (bool): Whether the player can take damage.
         """
         sprite_groups = [World.all_sprites, World.players]
         super().__init__(
-            position, size, speed, image, health=health, take_damage=take_damage, sprite_groups=sprite_groups)
+            position, size, speed, image, direction, health=health, can_take_damage=can_take_damage,
+            sprite_groups=sprite_groups)
 
         self.is_jumping = False
         self.gravity = 1.3
         self.jump_strength = 20
-
-        self.direction = Directions.RIGHT
         self.jump_cooldown = 0
 
         self.bullets = pygame.sprite.Group()
@@ -56,6 +56,7 @@ class Player(Character):
         self.apply_shoot_cooldown()
         self.check_boundaries()
         self.check_alive()
+        self.animate()
 
     def handle_input(self) -> None:
         """
@@ -65,15 +66,9 @@ class Player(Character):
         self.velocity.x = 0
         if keys[pygame.K_LEFT]:
             self.velocity.x = - self.speed
-            if self.direction == Directions.RIGHT:
-                self.image = pygame.transform.flip(self.image, True, False)
-                self.mask = pygame.mask.from_surface(self.image)
             self.direction = Directions.LEFT
         if keys[pygame.K_RIGHT]:
             self.velocity.x = self.speed
-            if self.direction == Directions.LEFT:
-                self.image = pygame.transform.flip(self.image, True, False)
-                self.mask = pygame.mask.from_surface(self.image)
             self.direction = Directions.RIGHT
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
@@ -105,7 +100,7 @@ class Player(Character):
                     self, (self.rect.x + self.rect.width * (1 / 2) * (self.direction + 1) + self.direction * 15,
                            self.rect.y + self.rect.height * (2 / 3)), (12, 12), 12, self.direction)
                 self.bullets.add(bullet)
-                self.shoot_cooldown = 12
+                self.shoot_cooldown = 20
 
     def apply_shoot_cooldown(self) -> None:
         """

@@ -9,7 +9,7 @@ from src.assets.characters.enemies.sniper_guy import SniperGuy
 from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
-from src.environment.world import World, Colors
+from src.environment.world import World, Directions, Colors
 from src.environment.camera import (Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY,
                                     BorderCamModeY, AutoCamModeY, PageCamModeY)
 
@@ -36,12 +36,12 @@ def main() -> None:
     layer_0.render()
 
     # Create player
-    player_1 = Player((200, 280), (41, 116), 10, World.images["player"], 3)
+    player_1 = Player((200, 280), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
 
     # Create enemies
-    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], (600, 400), 5)
-    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.images["stickman"], 3)
-    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], (300, 200), 1)
+    enemy_1 = Runner((600, 450), (70, 180), 3, World.images["runner"], Directions.RIGHT, (600, 400), 5)
+    enemy_2 = SniperGuy((2195, 170), (60, 110), 0, World.images["stickman"], Directions.LEFT, 3)
+    enemy_3 = Runner((2380, 350), (70, 180), 4, World.images["runner"], Directions.RIGHT, (300, 200), 1)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
@@ -107,14 +107,15 @@ def main() -> None:
                 elif event.key == pygame.K_BACKSPACE:
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
-                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], (0, 0), 1,
-                        direction=player_1.direction)
-                elif event.key == pygame.K_F1:
-                    player_1.image = pygame.transform.scale(player_1.image, (100, 250))
+                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], player_1.direction, (0, 0), 1)
+                elif event.key == pygame.K_F1:  # Make player bigger
                     midbottom = player_1.rect.midbottom
-                    player_1.rect = player_1.image.get_rect()
+                    player_1.rect.size = (player_1.rect.width * 2, player_1.rect.height * 2)
                     player_1.rect.midbottom = midbottom
-                    player_1.mask = pygame.mask.from_surface(player_1.image)
+                elif event.key == pygame.K_F2:  # Make player smaller
+                    midbottom = player_1.rect.midbottom
+                    player_1.rect.size = (player_1.rect.width / 2, player_1.rect.height / 2)
+                    player_1.rect.midbottom = midbottom
 
         World.all_sprites.update()  # Update all assets
         camera.scroll()  # Update the camera offset

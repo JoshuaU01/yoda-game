@@ -4,7 +4,8 @@ import pygame
 
 from src.asset import Asset
 from src.assets.objects.health_bar import HealthBar
-from src.environment.world import World
+from src.environment.world import World, Directions
+from src.utils import counter
 
 
 class Character(Asset):
@@ -18,8 +19,9 @@ class Character(Asset):
             size: tuple[int, int],
             speed: int,
             image: pygame.Surface,
+            direction: Directions,
             health: int = 1000,
-            take_damage: bool = True,
+            can_take_damage: bool = True,
             sprite_groups: Optional[list[pygame.sprite.Group]] = None) \
             -> None:
         """
@@ -31,15 +33,17 @@ class Character(Asset):
             speed (int): The maximum speed of the character.
             image (pygame.Surface): The image of the character.
             health (int): The number of lives of the character.
-            take_damage (bool): Whether the character can take damage.
+            can_take_damage (bool): Whether the character can take damage.
             sprite_groups: (Optional[list[pygame.sprite.Group]]): The global sprite groups that the character will be
             put in during initialization.
         """
         super().__init__(sprite_groups=sprite_groups)
+        self.original_image = image
         self.image = pygame.transform.scale(image, (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.topleft = (position[0], position[1])
         self.mask = pygame.mask.from_surface(self.image)
+        self.direction = direction
 
         self.velocity = pygame.math.Vector2()
         self.on_ground = False
@@ -47,7 +51,10 @@ class Character(Asset):
 
         self.health = health
         self.health_bar = HealthBar(self)
-        self.take_damage = take_damage
+        self.can_take_damage = can_take_damage
+
+        self.receiving_damage = False
+        self.damage_indicator_counter = counter.up_and_down(10)
 
     def update_position_x(self) -> None:
         """
@@ -89,12 +96,28 @@ class Character(Asset):
         """
         self.health -= amount
 
+    def indicate_damage(self) -> None:
+        """
+        Enables the light_up method.
+        """
+        self.receiving_damage = True
+
+    def take_damage(self, damage: int) -> None:
+        """
+        Triggers some methods to process a character's health loss.
+
+        Args:
+            damage (int): The amount of health the character loses.
+        """
+        self.lose_health(damage)
+        self.indicate_damage()
+
     def check_boundaries(self) -> None:
         """
         Practically kills a character who fell out of the world.
         """
         if self.rect.top > (12 / 10) * World.SCREEN_HEIGHT:
-            self.lose_health(1000)
+            self.take_damage(1000)
 
     def check_alive(self) -> bool:
         """
@@ -108,3 +131,39 @@ class Character(Asset):
             self.kill()
             return False
         return True
+
+    def light_up(self) -> None:
+        """
+        Flashes the character's image with red color after receiving damage.
+        """
+        if self.receiving_damage:
+            # Determine intensity of the red overlay color
+            intensity = 12 * next(self.damage_indicator_counter)
+            if intensity < 0 or intensity > 255:
+                print("Color codes must be in [0; 255].")
+                intensity = max(0, min(255, intensity))
+
+            # Create and fill color layers
+            add_layer = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+            norm_layer = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+            add_layer.fill((intensity, 0, 0))
+            norm_layer.fill((255, 255 - intensity, 255 - intensity))
+
+            # Blit color layers onto the character's image
+            self.image.blit(add_layer, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+            self.image.blit(norm_layer, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+            # End the animation
+            if intensity <= 0:
+                self.receiving_damage = False
+
+    def animate(self) -> None:
+        """
+        Picks a suitable image based on some status flags of the character.
+        """
+        # TODO Use temp image and more flags to avoid repeating unnecessary operations?
+        self.image = self.original_image.copy()  # Fetch original image
+        self.image = pygame.transform.scale(self.image, self.rect.size)  # Scale to hitbox dimensions
+        self.image = pygame.transform.flip(self.image, self.direction == Directions.LEFT, False)  # Flip if facing left
+        self.mask = pygame.mask.from_surface(self.image)  # Update mask
+        self.light_up()  # Display dealt damage
