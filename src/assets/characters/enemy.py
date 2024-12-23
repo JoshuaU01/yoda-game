@@ -36,11 +36,3 @@ class Enemy(Character, ABC):
         super().__init__(
             position, size, speed, image, direction, health=health, can_take_damage=can_take_damage,
             sprite_groups=sprite_groups)
-        self.gravity = 1.3
-
-    def apply_gravity(self) -> None:
-        """
-        Pulls the enemy down while in the air.
-        """
-        if not self.on_ground:
-            self.velocity.y += self.gravity

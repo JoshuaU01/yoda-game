@@ -38,7 +38,6 @@ class Player(Character):
             sprite_groups=sprite_groups)
 
         self.is_jumping = False
-        self.gravity = 1.3
         self.jump_strength = 20
         self.jump_cooldown = 0
 
@@ -81,14 +80,6 @@ class Player(Character):
         """
         self.velocity.y = -self.jump_strength
         self.is_jumping = True
-        self.on_ground = False
-
-    def apply_gravity(self) -> None:
-        """
-        Pulls the player down while in the air.
-        """
-        if not self.on_ground:
-            self.velocity.y += self.gravity
 
     def shoot(self) -> None:
         """

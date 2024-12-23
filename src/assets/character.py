@@ -14,6 +14,22 @@ class Character(Asset, ABC):
     A super class for all players and enemies.
     """
 
+    @property
+    def on_ground(self) -> bool:
+        """
+        Checks if the character stands on a solid asset.
+        This works by checking if the character would have collisions if they stood 1 pixel lower.
+
+        Returns:
+            on_ground (bool): True if the character stands on something.
+        """
+        self.rect.y += 1
+        collision = self.collision
+        self.rect.y -= 1
+        if collision:
+            return True
+        return False
+
     def __init__(
             self,
             position: tuple[int, int],
@@ -47,13 +63,12 @@ class Character(Asset, ABC):
         self.direction = direction
 
         self.velocity = pygame.math.Vector2()
-        self.on_ground = False
         self.speed = speed
+        self.gravity = 1.3
 
         self.health = health
         self.health_bar = HealthBar(self)
         self.can_take_damage = can_take_damage
-
         self.receiving_damage = False
         self.damage_indicator_counter = counter.up_and_down(10)
 
@@ -81,12 +96,16 @@ class Character(Asset, ABC):
             if self.velocity.y > 0:  # Moving downwards
                 self.rect.bottom = collided_asset.rect.top
                 self.velocity.y = 0
-                self.on_ground = True
             elif self.velocity.y < 0:  # Moving upwards
                 self.rect.top = collided_asset.rect.bottom
                 self.velocity.y = 0
-        else:
-            self.on_ground = False
+
+    def apply_gravity(self) -> None:
+        """
+        Pulls the character down while in the air.
+        """
+        if not self.on_ground:
+            self.velocity.y += self.gravity
 
     def lose_health(self, amount: int) -> None:
         """

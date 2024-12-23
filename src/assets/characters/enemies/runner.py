@@ -144,7 +144,6 @@ class Runner(Enemy):
         """
         if self.on_ground:
             self.velocity.y = -12
-            self.on_ground = False
         self.is_stomping = True
         self.stomp_cooldown = 50
 
