@@ -37,7 +37,7 @@ class Player(Character):
             position, size, speed, image, direction, health=health, can_take_damage=can_take_damage,
             sprite_groups=sprite_groups)
 
-        self.is_jumping = False
+        self.jump_lock = False
         self.jump_strength = 20
         self.jump_cooldown = 0
 
@@ -69,8 +69,10 @@ class Player(Character):
         if keys[pygame.K_RIGHT]:
             self.velocity.x = self.speed
             self.direction = Directions.RIGHT
-        if keys[pygame.K_SPACE] and self.on_ground:
+        if keys[pygame.K_SPACE] and self.on_ground and not self.jump_lock:
             self.jump()
+        elif not keys[pygame.K_SPACE] and self.jump_lock:
+            self.jump_lock = False  # Once the jump key is released, the player can jump again
         if keys[pygame.K_a]:
             self.shoot()
 
@@ -79,7 +81,7 @@ class Player(Character):
         Starts a jump.
         """
         self.velocity.y = -self.jump_strength
-        self.is_jumping = True
+        self.jump_lock = True
 
     def shoot(self) -> None:
         """
