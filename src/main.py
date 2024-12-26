@@ -131,7 +131,7 @@ def main() -> None:
                 pygame.draw.rect(screen, Colors.WHITE, camera.apply_offset(sprite), 1)
 
         pygame.display.update()  # Update some pygame internals
-        clock.tick(60)  # Set the framerate to 60fps
+        clock.tick(50)  # Set the framerate (in fps)
 
 
 if __name__ == '__main__':
