@@ -55,8 +55,8 @@ class Character(Asset, ABC):
             put in during initialization.
         """
         super().__init__(sprite_groups=sprite_groups)
-        self.original_image = image
         self.image = pygame.transform.scale(image, (size[0], size[1]))
+        self.original_image = self.image.copy()
         self.rect = self.image.get_rect()
         self.rect.topleft = (position[0], position[1])
         self.mask = pygame.mask.from_surface(self.image)
