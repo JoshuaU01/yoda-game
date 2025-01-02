@@ -44,7 +44,7 @@ class Runner(Enemy):
         self.target = None
         self.detect_range = detect_range
         self.attack_range = tuple(x * (2 / 3) for x in self.detect_range)
-        self.delay = 20
+        self.turning_delay = 20
 
         self.gravity = 1.2
         self.is_stomping = False
@@ -97,13 +97,13 @@ class Runner(Enemy):
             target (Asset): The target of the runner.
         """
         if self.is_facing(target):
-            self.delay = 20  # Reset delay
+            self.turning_delay = 20  # Reset turning delay
         else:
-            if self.delay <= 0:
+            if self.turning_delay <= 0:
                 self.direction *= -1  # Turn around
-                self.delay = 20  # Reset delay after turn
+                self.turning_delay = 20  # Reset turning delay after turn
             else:
-                self.delay -= 1
+                self.turning_delay -= 1
 
     def walk(self) -> None:
         """
