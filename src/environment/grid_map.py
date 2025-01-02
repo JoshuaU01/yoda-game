@@ -43,6 +43,8 @@ class GridMap(pygame.sprite.Sprite):
         self.sprite_sheet = sprite_sheet
         self.grid_size = grid_size
         self.map = None
+        self.map_width = 0
+        self.map_height = 0
         self.blocks = []
 
     def load_csv(self) -> Optional[np.ndarray]:
@@ -57,9 +59,9 @@ class GridMap(pygame.sprite.Sprite):
             map_list = [row for row in filereader]
 
             if map_list:
-                width = len(map_list)
-                heigth = len(map_list[0])
-                self.map = np.full((width, heigth), -1, dtype=np.int8)
+                self.map_height = len(map_list)
+                self.map_width = len(map_list[0])
+                self.map = np.full((self.map_height, self.map_width), -1, dtype=np.int8)
 
                 for vertical, row in enumerate(map_list):
                     for horizontal, cell in enumerate(row):

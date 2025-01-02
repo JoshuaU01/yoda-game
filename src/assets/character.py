@@ -136,7 +136,10 @@ class Character(Asset, ABC):
         """
         Practically kills a character who fell out of the world.
         """
-        if self.rect.top > (12 / 10) * World.SCREEN_HEIGHT:
+        if (self.rect.right < World.boundaries["left"] or
+                self.rect.left > World.boundaries["right"] or
+                self.rect.bottom < World.boundaries["top"] or
+                self.rect.top > World.boundaries["bottom"]):
             self.take_damage(1000)
 
     def check_alive(self) -> bool:

@@ -25,6 +25,8 @@ class World(pygame.sprite.Sprite):
 
     images = dict()
 
+    boundaries = dict()
+
     @staticmethod
     def load_image(image_path: str, size: Optional[tuple[int, int]] = None) -> pygame.Surface:
         """
@@ -57,6 +59,21 @@ class World(pygame.sprite.Sprite):
         World.images["bullet"] = World.load_image("media/images/bullet/bullet_small.png")
         World.images["full_heart"] = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
         World.images["half_heart"] = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
+
+    @staticmethod
+    def set_boundaries(left: int, right: int, top: int, bottom: int) -> None:
+        """
+        Sets the boundaries of the world. A character will die, if they leave them.
+
+        :param left: Left boundary.
+        :param right: Right boundary.
+        :param top: Upper boundary.
+        :param bottom: Lower boundary.
+        """
+        World.boundaries["left"] = left
+        World.boundaries["right"] = right
+        World.boundaries["top"] = top
+        World.boundaries["bottom"] = bottom
 
     def __init__(self) -> None:
         """

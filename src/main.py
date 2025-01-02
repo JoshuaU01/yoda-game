@@ -34,6 +34,9 @@ def main() -> None:
     layer_0.load_csv()
     layer_0.build()
     layer_0.render()
+    World.set_boundaries(
+        -3 * layer_0.grid_size, (layer_0.map_width + 3) * layer_0.grid_size, -3 * layer_0.grid_size,
+        (layer_0.map_height + 5) * layer_0.grid_size)
 
     # Create player
     player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
@@ -46,7 +49,7 @@ def main() -> None:
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)
-    right_wall = Border(130 * layer_0.grid_size, -100, 100, World.SCREEN_HEIGHT + 200)
+    right_wall = Border(layer_0.map_width * layer_0.grid_size, -100, 100, World.SCREEN_HEIGHT + 200)
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
@@ -54,7 +57,7 @@ def main() -> None:
     border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
     auto_cam_mode_x = AutoCamModeX(camera, 1)
     follow_cam_mode_y = FollowCamModeY(camera)
-    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, 35 * layer_0.grid_size, 180, 100)
+    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, layer_0.map_height * layer_0.grid_size, 180, 100)
     auto_cam_mode_y = AutoCamModeY(camera, -1)
     page_cam_mode_y = PageCamModeY(camera)
     camera.set_horizontal_method(border_cam_mode_x)
