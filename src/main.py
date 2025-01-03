@@ -42,7 +42,7 @@ def main() -> None:
     player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
 
     # Create enemies
-    enemy_1 = Runner((600, 800), (60, 150), 3, World.images["runner"], Directions.RIGHT, (600, 400), 5)
+    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 400), 5)
     enemy_2 = SniperGuy((2160, 490), (60, 110), 0, World.images["stickman"], Directions.LEFT, 32, 80, 3)
     enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (300, 200), 1)
     enemy_4 = SniperGuy((4000, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 10)

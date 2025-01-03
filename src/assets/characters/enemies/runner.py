@@ -1,12 +1,12 @@
-from typing import Optional, Callable
+from typing import Optional
 
-import math
 import pygame
 
 from src.asset import Asset
 from src.assets.characters.enemy import Enemy
 from src.assets.characters.player import Player
 from src.environment.world import World, Directions
+from src.utils.state import State, WalkState, RunState, PrepareAttackState, StompState
 
 
 class Runner(Enemy):
@@ -40,14 +40,17 @@ class Runner(Enemy):
         """
         super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
-        self.state = self.walk
+        self.walk_state = WalkState(self)
+        self.run_state = RunState(self)
+        self.prepare_attack_state = PrepareAttackState(self)
+        self.stomp_state = StompState(self)
+        self.state = self.walk_state
         self.target = None
         self.detect_range = detect_range
-        self.attack_range = tuple(x * (2 / 3) for x in self.detect_range)
+        self.attack_range = tuple(x * (1 / 3) for x in self.detect_range)
         self.turning_delay = 20
 
         self.gravity = 1.2
-        self.is_stomping = False
         self.stomp_cooldown = 50
 
     def update(self) -> None:
@@ -55,15 +58,16 @@ class Runner(Enemy):
         Updates the runner enemy with every frame.
         """
         self.apply_gravity()
-        self.state = self.determine_state()
-        self.state()
-        self.attack()
+        self.target = self.update_target()
+        self.update_state()
+        self.state.execute()
         self.apply_stomp_cooldown()
         self.update_position_x()
         self.update_position_y()
         self.check_boundaries()
         self.check_alive()
         self.animate()
+        print(self.state)
 
     def is_facing(self, asset: Asset) -> bool:
         """
@@ -77,15 +81,18 @@ class Runner(Enemy):
         """
         return (asset.rect.x - self.rect.x) * self.direction >= 0
 
-    def look_for_players(self) -> Optional[Player]:
+    def update_target(self) -> Optional[Player]:
         """
         Checks, if any player is within the detection range of the runner.
 
         Returns:
             Optional[Player]: A near player.
         """
+        if self.target and self.is_near(self.target, self.detect_range):
+            return self.target
         for player in World.players:
-            if self.is_near(player, self.detect_range) and self.is_facing(player):
+            if self.is_near(player, self.detect_range) and self.is_facing(player) or self.is_near(
+                    player, self.attack_range):
                 return player
         return None
 
@@ -105,67 +112,51 @@ class Runner(Enemy):
             else:
                 self.turning_delay -= 1
 
-    def walk(self) -> None:
-        """
-        Movement type. The runner slowly walks from side to side.
-        """
-        self.velocity.x = self.direction * self.speed
-        old_x = self.rect.x
-        self.rect.x += self.velocity.x
-        if self.collision:  # Pre-check, if the runner would collide with something.
-            self.direction *= -1  # Turn around
-            self.velocity.x *= -1
-        self.rect.x = old_x  # Always reset the horizontal position, as the position update will be done later
+    def change_state(self, new_state: State):
+        self.state.exit()
+        self.state = new_state
+        self.state.enter()
 
-    def run(self) -> None:
-        """
-        Movement type. The runner runs towards his target.
-        """
-        self.face_target(self.target)
-        self.velocity.x = self.direction * self.speed * 3
-
-    def determine_state(self) -> Callable[[], None]:
+    def update_state(self) -> None:
         """
         Selects a movement type based on the players' behavior.
 
         Returns:
             Callable[[], None]: A reference to the selected state method.
         """
-        if self.target and self.is_near(self.target, self.detect_range):
-            return self.run
-        self.target = self.look_for_players()
-        if self.target:
-            return self.run
-        return self.walk
-
-    def stomp(self) -> None:
-        """
-        Starts the stomp attack of the runner.
-        """
-        if self.on_ground:
-            self.velocity.y = -12
-        self.is_stomping = True
-        self.stomp_cooldown = 90
-
-    def attack(self) -> None:
-        """
-        Handles the attack of the runner.
-        """
-        if self.state == self.run and self.target and self.is_near(
-                self.target, self.attack_range) and self.stomp_cooldown <= 0:
-            self.stomp()
-        if self.is_stomping and self.on_ground:
-            if self.target and self.is_near(
-                    self.target, (self.attack_range[0], 40)):
-                if self.target.can_take_damage and hasattr(self.target, "take_damage"):
-                    self.target.take_damage(1)  # Only vulnerable assets take damage
-                print(f"{self.target} got hit!")
-            # TODO shake the camera (observer)
-            self.is_stomping = False
+        if self.state == self.walk_state:
+            # T1
+            if self.target and not self.is_near(self.target, self.attack_range):
+                self.change_state(self.run_state)
+            # T5
+            if self.target and self.is_near(self.target, self.attack_range):
+                self.change_state(self.prepare_attack_state)
+        elif self.state == self.run_state:
+            # T2
+            if not self.target:
+                self.change_state(self.walk_state)
+            # T8
+            if self.target and self.is_near(self.target, self.attack_range):
+                self.change_state(self.prepare_attack_state)
+        elif self.state == self.prepare_attack_state:
+            # T4
+            if not self.target:
+                self.change_state(self.walk_state)
+            # T3
+            if self.target and not self.is_near(self.target, self.attack_range):
+                self.change_state(self.run_state)
+            # T6
+            if self.target and self.is_near(self.target, self.attack_range) and self.is_facing(
+                    self.target) and self.on_ground and self.stomp_cooldown <= 0:
+                self.change_state(self.stomp_state)
+        elif self.state == self.stomp_state:
+            # T7
+            if self.on_ground and self.velocity.y >= 0:
+                self.change_state(self.prepare_attack_state)
 
     def apply_stomp_cooldown(self) -> None:
         """
         Counts down a timer for the next allowed stomp attack.
         """
-        if not self.is_stomping and self.stomp_cooldown > 0:
+        if not self.state == self.stomp_state and self.stomp_cooldown > 0:
             self.stomp_cooldown -= 1
