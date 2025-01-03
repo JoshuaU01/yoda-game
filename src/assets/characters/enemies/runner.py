@@ -6,7 +6,7 @@ from src.asset import Asset
 from src.assets.characters.enemy import Enemy
 from src.assets.characters.player import Player
 from src.environment.world import World, Directions
-from src.utils.state import State, WalkState, RunState, PrepareAttackState, StompState
+from src.utils.state import StateManager, WalkState, RunState, PrepareAttackState, StompState
 
 
 class Runner(Enemy):
@@ -40,6 +40,7 @@ class Runner(Enemy):
         """
         super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
+        self.state_manager = StateManager(self)
         self.walk_state = WalkState(self)
         self.run_state = RunState(self)
         self.prepare_attack_state = PrepareAttackState(self)
@@ -59,7 +60,7 @@ class Runner(Enemy):
         """
         self.apply_gravity()
         self.target = self.update_target()
-        self.update_state()
+        self.state.update()
         self.state.execute()
         self.apply_stomp_cooldown()
         self.update_position_x()
@@ -111,48 +112,6 @@ class Runner(Enemy):
                 self.turning_delay = 20  # Reset turning delay after turn
             else:
                 self.turning_delay -= 1
-
-    def change_state(self, new_state: State):
-        self.state.exit()
-        self.state = new_state
-        self.state.enter()
-
-    def update_state(self) -> None:
-        """
-        Selects a movement type based on the players' behavior.
-
-        Returns:
-            Callable[[], None]: A reference to the selected state method.
-        """
-        if self.state == self.walk_state:
-            # T1
-            if self.target and not self.is_near(self.target, self.attack_range):
-                self.change_state(self.run_state)
-            # T5
-            if self.target and self.is_near(self.target, self.attack_range):
-                self.change_state(self.prepare_attack_state)
-        elif self.state == self.run_state:
-            # T2
-            if not self.target:
-                self.change_state(self.walk_state)
-            # T8
-            if self.target and self.is_near(self.target, self.attack_range):
-                self.change_state(self.prepare_attack_state)
-        elif self.state == self.prepare_attack_state:
-            # T4
-            if not self.target:
-                self.change_state(self.walk_state)
-            # T3
-            if self.target and not self.is_near(self.target, self.attack_range):
-                self.change_state(self.run_state)
-            # T6
-            if self.target and self.is_near(self.target, self.attack_range) and self.is_facing(
-                    self.target) and self.on_ground and self.stomp_cooldown <= 0:
-                self.change_state(self.stomp_state)
-        elif self.state == self.stomp_state:
-            # T7
-            if self.on_ground and self.velocity.y >= 0:
-                self.change_state(self.prepare_attack_state)
 
     def apply_stomp_cooldown(self) -> None:
         """
