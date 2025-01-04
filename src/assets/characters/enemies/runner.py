@@ -14,6 +14,10 @@ class Runner(Enemy):
     A melee enemy type that can run towards the player.
     """
 
+    @property
+    def state(self):
+        return self.state_manager.current_state
+
     def __init__(
             self,
             position: tuple[int, int],
@@ -41,11 +45,10 @@ class Runner(Enemy):
         super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
         self.state_manager = StateManager(self)
-        self.walk_state = WalkState(self)
-        self.run_state = RunState(self)
-        self.prepare_attack_state = PrepareAttackState(self)
-        self.stomp_state = StompState(self)
-        self.state = self.walk_state
+        self.state_manager.add_state(WalkState(), state_name="walk", active=True)
+        self.state_manager.add_state(RunState(), state_name="run")
+        self.state_manager.add_state(PrepareAttackState(), state_name="prepare_attack")
+        self.state_manager.add_state(StompState(), state_name="stomp")
         self.target = None
         self.detect_range = detect_range
         self.attack_range = tuple(x * (1 / 3) for x in self.detect_range)
@@ -60,8 +63,8 @@ class Runner(Enemy):
         """
         self.apply_gravity()
         self.target = self.update_target()
-        self.state.update()
-        self.state.execute()
+        self.state_manager.update()
+        self.state_manager.execute()
         self.apply_stomp_cooldown()
         self.update_position_x()
         self.update_position_y()
@@ -117,5 +120,5 @@ class Runner(Enemy):
         """
         Counts down a timer for the next allowed stomp attack.
         """
-        if not self.state == self.stomp_state and self.stomp_cooldown > 0:
+        if not isinstance(self.state, StompState) and self.stomp_cooldown > 0:
             self.stomp_cooldown -= 1

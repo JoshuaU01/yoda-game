@@ -4,22 +4,67 @@ from abc import ABC, abstractmethod
 
 
 class StateManager:
-    def __init__(self, master):
-        self.master = master
+    def __init__(self, owner) -> None:
+        self.owner = owner
+        self.states = {}
+        self.current_state = None
 
-    def change_state(self, new_state: State):
-        self.master.state.exit()
-        self.master.state = new_state
-        self.master.state.enter()
+    def add_state(self, state: State, state_name: str, active: bool = False) -> None:
+        if state_name in self.states:
+            print(f"{self.states[state_name]} already exists in state manager.")
+            return None
+        self.states[state_name] = state  # Add state to the internal states dict
+        state.attach_state_manager(self)
+        if active:
+            self.change_state(state)
+
+    def change_state(self, new_state: State | str) -> None:
+        # Convert state name to state object
+        if isinstance(new_state, str):
+            if new_state not in self.states:
+                print(f"State {new_state} does not exist in state manager.")
+                return None
+            new_state = self.states[new_state]
+
+        # Check if desired state has been added to state manager
+        elif new_state not in self.states.values():
+            print(f"{new_state} does not exist in state manager.")
+            return None
+
+        # Execute the state transition
+        if self.current_state:
+            self.current_state.exit()
+        self.current_state = new_state
+        self.current_state.enter()
+
+    def update(self):
+        if self.current_state is None:
+            print("No state active. Initial state must be activated.")
+            return None
+        self.current_state.update()
+
+    def execute(self):
+        if self.current_state is None:
+            print("No state active. Initial state must be activated.")
+            return None
+        self.current_state.execute()
 
 
 class State(ABC):
     """
-    Abstract base class for the runner's states in the finite state machine.
+    Abstract base class for the states.
+    The states are being centrally managed by the state manager.
+    The states are represented as a finite state machine.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__class__.__name__
+
+    def __init__(self) -> None:
+        self.state_manager = None
+
+    def attach_state_manager(self, state_manager: StateManager) -> None:
+        self.state_manager = state_manager
 
     @abstractmethod
     def update(self):
@@ -38,22 +83,25 @@ class State(ABC):
 
 class WalkState(State):
 
-    def __init__(self, runner: "Runner"):
-        self.runner = runner
+    @property
+    def runner(self):
+        return self.state_manager.owner
 
     def update(self):
         # T1
-        if self.runner.target and not self.runner.is_near(self.runner.target, self.runner.attack_range):
-            self.runner.state_manager.change_state(self.runner.run_state)
+        if self.runner.target and not self.runner.is_near(
+                self.runner.target, self.runner.attack_range):
+            self.state_manager.change_state("run")
         # T5
-        if self.runner.target and self.runner.is_near(self.runner.target, self.runner.attack_range):
-            self.runner.state_manager.change_state(self.runner.prepare_attack_state)
+        if self.runner.target and self.runner.is_near(
+                self.runner.target, self.runner.attack_range):
+            self.state_manager.change_state("prepare_attack")
 
     def execute(self) -> None:
         self.runner.velocity.x = self.runner.direction * self.runner.speed
         old_x = self.runner.rect.x
         self.runner.rect.x += self.runner.velocity.x
-        if self.runner.collision:  # Pre-check, if the runner would collide with something.
+        if self.runner.collision:  # Pre-check, if the owner would collide with something.
             self.runner.direction *= -1  # Turn around
             self.runner.velocity.x *= -1
         self.runner.rect.x = old_x  # Always reset the horizontal position, as the position update will be done later
@@ -61,16 +109,18 @@ class WalkState(State):
 
 class RunState(State):
 
-    def __init__(self, runner: "Runner"):
-        self.runner = runner
+    @property
+    def runner(self):
+        return self.state_manager.owner
 
     def update(self):
         # T2
         if not self.runner.target:
-            self.runner.state_manager.change_state(self.runner.walk_state)
+            self.state_manager.change_state("walk")
         # T8
-        if self.runner.target and self.runner.is_near(self.runner.target, self.runner.attack_range):
-            self.runner.state_manager.change_state(self.runner.prepare_attack_state)
+        if self.runner.target and self.runner.is_near(
+                self.runner.target, self.runner.attack_range):
+            self.state_manager.change_state("prepare_attack")
 
     def execute(self) -> None:
         self.runner.face_target(self.runner.target)
@@ -79,21 +129,23 @@ class RunState(State):
 
 class PrepareAttackState(State):
 
-    def __init__(self, runner: "Runner"):
-        self.runner = runner
+    @property
+    def runner(self):
+        return self.state_manager.owner
 
     def update(self):
         # T4
         if not self.runner.target:
-            self.runner.state_manager.change_state(self.runner.walk_state)
+            self.state_manager.change_state("walk")
         # T3
-        if self.runner.target and not self.runner.is_near(self.runner.target, self.runner.attack_range):
-            self.runner.state_manager.change_state(self.runner.run_state)
+        if self.runner.target and not self.runner.is_near(
+                self.runner.target, self.runner.attack_range):
+            self.state_manager.change_state("run")
         # T6
         if self.runner.target and self.runner.is_near(
                 self.runner.target, self.runner.attack_range) and self.runner.is_facing(
             self.runner.target) and self.runner.on_ground and self.runner.stomp_cooldown <= 0:
-            self.runner.state_manager.change_state(self.runner.stomp_state)
+            self.state_manager.change_state("stomp")
 
     def execute(self) -> None:
         self.runner.face_target(self.runner.target)
@@ -102,13 +154,14 @@ class PrepareAttackState(State):
 
 class StompState(State):
 
-    def __init__(self, runner: "Runner"):
-        self.runner = runner
+    @property
+    def runner(self):
+        return self.state_manager.owner
 
     def update(self):
         # T7
         if self.runner.on_ground and self.runner.velocity.y >= 0:
-            self.runner.state_manager.change_state(self.runner.prepare_attack_state)
+            self.state_manager.change_state("prepare_attack")
 
     def enter(self):
         """

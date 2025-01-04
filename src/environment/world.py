@@ -23,9 +23,9 @@ class World(pygame.sprite.Sprite):
     blocks = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
 
-    images = dict()
+    images = {}
 
-    boundaries = dict()
+    boundaries = {}
 
     @staticmethod
     def load_image(image_path: str, size: Optional[tuple[int, int]] = None) -> pygame.Surface:

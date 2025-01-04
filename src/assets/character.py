@@ -150,7 +150,7 @@ class Character(Asset, ABC):
             bool: Whether the character is still alive or not.
         """
         if self.health <= 0:
-            print(f"{self.__str__()} has died.")
+            print(f"{self.__class__.__name__} at {self.rect.topleft} has died.")
             self.kill()
             return False
         return True
