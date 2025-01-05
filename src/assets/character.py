@@ -100,6 +100,9 @@ class Character(Asset, ABC):
                 self.rect.top = collided_asset.rect.bottom
                 self.velocity.y = 0
 
+    def turn_around(self):
+        self.direction *= -1
+
     def apply_gravity(self) -> None:
         """
         Pulls the character down while in the air.

@@ -109,12 +109,11 @@ class Runner(Enemy):
         """
         if self.is_facing(target):
             self.turning_delay = 20  # Reset turning delay
-        else:
-            if self.turning_delay <= 0:
-                self.direction *= -1  # Turn around
+        elif self.turning_delay <= 0:
+                self.turn_around()
                 self.turning_delay = 20  # Reset turning delay after turn
-            else:
-                self.turning_delay -= 1
+        else:
+            self.turning_delay -= 1
 
     def apply_stomp_cooldown(self) -> None:
         """
