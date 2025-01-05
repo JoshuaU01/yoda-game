@@ -19,7 +19,8 @@ class Bullet(Object):
             speed (int): The speed of the bullet.
             direction (int): The shoot direction of the bullet.
         """
-        super().__init__()
+        sprite_groups = [World.all_sprites]
+        super().__init__(sprite_groups=sprite_groups)
         self.image = pygame.transform.scale(World.image_bullet, (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.center = (position[0], position[1])

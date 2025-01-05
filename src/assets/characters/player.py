@@ -23,8 +23,8 @@ class Player(Character):
             image (pygame.Surface): The image of the player.
             health (int): The number of lives of the player.
         """
-        super().__init__(position, size, speed, image, health)
-        World.players.add(self)
+        sprite_groups = [World.all_sprites, World.players]
+        super().__init__(position, size, speed, image, health=health, sprite_groups=sprite_groups)
 
         self.is_jumping = False
         self.gravity = 1.3

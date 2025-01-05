@@ -32,20 +32,26 @@ class World(pygame.sprite.Sprite):
         Returns:
             pygame.Surface: The loaded image.
         """
-        image = pygame.image.load(image_path)
+        image = pygame.image.load(image_path).convert_alpha()
         if size:
             image = pygame.transform.scale(image, size)
         return image
 
-    image_player = load_image("media/images/player/ziwomol/ziwomol_v3.png")
-    image_stickman = load_image("media/images/template/stickman.png")
-    image_runner = load_image("media/images/enemies/runner/runner_v2.png")
-    image_background = load_image(
-        "media/images/background/map_grass_background.png", size=(SCREEN_WIDTH, SCREEN_HEIGHT))
-    image_floor = load_image("media/images/background/map_grass_floor.png", size=(SCREEN_WIDTH, 180))
-    image_bullet = load_image("media/images/bullet/bullet_small.png")
-    image_full_heart = load_image("media/images/heart/full_heart.png", size=(16, 16))
-    image_half_heart = load_image("media/images/heart/half_heart.png", size=(8, 16))
+    @staticmethod
+    def load_images() -> None:
+        """
+        Loads in all the single images that are not part of a sprite sheet.
+        """
+        World.image_player = World.load_image("media/images/player/ziwomol/ziwomol_v3.png")
+        World.image_stickman = World.load_image("media/images/template/stickman.png")
+        World.image_runner = World.load_image("media/images/enemies/runner/runner_v2.png")
+        World.image_background = World.load_image(
+            "media/images/background/map_grass_background.png", size=(World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
+        World.image_floor = World.load_image(
+            "media/images/background/map_grass_floor.png", size=(World.SCREEN_WIDTH, 180))
+        World.image_bullet = World.load_image("media/images/bullet/bullet_small.png")
+        World.image_full_heart = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
+        World.image_half_heart = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
 
     def __init__(self) -> None:
         """
