@@ -39,7 +39,7 @@ def main() -> None:
         (layer_0.map_height + 5) * layer_0.grid_size)
 
     # Create player
-    player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 4)
+    player_1 = Player((200, 680), (41, 116), 8, World.images["player"], Directions.RIGHT, 4)
 
     # Create enemies
     enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
