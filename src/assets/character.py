@@ -100,6 +100,18 @@ class Character(Asset, ABC):
                 self.rect.top = collided_asset.rect.bottom
                 self.velocity.y = 0
 
+    def is_facing(self, asset: Asset) -> bool:
+        """
+        Checks, if the character is facing a specified asset.
+
+        Params:
+            asset (Asset): The asset to check.
+
+        Returns:
+            bool: Whether the character is facing the asset.
+        """
+        return (asset.rect.x - self.rect.x) * self.direction >= 0
+
     def turn_around(self):
         self.direction *= -1
 

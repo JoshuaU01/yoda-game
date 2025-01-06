@@ -39,13 +39,13 @@ def main() -> None:
         (layer_0.map_height + 5) * layer_0.grid_size)
 
     # Create player
-    player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 5)
+    player_1 = Player((200, 680), (41, 116), 10, World.images["player"], Directions.RIGHT, 4)
 
     # Create enemies
-    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 400), 5)
+    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
     enemy_2 = SniperGuy((2160, 490), (60, 110), 0, World.images["stickman"], Directions.LEFT, 32, 80, 3)
-    enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (300, 200), 1)
-    enemy_4 = SniperGuy((4000, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 10)
+    enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
+    enemy_4 = SniperGuy((4080, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 4)
 
     # Create borders
     left_wall = Border(-100, -100, 100, World.SCREEN_HEIGHT + 200)

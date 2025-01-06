@@ -50,9 +50,12 @@ class Runner(Enemy):
         self.state_manager.add_state(PrepareAttackState(), state_name="prepare_attack")
         self.state_manager.add_state(StompState(), state_name="stomp")
         self.target = None
+        self.target_lost_counter = 0
         self.detect_range = detect_range
-        self.attack_range = tuple(x * (1 / 3) for x in self.detect_range)
-        self.turning_delay = 20
+        self.attack_range = (1/3 * detect_range[0], detect_range[1])
+        self.withdraw_attack_range = (1/2 * detect_range[0], detect_range[1])
+        self.hit_range = (2/3 * detect_range[0], 2/5 * detect_range[1])
+        self.turning_delay = 15
 
         self.gravity = 1.2
         self.stomp_cooldown = 50
@@ -73,30 +76,33 @@ class Runner(Enemy):
         self.animate()
         print(self.state)
 
-    def is_facing(self, asset: Asset) -> bool:
-        """
-        Checks, if the runner is facing a specified asset.
-
-        Params:
-            asset (Asset): The asset to check.
-
-        Returns:
-            bool: Whether the runner is facing the asset.
-        """
-        return (asset.rect.x - self.rect.x) * self.direction >= 0
 
     def update_target(self) -> Optional[Player]:
         """
-        Checks, if any player is within the detection range of the runner.
+        If the runner has no target, he will search for a near player in the world.
+        If the target is still in range, the runner keeps the target,
+        even if the target gets out of his range for a short time (self.target_lost_counter).
+        If the counter exceeds a certain threshold,
+        the runner looses his target and starts searching for a near player again.
 
         Returns:
             Optional[Player]: A near player.
         """
-        if self.target and self.is_near(self.target, self.detect_range):
-            return self.target
+        # Check if the current target will remain
+        if self.target:
+            if self.is_near(self.target, self.detect_range):
+                self.target_lost_counter = 0  # Reset the counter
+                return self.target
+            else:
+                self.target_lost_counter += 1  # Increment the counter for each frame the target is out of range
+                if self.target_lost_counter < 40:
+                    return self.target
+
+        # Search for other players
         for player in World.players:
             if self.is_near(player, self.detect_range) and self.is_facing(player) or self.is_near(
                     player, self.attack_range):
+                self.target_lost_counter = 0
                 return player
         return None
 
@@ -107,11 +113,14 @@ class Runner(Enemy):
         Args:
             target (Asset): The target of the runner.
         """
+        if not self.target:
+            print(f"{self.__class__.__name__} has no target.")
+            return None
         if self.is_facing(target):
-            self.turning_delay = 20  # Reset turning delay
+            self.turning_delay = 15  # Reset turning delay
         elif self.turning_delay <= 0:
                 self.turn_around()
-                self.turning_delay = 20  # Reset turning delay after turn
+                self.turning_delay = 15  # Reset turning delay after turn
         else:
             self.turning_delay -= 1
 
@@ -172,7 +181,7 @@ class PrepareAttackState(State):
     def update(self):
         if not self.runner.target:
             self.state_manager.change_state("walk")  # Transition T4
-        elif not self.runner.is_near(self.runner.target, self.runner.attack_range):
+        elif not self.runner.is_near(self.runner.target, self.runner.withdraw_attack_range):
             self.state_manager.change_state("run")  # Transition T3
         elif self.runner.is_facing(self.runner.target) and self.runner.on_ground and self.runner.stomp_cooldown <= 0:
             self.state_manager.change_state("stomp")  # Transition T6
@@ -201,15 +210,15 @@ class StompState(State):
         """
         Start stomping.
         """
-        self.runner.velocity.y = -12
+        self.runner.velocity.y = -15
         self.runner.stomp_cooldown = 90
 
     def execute(self) -> None:
         pass
 
     def exit(self):
-        if self.runner.target and self.runner.is_near(self.runner.target, (self.runner.detect_range[0], 40)):
-            if self.runner.target.can_take_damage and hasattr(self.runner.target, "take_damage"):
-                self.runner.target.take_damage(1)  # Only vulnerable assets take damage
-            print(f"{self.runner.target} got hit!")
+        for player in World.players:
+            if self.runner.is_near(player, self.runner.hit_range) and player.on_ground and player.can_take_damage:
+                player.take_damage(1)  # Only vulnerable players take damage
+                print(f"{player.__class__.__name__} got hit!")
         # TODO shake the camera (observer)
