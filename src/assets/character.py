@@ -30,6 +30,9 @@ class Character(Asset, ABC):
             return True
         return False
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__} at {self.rect.topleft}"
+
     def __init__(
             self,
             position: tuple[int, int],
@@ -165,7 +168,7 @@ class Character(Asset, ABC):
             bool: Whether the character is still alive or not.
         """
         if self.health <= 0:
-            print(f"{self.__class__.__name__} at {self.rect.topleft} has died.")
+            print(f"{self} has died!")
             self.kill()
             return False
         return True

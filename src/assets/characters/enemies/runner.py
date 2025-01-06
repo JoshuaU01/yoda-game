@@ -74,7 +74,7 @@ class Runner(Enemy):
         self.check_boundaries()
         self.check_alive()
         self.animate()
-        print(self.state)
+        #print(self.state)
 
 
     def update_target(self) -> Optional[Player]:
@@ -220,5 +220,5 @@ class StompState(State):
         for player in World.players:
             if self.runner.is_near(player, self.runner.hit_range) and player.on_ground and player.can_take_damage:
                 player.take_damage(1)  # Only vulnerable players take damage
-                print(f"{player.__class__.__name__} got hit!")
+                print(f"{player} got hit!")
         # TODO shake the camera (observer)
