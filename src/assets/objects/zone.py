@@ -86,3 +86,13 @@ class RectangularZone(Zone):
         rectangle_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         pygame.draw.rect(rectangle_surface, Colors.WHITE, (0, 0, width, height))
         super().__init__(owner, rectangle_surface, offset=offset, color=color)
+
+
+class CustomZone(Zone):
+    def __init__(
+            self,
+            owner: Asset,
+            shape: pygame.Surface,
+            offset: tuple[int | float, int | float] = (0, 0),
+            color: Colors | tuple[int] = Colors.WHITE_TRANSPARENT):
+        super().__init__(owner, shape, offset=offset, color=color)
