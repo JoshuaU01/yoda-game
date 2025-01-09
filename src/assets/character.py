@@ -1,6 +1,6 @@
 from typing import Optional
 
-from abc import ABC
+from abc import ABC, abstractmethod
 import pygame
 
 from src.asset import Asset
@@ -33,6 +33,7 @@ class Character(Asset, ABC):
     def __str__(self) -> str:
         return f"{self.__class__.__name__} at {self.rect.topleft}"
 
+    @abstractmethod
     def __init__(
             self,
             position: tuple[int, int],

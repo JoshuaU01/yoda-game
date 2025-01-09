@@ -2,12 +2,11 @@ from typing import Optional
 
 import pygame
 
-from src.asset import Asset
 from src.assets.characters.enemy import Enemy
 from src.assets.characters.player import Player
 from src.environment.world import World, Directions, Colors
 from src.utils.state import State, StateManager
-from src.assets.objects.zone import Zone
+from src.assets.objects.zone import EllipticZone, SemiEllipticZone
 
 
 class Runner(Enemy):
@@ -52,10 +51,15 @@ class Runner(Enemy):
         self.state_manager.add_state(StompState(), state_name="stomp")
         self.target = None
         self.target_lost_counter = 0
-        self.detect_zone = Zone(self, 2 * detect_range[0], 2 * detect_range[1], color=Colors.GREEN_TRANSPARENT)
-        self.attack_zone = Zone(self, 1/3 * 2 * detect_range[0], 2 * detect_range[1], color=Colors.YELLOW_TRANSPARENT)
-        self.continue_attack_zone = Zone(self, 1/2 * 2 * detect_range[0], 2 * detect_range[1], color=Colors.BLUE_TRANSPARENT)
-        self.hit_zone = Zone(self, 2/3 * 2 * detect_range[0], 2/5 * 2 * detect_range[1], color=Colors.RED_TRANSPARENT)
+        self.detect_zone = EllipticZone(
+            self, 2 * detect_range[0], 2 * detect_range[1], color=Colors.GREEN_TRANSPARENT)
+        self.attack_zone = EllipticZone(
+            self, (1 / 3) * 2 * detect_range[0], 2 * detect_range[1], color=Colors.YELLOW_TRANSPARENT)
+        self.continue_attack_zone = EllipticZone(
+            self, (1 / 2) * 2 * detect_range[0], 2 * detect_range[1], color=Colors.BLUE_TRANSPARENT)
+        self.hit_zone = SemiEllipticZone(
+            self, (2 / 3) * 2 * detect_range[0], (1 / 5) * 2 * detect_range[1],
+            offset=(0, -((1 / 5) * 2 * detect_range[1] - self.rect.height) / 2), color=Colors.RED_TRANSPARENT)
 
         self.gravity = 1.2
         self.turning_delay = 15
@@ -75,8 +79,6 @@ class Runner(Enemy):
         self.check_boundaries()
         self.check_alive()
         self.animate()
-        #print(self.state)
-
 
     def update_target(self) -> Optional[Player]:
         """
@@ -91,7 +93,7 @@ class Runner(Enemy):
         """
         # Check if the current target will remain
         if self.target:
-            if self.detect_zone.contains(self.target):
+            if self.detect_zone.contains(self.target) or self.attack_zone.contains(self.target):
                 self.target_lost_counter = 0  # Reset the counter
                 return self.target
             else:
@@ -106,21 +108,18 @@ class Runner(Enemy):
                 return player
         return None
 
-    def face_target(self, target: Asset) -> None:
+    def face_target(self) -> None:
         """
         The runner orients himself towards his target.
-
-        Args:
-            target (Asset): The target of the runner.
         """
         if not self.target:
             print(f"{self.__class__.__name__} has no target.")
             return None
-        if self.is_facing(target):
+        if self.is_facing(self.target):
             self.turning_delay = 15  # Reset turning delay
         elif self.turning_delay <= 0:
-                self.turn_around()
-                self.turning_delay = 15  # Reset turning delay after turn
+            self.turn_around()
+            self.turning_delay = 15  # Reset turning delay after turn
         else:
             self.turning_delay -= 1
 
@@ -168,7 +167,7 @@ class RunState(State):
             self.state_manager.change_state("prepare_attack")  # Transition T8
 
     def execute(self) -> None:
-        self.runner.face_target(self.runner.target)
+        self.runner.face_target()
         self.runner.velocity.x = self.runner.direction * self.runner.speed * 3
 
 
@@ -187,7 +186,7 @@ class PrepareAttackState(State):
             self.state_manager.change_state("stomp")  # Transition T6
 
     def execute(self) -> None:
-        self.runner.face_target(self.runner.target)
+        self.runner.face_target()
         self.runner.velocity.x = 0
 
 
@@ -202,7 +201,7 @@ class StompState(State):
             if not self.runner.target:
                 self.state_manager.change_state("walk")  # Transition T9
             elif not self.runner.attack_zone.contains(self.runner.target):
-                    self.state_manager.change_state("run")  # Transition 10
+                self.state_manager.change_state("run")  # Transition 10
             else:
                 self.state_manager.change_state("prepare_attack")  # Transition T7
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 
-from abc import ABC
+from abc import ABC, abstractmethod
 import pygame
 
 from src.environment.world import World, Colors
@@ -52,6 +52,7 @@ class Asset(pygame.sprite.Sprite, ABC):
                                  precise_collisions]
         return list(zip(precise_collisions, collision_coordinates))
 
+    @abstractmethod
     def __init__(self, sprite_groups: Optional[list[pygame.sprite.Group]] = None) -> None:
         """
         Creates an instance of this class.

@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import pygame
 
@@ -11,6 +11,7 @@ class Enemy(Character, ABC):
     A super class for all enemy types.
     """
 
+    @abstractmethod
     def __init__(
             self,
             position: tuple[int, int],

@@ -43,9 +43,9 @@ def main() -> None:
     player_1 = Player((200, 680), (41, 116), 8, World.images["player"], Directions.RIGHT, 4)
 
     # Create enemies
-    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (580, 185), 5)
+    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (580, 200), 5)
     enemy_2 = SniperGuy((2160, 490), (60, 110), 0, World.images["stickman"], Directions.LEFT, 32, 80, 3)
-    enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
+    enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (580, 200), 5)
     enemy_4 = SniperGuy((4080, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 4)
 
     # Create borders
@@ -117,7 +117,8 @@ def main() -> None:
                 elif event.key == pygame.K_BACKSPACE:
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
-                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], player_1.direction, (80, 30), 1)
+                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"],
+                        player_1.direction, (80, 30), 1)
                 elif event.key == pygame.K_F1:  # Make player bigger
                     midbottom = player_1.rect.midbottom
                     player_1.rect.size = (player_1.rect.width * 2, player_1.rect.height * 2)
