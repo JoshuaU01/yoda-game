@@ -5,8 +5,9 @@ import pygame
 from src.asset import Asset
 from src.assets.characters.enemy import Enemy
 from src.assets.characters.player import Player
-from src.environment.world import World, Directions
+from src.environment.world import World, Directions, Colors
 from src.utils.state import State, StateManager
+from src.assets.objects.zone import Zone
 
 
 class Runner(Enemy):
@@ -51,13 +52,13 @@ class Runner(Enemy):
         self.state_manager.add_state(StompState(), state_name="stomp")
         self.target = None
         self.target_lost_counter = 0
-        self.detect_range = detect_range
-        self.attack_range = (1/3 * detect_range[0], detect_range[1])
-        self.withdraw_attack_range = (1/2 * detect_range[0], detect_range[1])
-        self.hit_range = (2/3 * detect_range[0], 2/5 * detect_range[1])
-        self.turning_delay = 15
+        self.detect_zone = Zone(self, 2 * detect_range[0], 2 * detect_range[1], color=Colors.GREEN_TRANSPARENT)
+        self.attack_zone = Zone(self, 1/3 * 2 * detect_range[0], 2 * detect_range[1], color=Colors.YELLOW_TRANSPARENT)
+        self.continue_attack_zone = Zone(self, 1/2 * 2 * detect_range[0], 2 * detect_range[1], color=Colors.BLUE_TRANSPARENT)
+        self.hit_zone = Zone(self, 2/3 * 2 * detect_range[0], 2/5 * 2 * detect_range[1], color=Colors.RED_TRANSPARENT)
 
         self.gravity = 1.2
+        self.turning_delay = 15
         self.stomp_cooldown = 50
 
     def update(self) -> None:
@@ -90,7 +91,7 @@ class Runner(Enemy):
         """
         # Check if the current target will remain
         if self.target:
-            if self.is_near(self.target, self.detect_range):
+            if self.detect_zone.contains(self.target):
                 self.target_lost_counter = 0  # Reset the counter
                 return self.target
             else:
@@ -100,8 +101,7 @@ class Runner(Enemy):
 
         # Search for other players
         for player in World.players:
-            if self.is_near(player, self.detect_range) and self.is_facing(player) or self.is_near(
-                    player, self.attack_range):
+            if self.detect_zone.contains(player) and self.is_facing(player) or self.attack_zone.contains(player):
                 self.target_lost_counter = 0
                 return player
         return None
@@ -140,7 +140,7 @@ class WalkState(State):
 
     def update(self) -> None:
         if self.runner.target:
-            if self.runner.is_near(self.runner.target, self.runner.attack_range):
+            if self.runner.attack_zone.contains(self.runner.target):
                 self.state_manager.change_state("prepare_attack")  # Transition T5
             else:
                 self.state_manager.change_state("run")  # Transition T1
@@ -164,7 +164,7 @@ class RunState(State):
     def update(self):
         if not self.runner.target:
             self.state_manager.change_state("walk")  # Transition T2
-        elif self.runner.is_near(self.runner.target, self.runner.attack_range):
+        elif self.runner.attack_zone.contains(self.runner.target):
             self.state_manager.change_state("prepare_attack")  # Transition T8
 
     def execute(self) -> None:
@@ -181,7 +181,7 @@ class PrepareAttackState(State):
     def update(self):
         if not self.runner.target:
             self.state_manager.change_state("walk")  # Transition T4
-        elif not self.runner.is_near(self.runner.target, self.runner.withdraw_attack_range):
+        elif not self.runner.continue_attack_zone.contains(self.runner.target):
             self.state_manager.change_state("run")  # Transition T3
         elif self.runner.is_facing(self.runner.target) and self.runner.on_ground and self.runner.stomp_cooldown <= 0:
             self.state_manager.change_state("stomp")  # Transition T6
@@ -201,7 +201,7 @@ class StompState(State):
         if self.runner.on_ground and self.runner.velocity.y >= 0:  # Stomp action must be completed to exit this state
             if not self.runner.target:
                 self.state_manager.change_state("walk")  # Transition T9
-            elif not self.runner.is_near(self.runner.target, self.runner.attack_range):
+            elif not self.runner.attack_zone.contains(self.runner.target):
                     self.state_manager.change_state("run")  # Transition 10
             else:
                 self.state_manager.change_state("prepare_attack")  # Transition T7
@@ -218,7 +218,7 @@ class StompState(State):
 
     def exit(self):
         for player in World.players:
-            if self.runner.is_near(player, self.runner.hit_range) and player.on_ground and player.can_take_damage:
+            if self.runner.hit_zone.contains(player) and player.on_ground and player.can_take_damage:
                 player.take_damage(1)  # Only vulnerable players take damage
                 print(f"{player} got hit!")
         # TODO shake the camera (observer)

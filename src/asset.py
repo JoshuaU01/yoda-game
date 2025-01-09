@@ -4,7 +4,7 @@ from typing import Optional
 from abc import ABC
 import pygame
 
-from src.environment.world import World
+from src.environment.world import World, Colors
 
 
 class Asset(pygame.sprite.Sprite, ABC):
@@ -63,30 +63,36 @@ class Asset(pygame.sprite.Sprite, ABC):
         if sprite_groups is None:
             sprite_groups = []
         super().__init__(*sprite_groups)
-        self.rect = pygame.Rect(0, 0, 0, 0)  # Placeholder
+        # Placeholder variables
+        self.image = pygame.Surface((0, 0))
+        self.image.fill(Colors.BLACK)
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.can_take_damage = False
         self.visible = True
+
         self.hitbox_visible = World.hitboxes_visible
 
-        self.can_take_damage = False  # Placeholder
+    def show(self) -> None:
+        """
+        Make the asset visible.
+        """
+        self.visible = True
+
+    def hide(self) -> None:
+        """
+        Make the asset invisible.
+        """
+        self.visible = False
+
+    def toggle_visibility(self) -> None:
+        """
+        Toggles the visibility of the asset.
+        """
+        self.visible = not self.visible
 
     def toggle_hitbox_visibility(self) -> None:
         """
         Toggles the visibility of the hitbox of the asset.
         """
         self.hitbox_visible = not self.hitbox_visible
-
-    def is_near(self, asset: Asset, distance: tuple[int | float, int | float]) -> bool:  # TODO use masks
-        """
-        Checks, if an asset is near the asset.
-
-        Args:
-            asset (Optional[Asset]): The asset to check.
-            distance (tuple[int | float, int | float]): The semi-axles of the elliptic area that is considered near.
-
-        Returns:
-            bool: Whether the asset is near the asset.
-        """
-        if distance[0] <= 0 or distance[1] <= 0:
-            return False
-        return ((self.rect.centerx - asset.rect.centerx) ** 2 / distance[0] ** 2) + (
-                (self.rect.centery - asset.rect.centery) ** 2 / distance[1] ** 2) <= 1

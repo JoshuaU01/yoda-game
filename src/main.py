@@ -6,6 +6,7 @@ os.chdir("..")  # Work from root directory of the project to include all media a
 from src.assets.characters.player import Player
 from src.assets.characters.enemies.runner import Runner
 from src.assets.characters.enemies.sniper_guy import SniperGuy
+from src.assets.objects.zone import Zone
 from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
@@ -42,7 +43,7 @@ def main() -> None:
     player_1 = Player((200, 680), (41, 116), 8, World.images["player"], Directions.RIGHT, 4)
 
     # Create enemies
-    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
+    enemy_1 = Runner((600, 800), (60, 150), 4, World.images["runner"], Directions.RIGHT, (580, 185), 5)
     enemy_2 = SniperGuy((2160, 490), (60, 110), 0, World.images["stickman"], Directions.LEFT, 32, 80, 3)
     enemy_3 = Runner((2380, 700), (60, 150), 4, World.images["runner"], Directions.RIGHT, (600, 250), 5)
     enemy_4 = SniperGuy((4080, 330), (60, 110), 0, World.images["stickman"], Directions.LEFT, 24, 50, 4)
@@ -103,15 +104,20 @@ def main() -> None:
                 elif event.key == pygame.K_9:
                     World.health_bars_visible = not World.health_bars_visible
                     for character in (World.players.sprites() + World.enemies.sprites()):
-                        character.health_bar.toggle_on_off()
+                        character.health_bar.toggle_visibility()
                 elif event.key == pygame.K_0:
                     World.hitboxes_visible = not World.hitboxes_visible
-                    for asset in (World.all_sprites.sprites()):
+                    for asset in World.all_sprites.sprites():
                         asset.toggle_hitbox_visibility()
+                elif event.key == pygame.K_o:
+                    World.zones_visible = not World.zones_visible
+                    for asset in World.all_sprites.sprites():
+                        if isinstance(asset, Zone):
+                            asset.toggle_visibility()
                 elif event.key == pygame.K_BACKSPACE:
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
-                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], player_1.direction, (0, 0), 1)
+                         player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"], player_1.direction, (80, 30), 1)
                 elif event.key == pygame.K_F1:  # Make player bigger
                     midbottom = player_1.rect.midbottom
                     player_1.rect.size = (player_1.rect.width * 2, player_1.rect.height * 2)

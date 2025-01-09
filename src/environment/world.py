@@ -16,6 +16,7 @@ class World(pygame.sprite.Sprite):
 
     hitboxes_visible = False
     health_bars_visible = True
+    zones_visible = False
 
     players = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
@@ -99,6 +100,15 @@ class Colors:
     MAGENTA = (255, 0, 255)
     ORANGE = (255, 165, 0)
     BROWN = (128, 128, 128)
+
+    TRANSPARENT = (0, 0, 0, 0)
+    WHITE_TRANSPARENT = (255, 255, 255, 64)
+    BLACK_TRANSPARENT = (0, 0, 0, 64)
+    GREY_TRANSPARENT = (128, 128, 128)
+    RED_TRANSPARENT = (255, 0, 0, 64)
+    GREEN_TRANSPARENT = (0, 255, 0, 64)
+    BLUE_TRANSPARENT = (0, 0, 255, 64)
+    YELLOW_TRANSPARENT = (255, 255, 0, 64)
 
 
 class Directions:

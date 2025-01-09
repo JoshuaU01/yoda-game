@@ -29,7 +29,7 @@ class HealthBar(Object):
             (math.ceil(self.hearts) * (World.images["full_heart"].get_width() + self.padding),
              World.images["full_heart"].get_height()), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.topleft = self.owner.rect.left, self.owner.rect.top - 30
+        self.update_position()
         self.fill()
 
     def update(self) -> None:
@@ -71,27 +71,9 @@ class HealthBar(Object):
                 World.images["half_heart"],
                 (int(self.hearts) * (World.images["full_heart"].get_width() + self.padding), 0))
 
-    def show(self) -> None:
-        """
-        Make the health bar visible.
-        """
-        self.visible = True
-
-    def hide(self) -> None:
-        """
-        Make the health bar invisible.
-        """
-        self.visible = False
-
-    def toggle_on_off(self) -> None:
-        """
-        Toggles the visibility of the health bar.
-        """
-        self.visible = not self.visible
-
     def check_owner_alive(self) -> None:
         """
-        Checks, if the owner is alive.
+        Checks if the owner is alive.
         """
-        if self.owner.health <= 0:
+        if not self.owner.alive():
             self.kill()
