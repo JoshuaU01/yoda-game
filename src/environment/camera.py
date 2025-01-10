@@ -5,8 +5,6 @@ from typing import Any, Optional
 import pygame
 from abc import ABC, abstractmethod
 
-from src.environment.world import World
-
 
 class Camera:
     """

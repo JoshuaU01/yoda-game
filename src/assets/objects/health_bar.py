@@ -15,21 +15,25 @@ class HealthBar(Object):
     A health bar that can be filled with heart icons to display a character's health.
     """
 
-    def __init__(self, character: "Character") -> None:
+    def __init__(self, owner: "Character") -> None:
         """
         Creates an instance of this class.
+
+        Args:
+            owner (Character): The character to whom this health bar belongs.
         """
         sprite_groups = [World.all_sprites]
         super().__init__(sprite_groups=sprite_groups)
-        self.visible = True
-        self.character = character
-        self.hearts = self.character.health / 2
+        self.visible = World.health_bars_visible
+        self.owner = owner
+
+        self.hearts = self.owner.health / 2
         self.padding = 1
         self.image = pygame.Surface(
-            (math.ceil(self.hearts) * (World.image_full_heart.get_width() + self.padding),
-             World.image_full_heart.get_height()), pygame.SRCALPHA)
+            (math.ceil(self.hearts) * (World.images["full_heart"].get_width() + self.padding),
+             World.images["full_heart"].get_height()), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.topleft = self.character.rect.left, self.character.rect.top - 30
+        self.update_position()
         self.fill()
 
     def update(self) -> None:
@@ -42,18 +46,19 @@ class HealthBar(Object):
         # Only draw the health bar, if it changed.
         if self.hearts != previous_hearts:
             self.fill()
+        self.check_owner_alive()
 
     def update_position(self) -> None:
         """
-        Updates the position of the health bar with respect to its character's position.
+        Updates the position of the health bar with respect to its owner's position.
         """
-        self.rect.topleft = self.character.rect.left, self.character.rect.top - 30
+        self.rect.topleft = self.owner.rect.left, self.owner.rect.top - 30
 
     def update_hearts(self) -> None:
         """
-        Updates the number of hearts of the health bar with respect to its character's health.
+        Updates the number of hearts of the health bar with respect to its owner's health.
         """
-        self.hearts = self.character.health / 2
+        self.hearts = self.owner.health / 2
 
     def fill(self) -> None:
         """
@@ -62,26 +67,17 @@ class HealthBar(Object):
         self.image.fill((0, 0, 0, 0))  # Clear the health bar.
         # Draw the full hearts onto the health bar.
         for i in range(int(self.hearts)):
-            self.image.blit(World.image_full_heart, (i * (World.image_full_heart.get_width() + self.padding), 0))
+            self.image.blit(
+                World.images["full_heart"], (i * (World.images["full_heart"].get_width() + self.padding), 0))
         # Draw the half heart at the end, if it exists.
         if self.hearts % 1 != 0:
             self.image.blit(
-                World.image_half_heart, (int(self.hearts) * (World.image_full_heart.get_width() + self.padding), 0))
+                World.images["half_heart"],
+                (int(self.hearts) * (World.images["full_heart"].get_width() + self.padding), 0))
 
-    def show(self) -> None:
+    def check_owner_alive(self) -> None:
         """
-        Make the health bar visible.
+        Checks if the owner is alive.
         """
-        self.visible = True
-
-    def hide(self) -> None:
-        """
-        Make the health bar invisible.
-        """
-        self.visible = False
-
-    def toggle_on_off(self) -> None:
-        """
-        Toggle visibility of the health bar.
-        """
-        self.visible = not self.visible
+        if not self.owner.alive():
+            self.kill()

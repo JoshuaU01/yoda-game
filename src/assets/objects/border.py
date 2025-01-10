@@ -22,6 +22,5 @@ class Border(Object):
         sprite_groups = [World.all_sprites, World.borders]
         super().__init__(sprite_groups=sprite_groups)
         self.image = pygame.Surface([width, height], pygame.SRCALPHA)
-        # self.image.fill(Colors.RED)  # Debug purposes
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)

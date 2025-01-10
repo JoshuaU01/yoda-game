@@ -14,11 +14,19 @@ class World(pygame.sprite.Sprite):
     SCREEN_WIDTH = 1440  # display_info.current_w
     SCREEN_HEIGHT = 800  # display_info.current_h
 
+    hitboxes_visible = False
+    health_bars_visible = True
+    zones_visible = False
+
     players = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
     borders = pygame.sprite.Group()
     blocks = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
+
+    images = {}
+
+    boundaries = {}
 
     @staticmethod
     def load_image(image_path: str, size: Optional[tuple[int, int]] = None) -> pygame.Surface:
@@ -42,16 +50,31 @@ class World(pygame.sprite.Sprite):
         """
         Loads in all the single images that are not part of a sprite sheet.
         """
-        World.image_player = World.load_image("media/images/player/ziwomol/ziwomol_v3.png")
-        World.image_stickman = World.load_image("media/images/template/stickman.png")
-        World.image_runner = World.load_image("media/images/enemies/runner/runner_v2.png")
-        World.image_background = World.load_image(
+        World.images["player"] = World.load_image("media/images/player/ziwomol/ziwomol_v3.png")
+        World.images["stickman"] = World.load_image("media/images/template/stickman.png")
+        World.images["runner"] = World.load_image("media/images/enemies/runner/runner_v2.png")
+        World.images["background"] = World.load_image(
             "media/images/background/map_grass_background.png", size=(World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
-        World.image_floor = World.load_image(
+        World.images["floor"] = World.load_image(
             "media/images/background/map_grass_floor.png", size=(World.SCREEN_WIDTH, 180))
-        World.image_bullet = World.load_image("media/images/bullet/bullet_small.png")
-        World.image_full_heart = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
-        World.image_half_heart = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
+        World.images["bullet"] = World.load_image("media/images/bullet/bullet_small.png")
+        World.images["full_heart"] = World.load_image("media/images/heart/full_heart.png", size=(16, 16))
+        World.images["half_heart"] = World.load_image("media/images/heart/half_heart.png", size=(8, 16))
+
+    @staticmethod
+    def set_boundaries(left: int, right: int, top: int, bottom: int) -> None:
+        """
+        Sets the boundaries of the world. A character will die, if they leave them.
+
+        :param left: Left boundary.
+        :param right: Right boundary.
+        :param top: Upper boundary.
+        :param bottom: Lower boundary.
+        """
+        World.boundaries["left"] = left
+        World.boundaries["right"] = right
+        World.boundaries["top"] = top
+        World.boundaries["bottom"] = bottom
 
     def __init__(self) -> None:
         """
@@ -77,6 +100,15 @@ class Colors:
     MAGENTA = (255, 0, 255)
     ORANGE = (255, 165, 0)
     BROWN = (128, 128, 128)
+
+    TRANSPARENT = (0, 0, 0, 0)
+    WHITE_TRANSPARENT = (255, 255, 255, 64)
+    BLACK_TRANSPARENT = (0, 0, 0, 64)
+    GREY_TRANSPARENT = (128, 128, 128)
+    RED_TRANSPARENT = (255, 0, 0, 64)
+    GREEN_TRANSPARENT = (0, 255, 0, 64)
+    BLUE_TRANSPARENT = (0, 0, 255, 64)
+    YELLOW_TRANSPARENT = (255, 255, 0, 64)
 
 
 class Directions:

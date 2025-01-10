@@ -11,8 +11,17 @@ class SniperGuy(Enemy):
     """
 
     def __init__(
-            self, position: tuple[int, int], size: tuple[int, int], speed: int, image: pygame.Surface,
-            health: int) -> None:
+            self,
+            position: tuple[int, int],
+            size: tuple[int, int],
+            speed: int,
+            image: pygame.Surface,
+            direction: Directions,
+            bullet_speed: int,
+            bullet_TTL: int,
+            health: int,
+            can_take_damage: bool = True) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -21,13 +30,18 @@ class SniperGuy(Enemy):
             size (tuple[int, int]): The size of the sniper guy.
             speed (int): The maximum speed of the sniper guy.
             image (pygame.Surface): The image of the sniper guy.
+            direction (Directions): The initial horizontal direction the sniper guy is facing.
+            bullet_speed (int): The velocity of the sniper guy's bullets.
+            bullet_TTL (int): After counting down this TTL (time to live) timer, the bullet gets destroyed.
             health (int): The number of lives of the sniper guy.
+            can_take_damage (bool): Whether the sniper guy can take damage.
         """
-        super().__init__(position, size, speed, image, health)
+        super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
-        self.take_damage = True
         self.bullets = pygame.sprite.Group()
-        self.cooldown = 0
+        self.bullet_speed = bullet_speed
+        self.bullet_TTL = bullet_TTL
+        self.cooldown = 20
 
     def update(self) -> None:
         """
@@ -40,13 +54,16 @@ class SniperGuy(Enemy):
         self.apply_cooldown()
         self.check_boundaries()
         self.check_alive()
+        self.animate()
 
     def shoot(self) -> None:
         """
         Lets the sniper guy shoot bullets.
         """
         if self.cooldown <= 0:
-            bullet = Bullet((self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (24, 4), 32, Directions.LEFT)
+            bullet = Bullet(
+                self, (self.rect.x, self.rect.y + (2 / 5) * self.rect.height), (int(self.bullet_speed / 1.3), 4),
+                self.bullet_speed, Directions.LEFT, time_to_live=self.bullet_TTL)
             self.bullets.add(bullet)
             self.cooldown = 120
 

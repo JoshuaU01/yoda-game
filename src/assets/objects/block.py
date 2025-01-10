@@ -1,7 +1,6 @@
 import pygame
 
 from src.assets.object import Object
-from src.environment.world import World
 
 
 class Block(Object):
@@ -24,3 +23,4 @@ class Block(Object):
         self.image = pygame.transform.scale(image, (width, height))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+        self.mask = pygame.mask.from_surface(self.image)
