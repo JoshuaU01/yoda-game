@@ -10,9 +10,8 @@ from src.assets.objects.zone import Zone
 from src.assets.objects.border import Border
 from src.environment.sprite_sheet import SpriteSheet
 from src.environment.grid_map import GridMap
-from src.environment.world import World, Directions, Colors
-from src.environment.camera import (Camera, FollowCamModeX, BorderCamModeX, AutoCamModeX, FollowCamModeY,
-                                    BorderCamModeY, AutoCamModeY, PageCamModeY)
+from src.environment.world import World, Colors
+from src.environment.camera import Camera, FollowCamModeX, AutoCamModeX, PageCamModeX, FollowCamModeY, AutoCamModeY, PageCamModeY
 
 
 def main() -> None:
@@ -54,15 +53,16 @@ def main() -> None:
 
     # Init camera
     camera = Camera(player_1, World.SCREEN_WIDTH, World.SCREEN_HEIGHT)
-    follow_cam_mode_x = FollowCamModeX(camera)
-    border_cam_mode_x = BorderCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
-    auto_cam_mode_x = AutoCamModeX(camera, 1)
-    follow_cam_mode_y = FollowCamModeY(camera)
-    border_cam_mode_y = BorderCamModeY(camera, -2 * camera.height, layer_0.map_height * layer_0.grid_size, 180, 100)
+    follow_cam_mode_x_1 = FollowCamModeX(camera)
+    follow_cam_mode_x_2 = FollowCamModeX(camera, left_wall.rect.right, right_wall.rect.left, (4, 6))
+    auto_cam_mode_x = AutoCamModeX(camera, 2)
+    page_cam_mode_x = PageCamModeX(camera, 0, 4 * camera.width)
+    follow_cam_mode_y_1 = FollowCamModeY(camera)
+    follow_cam_mode_y_2 = FollowCamModeY(camera, -2 * camera.height, camera.height, 180, 100)
     auto_cam_mode_y = AutoCamModeY(camera, -1)
-    page_cam_mode_y = PageCamModeY(camera)
-    camera.set_horizontal_method(border_cam_mode_x)
-    camera.set_vertical_method(border_cam_mode_y)
+    page_cam_mode_y = PageCamModeY(camera, -2 * camera.height, camera.height)
+    camera.set_horizontal_method(follow_cam_mode_x_2)
+    camera.set_vertical_method(follow_cam_mode_y_2)
     character_focus_index = 0
 
     # Start the game loop
@@ -84,46 +84,48 @@ def main() -> None:
                     World.FULLSCREEN = not World.FULLSCREEN
                 # Check for key inputs which set the camera
                 elif event.key == pygame.K_1:
-                    camera.set_horizontal_method(follow_cam_mode_x)
+                    camera.set_horizontal_method(follow_cam_mode_x_1)
                 elif event.key == pygame.K_2:
-                    camera.set_horizontal_method(border_cam_mode_x)
+                    camera.set_horizontal_method(follow_cam_mode_x_2)
                 elif event.key == pygame.K_3:
                     camera.set_horizontal_method(auto_cam_mode_x)
                 elif event.key == pygame.K_4:
-                    camera.set_vertical_method(follow_cam_mode_y)
+                    camera.set_horizontal_method(page_cam_mode_x)
                 elif event.key == pygame.K_5:
-                    camera.set_vertical_method(border_cam_mode_y)
+                    camera.set_vertical_method(follow_cam_mode_y_1)
                 elif event.key == pygame.K_6:
-                    camera.set_vertical_method(auto_cam_mode_y)
+                    camera.set_vertical_method(follow_cam_mode_y_2)
                 elif event.key == pygame.K_7:
-                    camera.set_vertical_method(page_cam_mode_y)
+                    camera.set_vertical_method(auto_cam_mode_y)
                 elif event.key == pygame.K_8:
+                    camera.set_vertical_method(page_cam_mode_y)
+                elif event.key == pygame.K_9:
                     characters_list = World.players.sprites() + World.enemies.sprites()
                     character_focus_index = (character_focus_index + 1) % len(characters_list)
                     camera.set_target(characters_list[character_focus_index])
-                elif event.key == pygame.K_9:
-                    World.health_bars_visible = not World.health_bars_visible
-                    for character in (World.players.sprites() + World.enemies.sprites()):
-                        character.health_bar.toggle_visibility()
-                elif event.key == pygame.K_0:
-                    World.hitboxes_visible = not World.hitboxes_visible
-                    for asset in World.all_sprites.sprites():
-                        asset.toggle_hitbox_visibility()
-                elif event.key == pygame.K_o:
-                    World.zones_visible = not World.zones_visible
-                    for asset in World.all_sprites.sprites():
-                        if isinstance(asset, Zone):
-                            asset.toggle_visibility()
-                elif event.key == pygame.K_BACKSPACE:
+                elif event.key == pygame.K_BACKSPACE:  # Spawn a mini runner
                     Runner(
                         (player_1.rect.centerx + player_1.direction * (player_1.rect.width + 50),
                          player_1.rect.bottom - 90), (35, 90), 3, World.images["runner"],
                         player_1.direction, (80, 30), 1)
-                elif event.key == pygame.K_F1:  # Make player bigger
+                elif event.key == pygame.K_F1:
+                    World.health_bars_visible = not World.health_bars_visible
+                    for character in (World.players.sprites() + World.enemies.sprites()):
+                        character.health_bar.toggle_visibility()
+                elif event.key == pygame.K_F2:
+                    World.hitboxes_visible = not World.hitboxes_visible
+                    for asset in World.all_sprites.sprites():
+                        asset.toggle_hitbox_visibility()
+                elif event.key == pygame.K_F3:
+                    World.zones_visible = not World.zones_visible
+                    for asset in World.all_sprites.sprites():
+                        if isinstance(asset, Zone):
+                            asset.toggle_visibility()
+                elif event.key == pygame.K_UP:  # Make player bigger
                     midbottom = player_1.rect.midbottom
                     player_1.rect.size = (player_1.rect.width * 2, player_1.rect.height * 2)
                     player_1.rect.midbottom = midbottom
-                elif event.key == pygame.K_F2:  # Make player smaller
+                elif event.key == pygame.K_DOWN:  # Make player smaller
                     midbottom = player_1.rect.midbottom
                     player_1.rect.size = (player_1.rect.width / 2, player_1.rect.height / 2)
                     player_1.rect.midbottom = midbottom
