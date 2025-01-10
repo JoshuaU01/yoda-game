@@ -15,7 +15,8 @@ class Asset(pygame.sprite.Sprite, ABC):
     @property
     def collision(self) -> list[Asset]:
         """
-        All found collisions to any other character, border or block
+        All found collisions to any other character, border or block.
+        Uses rects for collision check.
 
         Returns:
             list[Asset]: The assets that collided with the asset
@@ -31,6 +32,7 @@ class Asset(pygame.sprite.Sprite, ABC):
     @property
     def precise_collision(self) -> list[Asset]:
         """
+        All found collisions to any other character, border or block.
         Uses masks instead of rects for collision check.
 
         Returns:
@@ -76,13 +78,13 @@ class Asset(pygame.sprite.Sprite, ABC):
 
     def show(self) -> None:
         """
-        Make the asset visible.
+        Makes the asset visible.
         """
         self.visible = True
 
     def hide(self) -> None:
         """
-        Make the asset invisible.
+        Makes the asset invisible.
         """
         self.visible = False
 

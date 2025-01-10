@@ -12,8 +12,7 @@ class Player(Character):
 
     def __init__(
             self,
-            position:
-            tuple[int, int],
+            position: tuple[int, int],
             size: tuple[int, int],
             speed: int,
             image: pygame.Surface,
@@ -29,6 +28,7 @@ class Player(Character):
             size (tuple[int, int]): The size of the player.
             speed (int): The maximum speed of the player.
             image (pygame.Surface): The image of the player.
+            direction (Directions): The initial horizontal direction the player is facing.
             health (int): The number of lives of the player.
             can_take_damage (bool): Whether the player can take damage.
         """

@@ -11,8 +11,14 @@ class Bullet(Object):
     """
 
     def __init__(
-            self, owner: Character, position: tuple[float, float], size: tuple[int, int], speed: int,
-            direction: int, time_to_live: int = 80) -> None:
+            self,
+            owner: Character,
+            position: tuple[float, float],
+            size: tuple[int, int],
+            speed: int,
+            direction: int,
+            time_to_live: int = 80) \
+            -> None:
         """
         Creates an instance of this class.
 
@@ -21,11 +27,12 @@ class Bullet(Object):
             position (tuple[float, float]): The position of the center of the bullet.
             size (tuple[int, int]): The size of the bullet.
             speed (int): The speed of the bullet.
-            direction (int): The shoot direction of the bullet.
+            direction (int): The bullet's travel direction.
         """
         sprite_groups = [World.all_sprites]
         super().__init__(sprite_groups=sprite_groups)
         self.owner = owner
+
         self.image = pygame.transform.scale(World.images["bullet"], (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.center = (position[0], position[1])
@@ -50,7 +57,7 @@ class Bullet(Object):
         """
         self.velocity.x = self.speed * self.direction
         self.rect.x += self.velocity.x
-        # self.rect.y += self.velocity.y  # TODO work out self.dirction as vector 1x2?
+        # self.rect.y += self.velocity.y  # TODO Work out self.dirction as vector 1x2?
 
     def check_collisions(self) -> None:
         """

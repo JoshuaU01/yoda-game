@@ -17,11 +17,11 @@ class Character(Asset, ABC):
     @property
     def on_ground(self) -> bool:
         """
-        Checks if the character stands on a solid asset.
+        Checks whether the character stands on a solid asset.
         This works by checking if the character would have collisions if they stood 1 pixel lower.
 
         Returns:
-            on_ground (bool): True if the character stands on something.
+            bool: True if the character stands on something.
         """
         self.rect.y += 1
         collision = self.collision
@@ -31,6 +31,12 @@ class Character(Asset, ABC):
         return False
 
     def __str__(self) -> str:
+        """
+        Overrides the default __str__ method.
+
+        Returns:
+            str: Includes the class name and the character's coordinates.
+        """
         return f"{self.__class__.__name__} at {self.rect.topleft}"
 
     @abstractmethod
@@ -53,6 +59,7 @@ class Character(Asset, ABC):
             size (tuple[int, int]): The size of the character.
             speed (int): The maximum speed of the character.
             image (pygame.Surface): The image of the character.
+            direction (Directions): The initial horizontal direction the character is facing.
             health (int): The number of lives of the character.
             can_take_damage (bool): Whether the character can take damage.
             sprite_groups: (Optional[list[pygame.sprite.Group]]): The global sprite groups that the character will be
@@ -106,17 +113,20 @@ class Character(Asset, ABC):
 
     def is_facing(self, asset: Asset) -> bool:
         """
-        Checks, if the character is facing a specified asset.
+        Checks whether the character is facing a specified asset.
 
         Params:
             asset (Asset): The asset to check.
 
         Returns:
-            bool: Whether the character is facing the asset.
+            bool: True if the character is facing the asset.
         """
         return (asset.rect.x - self.rect.x) * self.direction >= 0
 
-    def turn_around(self):
+    def turn_around(self) -> None:
+        """
+        Changes the character's horizontal direction.
+        """
         self.direction *= -1
 
     def apply_gravity(self) -> None:
@@ -137,7 +147,7 @@ class Character(Asset, ABC):
 
     def indicate_damage(self) -> None:
         """
-        Enables the light_up method.
+        Enables the light_up method to visually indicate received damage.
         """
         self.receiving_damage = True
 
@@ -163,10 +173,10 @@ class Character(Asset, ABC):
 
     def check_alive(self) -> bool:
         """
-        Decides, if the character has enough health to be allowed to live.
+        Decides whether the character has enough health to be allowed to live.
 
         Returns:
-            bool: Whether the character is still alive or not.
+            bool: True if the character is still alive.
         """
         if self.health <= 0:
             print(f"{self} has died!")

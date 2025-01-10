@@ -11,11 +11,17 @@ from src.assets.objects.zone import EllipticZone, SemiEllipticZone
 
 class Runner(Enemy):
     """
-    A melee enemy type that can run towards the player.
+    A melee enemy type that can run towards the player and hit them with a stomp attack.
     """
 
     @property
-    def state(self):
+    def state(self) -> State:
+        """
+        A shortcut for using the runner's state.
+
+        Returns:
+            State: The runner's current state, managed by their state_manager.
+        """
         return self.state_manager.current_state
 
     def __init__(
@@ -37,10 +43,10 @@ class Runner(Enemy):
             size (tuple[int, int]): The size of the runner.
             speed (int): The maximum speed of the runner.
             image (pygame.Surface): The image of the runner.
+            direction (Directions): The initial horizontal direction the runner is facing.
             detect_range (tuple[int, int]): The horizontal and vertical range that a runner can detect an asset in.
             health (int): The number of lives of the runner.
             can_take_damage (bool): Whether the runner can take damage.
-            direction (Directions): The horizontal direction the runner is facing.
         """
         super().__init__(position, size, speed, image, direction, health, can_take_damage=can_take_damage)
 
@@ -52,13 +58,13 @@ class Runner(Enemy):
         self.target = None
         self.target_lost_counter = 0
         self.detect_zone = EllipticZone(
-            self, 2 * detect_range[0], 2 * detect_range[1], color=Colors.GREEN_TRANSPARENT)
+            2 * detect_range[0], 2 * detect_range[1], owner=self, color=Colors.GREEN_TRANSPARENT)
         self.attack_zone = EllipticZone(
-            self, (1 / 3) * 2 * detect_range[0], 2 * detect_range[1], color=Colors.YELLOW_TRANSPARENT)
+            (1 / 3) * 2 * detect_range[0], 2 * detect_range[1], owner=self, color=Colors.YELLOW_TRANSPARENT)
         self.continue_attack_zone = EllipticZone(
-            self, (1 / 2) * 2 * detect_range[0], 2 * detect_range[1], color=Colors.BLUE_TRANSPARENT)
+            (1 / 2) * 2 * detect_range[0], 2 * detect_range[1], owner=self, color=Colors.BLUE_TRANSPARENT)
         self.hit_zone = SemiEllipticZone(
-            self, (2 / 3) * 2 * detect_range[0], (1 / 5) * 2 * detect_range[1],
+            (2 / 3) * 2 * detect_range[0], (1 / 5) * 2 * detect_range[1], owner=self,
             offset=(0, -((1 / 5) * 2 * detect_range[1] - self.rect.height) / 2), color=Colors.RED_TRANSPARENT)
 
         self.gravity = 1.2
@@ -132,12 +138,27 @@ class Runner(Enemy):
 
 
 class WalkState(State):
+    """
+    While in this state, the runner slowly walks between walls.
+    He can only enter this state, if he currently has no target
+    and exits it as soon as he finds one.
+    """
 
     @property
-    def runner(self):
+    def runner(self) -> Runner:
+        """
+        A shortcut for using the runner.
+
+        Returns:
+            The runner that currently is in this state.
+        """
         return self.state_manager.owner
 
     def update(self) -> None:
+        """
+        Checks the transition conditions into other states
+        and switches it if they are fulfilled.
+        """
         if self.runner.target:
             if self.runner.attack_zone.contains(self.runner.target):
                 self.state_manager.change_state("prepare_attack")  # Transition T5
@@ -145,6 +166,10 @@ class WalkState(State):
                 self.state_manager.change_state("run")  # Transition T1
 
     def execute(self) -> None:
+        """
+        Repeatedly executes the runner's walking behavior.
+        If he hits a wall, the runner will turn around.
+        """
         self.runner.velocity.x = self.runner.direction * self.runner.speed
         old_x = self.runner.rect.x  # Save the current horizontal position
         self.runner.rect.x += self.runner.velocity.x
@@ -155,29 +180,66 @@ class WalkState(State):
 
 
 class RunState(State):
+    """
+    While in this state, the runner faces his target and runs towards it.
+    He must have a target to enter this state.
+    He can exit this state either to go back to walking or preparing his attack.
+    """
 
     @property
-    def runner(self):
+    def runner(self) -> Runner:
+        """
+        A shortcut for using the runner.
+
+        Returns:
+            The runner that currently is in this state.
+        """
         return self.state_manager.owner
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Checks the transition conditions into other states
+        and switches it if they are fulfilled.
+        """
         if not self.runner.target:
             self.state_manager.change_state("walk")  # Transition T2
         elif self.runner.attack_zone.contains(self.runner.target):
             self.state_manager.change_state("prepare_attack")  # Transition T8
 
     def execute(self) -> None:
+        """
+        Repeatedly executes the runner's running behavior.
+        He keeps facing the target and moves with increased velocity towards him.
+        """
         self.runner.face_target()
         self.runner.velocity.x = self.runner.direction * self.runner.speed * 3
 
 
 class PrepareAttackState(State):
+    """
+    While in this state, the runner stands still and prepares his stomp attack.
+    To enter this state, the target must have once entered the runner's attack zone
+    and must not leave his continue attack zone. By using two zones,
+    the runner can continue his attack, even if the target moves a little away from him.
+    He can exit this state either to go back to walking or running
+    (if the target left both of these zones) or to executing his stomp attack.
+    """
 
     @property
-    def runner(self):
+    def runner(self) -> Runner:
+        """
+        A shortcut for using the runner.
+
+        Returns:
+            The runner that currently is in this state.
+        """
         return self.state_manager.owner
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Checks the transition conditions into other states
+        and switches it if they are fulfilled.
+        """
         if not self.runner.target:
             self.state_manager.change_state("walk")  # Transition T4
         elif not self.runner.continue_attack_zone.contains(self.runner.target):
@@ -186,17 +248,36 @@ class PrepareAttackState(State):
             self.state_manager.change_state("stomp")  # Transition T6
 
     def execute(self) -> None:
+        """
+        Repeatedly executes the runner's prepare attack behavior.
+        Basically he just stands still and keeps facing his target.
+        """
         self.runner.face_target()
         self.runner.velocity.x = 0
 
 
 class StompState(State):
+    """
+    By entering this state, the runner starts his stomp attack.
+    By exiting this state, he will hit all players in his hit zone.
+    He can then go back to walking, running or preparing another attack.
+    """
 
     @property
-    def runner(self):
+    def runner(self) -> Runner:
+        """
+        A shortcut for using the runner.
+
+        Returns:
+            The runner that currently is in this state.
+        """
         return self.state_manager.owner
 
     def update(self) -> None:
+        """
+        Checks the transition conditions into other states
+        and switches it if they are fulfilled.
+        """
         if self.runner.on_ground and self.runner.velocity.y >= 0:  # Stomp action must be completed to exit this state
             if not self.runner.target:
                 self.state_manager.change_state("walk")  # Transition T9
@@ -205,17 +286,25 @@ class StompState(State):
             else:
                 self.state_manager.change_state("prepare_attack")  # Transition T7
 
-    def enter(self):
+    def enter(self) -> None:
         """
-        Start stomping.
+        Launch the stomp attack.
         """
         self.runner.velocity.y = -15
         self.runner.stomp_cooldown = 90
 
     def execute(self) -> None:
+        """
+        While stomping, the runner must not do anything else.
+        He is automatically pulled down by gravity.
+        """
         pass
 
-    def exit(self):
+    def exit(self) -> None:
+        """
+        Hit all grounded players in the runner's hit zone.
+        Do damage if they are allowed to take it.
+        """
         for player in World.players:
             if self.runner.hit_zone.contains(player) and player.on_ground and player.can_take_damage:
                 player.take_damage(1)  # Only vulnerable players take damage

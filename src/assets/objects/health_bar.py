@@ -18,11 +18,15 @@ class HealthBar(Object):
     def __init__(self, owner: "Character") -> None:
         """
         Creates an instance of this class.
+
+        Args:
+            owner (Character): The character to whom this health bar belongs.
         """
         sprite_groups = [World.all_sprites]
         super().__init__(sprite_groups=sprite_groups)
         self.visible = World.health_bars_visible
         self.owner = owner
+
         self.hearts = self.owner.health / 2
         self.padding = 1
         self.image = pygame.Surface(

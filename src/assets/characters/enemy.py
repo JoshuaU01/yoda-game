@@ -30,6 +30,7 @@ class Enemy(Character, ABC):
             size (tuple[int, int]): The size of the enemy.
             speed (int): The maximum speed of the enemy.
             image (pygame.Surface): The image of the enemy.
+            direction (Directions): The initial horizontal direction the enemy is facing.
             health (int): The number of lives of the enemy.
             can_take_damage (bool): Whether the enemy can take damage.
         """

@@ -30,6 +30,9 @@ class SniperGuy(Enemy):
             size (tuple[int, int]): The size of the sniper guy.
             speed (int): The maximum speed of the sniper guy.
             image (pygame.Surface): The image of the sniper guy.
+            direction (Directions): The initial horizontal direction the sniper guy is facing.
+            bullet_speed (int): The velocity of the sniper guy's bullets.
+            bullet_TTL (int): After counting down this TTL (time to live) timer, the bullet gets destroyed.
             health (int): The number of lives of the sniper guy.
             can_take_damage (bool): Whether the sniper guy can take damage.
         """
