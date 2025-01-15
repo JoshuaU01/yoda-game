@@ -26,7 +26,7 @@ def main() -> None:
     # Init screen
     pygame.display.set_caption("Joda Game")
     display_info = pygame.display.Info()
-    screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT), pygame.RESIZABLE, vsync=1)
 
     # Load sprite sheets and maps
     World.load_images()
@@ -74,16 +74,20 @@ def main() -> None:
             # Check for key inputs which close the game
             if event.type == pygame.QUIT:
                 World.RUNNING = False
+            if event.type == pygame.VIDEORESIZE and not World.FULLSCREEN:
+                World.SCREEN_WIDTH = event.w
+                World.SCREEN_HEIGHT = event.h
+                screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT), pygame.RESIZABLE, vsync=1)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     World.RUNNING = False
                 # Check for key inputs which toggle between windows and full screen
                 elif event.key == pygame.K_f:
-                    if World.FULLSCREEN:
-                        screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT))
-                    else:
-                        screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT), pygame.FULLSCREEN)
                     World.FULLSCREEN = not World.FULLSCREEN
+                    if World.FULLSCREEN:
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=1)
+                    else:
+                        screen = pygame.display.set_mode((World.SCREEN_WIDTH, World.SCREEN_HEIGHT), pygame.RESIZABLE, vsync=1)
                 # Check for key inputs which set the camera
                 elif event.key == pygame.K_1:
                     camera.set_horizontal_method(follow_cam_mode_x)
