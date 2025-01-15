@@ -42,7 +42,7 @@ class World(pygame.sprite.Sprite):
         """
         image = pygame.image.load(image_path).convert_alpha()
         if size:
-            image = pygame.transform.scale(image, size)
+            image = pygame.transform.smoothscale(image, size)
         return image
 
     @staticmethod

@@ -144,13 +144,15 @@ def main() -> None:
         screen.blit(World.images["background"], (0, 0))
         for sprite in World.all_sprites:
             if sprite.visible:
-                screen.blit(sprite.image, camera.apply_offset(sprite))
+                screen.blit(rescale(sprite.image, World.SCREEN_HEIGHT / 800), camera.apply_offset(sprite))
             if sprite.hitbox_visible:
                 pygame.draw.rect(screen, Colors.WHITE, camera.apply_offset(sprite), 1)
 
         pygame.display.update()  # Update some pygame internals
         clock.tick(50)  # Set the framerate (in fps)
 
+def rescale(graphic: pygame.Surface, factor):
+    return pygame.transform.smoothscale(graphic, (graphic.get_width() * factor, graphic.get_height() * factor))
 
 if __name__ == '__main__':
     main()

@@ -33,7 +33,7 @@ class Bullet(Object):
         super().__init__(sprite_groups=sprite_groups)
         self.owner = owner
 
-        self.image = pygame.transform.scale(World.images["bullet"], (size[0], size[1]))
+        self.image = pygame.transform.smoothscale(World.images["bullet"], (size[0], size[1]))
         self.rect = self.image.get_rect()
         self.rect.center = (position[0], position[1])
         self.mask = pygame.mask.from_surface(self.image)

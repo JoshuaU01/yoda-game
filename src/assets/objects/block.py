@@ -20,7 +20,7 @@ class Block(Object):
             height (int): The height of the block.
         """
         super().__init__()
-        self.image = pygame.transform.scale(image, (width, height))
+        self.image = pygame.transform.smoothscale(image, (width, height))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.mask = pygame.mask.from_surface(self.image)

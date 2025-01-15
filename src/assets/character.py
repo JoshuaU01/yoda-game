@@ -66,7 +66,7 @@ class Character(Asset, ABC):
             put in during initialization.
         """
         super().__init__(sprite_groups=sprite_groups)
-        self.image = pygame.transform.scale(image, (size[0], size[1]))
+        self.image = pygame.transform.smoothscale(image, (size[0], size[1]))
         self.original_image = self.image.copy()
         self.rect = self.image.get_rect()
         self.rect.topleft = (position[0], position[1])
@@ -215,7 +215,7 @@ class Character(Asset, ABC):
         """
         # TODO Use temp image and more flags to avoid repeating unnecessary operations?
         self.image = self.original_image.copy()  # Fetch original image
-        self.image = pygame.transform.scale(self.image, self.rect.size)  # Scale to hitbox dimensions
+        self.image = pygame.transform.smoothscale(self.image, self.rect.size)  # Scale to hitbox dimensions
         self.image = pygame.transform.flip(self.image, self.direction == Directions.LEFT, False)  # Flip if facing left
         self.mask = pygame.mask.from_surface(self.image)  # Update mask
         self.light_up()  # Display dealt damage
