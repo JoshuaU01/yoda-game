@@ -23,7 +23,7 @@ class Asset(pygame.sprite.Sprite, ABC):
         """
         combined_sprites = (
                 World.players.sprites() + World.enemies.sprites() + World.borders.sprites() +
-                World.blocks.sprites())  # A list is way faster than a separate sprite group
+                World.blocks.sprites())  # A tuple is way faster than a separate sprite group
         if self in combined_sprites:
             combined_sprites.remove(self)
 
